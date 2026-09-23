@@ -9,14 +9,26 @@ interface CaseStudyCardProps {
 
 export function CaseStudyCard({ study, compact = false }: CaseStudyCardProps) {
   return (
-    <motion.article className={`case-study-card ${compact ? "case-study-card--compact" : ""}`} whileHover={{ y: -5 }} transition={{ duration: 0.2 }}>
+    <motion.article
+      className={`case-study-card ${compact ? "case-study-card--compact" : ""}`}
+      whileHover={{ y: -5 }}
+      transition={{ duration: 0.2 }}
+    >
       <div className="case-study-image image-frame">
         <img src={study.image} alt={`${study.client} case study`} />
       </div>
       <div className="case-study-copy">
-        <h3>{study.client}</h3>
-        <span className="category">{study.category}</span>
-        <p>{study.description}</p>
+        <div className="case-study-header-meta">
+          <span className="case-study-client-name">{study.client}</span>
+          <span className="case-study-category-badge">{study.category}</span>
+        </div>
+        <h3 className="case-study-heading">{study.title}</h3>
+        <p className="case-study-desc">{study.description}</p>
+
+        <div className="case-study-tag-container">
+          <span className="case-study-accent-tag">description</span>
+        </div>
+
         {study.stats && (
           <div className="case-study-stats">
             {study.stats.map((stat) => (

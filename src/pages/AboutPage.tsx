@@ -92,7 +92,7 @@ export function AboutPage() {
               <AccordionItem value="vision">
                 <AccordionTrigger>
                   <span className="faq-number">01</span>
-                  <span>THE VISION</span>
+                  <span className="faq-question-text">THE VISION</span>
                 </AccordionTrigger>
                 <AccordionContent>
                   Make advanced technology more accessible and useful to the businesses
@@ -102,13 +102,14 @@ export function AboutPage() {
               <AccordionItem value="mission">
                 <AccordionTrigger>
                   <span className="faq-number">02</span>
-                  <span>OUR MISSION</span>
+                  <span className="faq-question-text">OUR MISSION</span>
                 </AccordionTrigger>
                 <AccordionContent>
                   Build systems that help people spend less time searching and more
                   time deciding.
                 </AccordionContent>
               </AccordionItem>
+
             </Accordion>
           </div>
 

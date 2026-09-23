@@ -24,12 +24,13 @@ export function FaqSection({ items, className = "" }: FaqSectionProps) {
             <AccordionItem key={item.id} value={item.id}>
               <AccordionTrigger>
                 <span className="faq-number">{String(index + 1).padStart(2, "0")}</span>
-                <span>{item.question}</span>
+                <span className="faq-question-text">{item.question}</span>
               </AccordionTrigger>
               <AccordionContent>{item.answer}</AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
+
       </div>
     </section>
   )

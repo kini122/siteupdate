@@ -155,7 +155,6 @@ export function HomePage() {
 
           <div className="case-study-topline">
             <span className="case-badge">Featured Case Study</span>
-            <span className="case-category-tag">AI AUTOMATION AND INTELLIGENCE</span>
           </div>
 
           <h3 className="case-study-title">{caseStudy.title}</h3>

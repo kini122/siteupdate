@@ -11,7 +11,14 @@ import { WorkPage } from "@/pages/WorkPage"
 const rootRoute = createRootRoute({ component: SiteLayout })
 
 const homeRoute = createRoute({ getParentRoute: () => rootRoute, path: "/", component: HomePage })
-const servicesRoute = createRoute({ getParentRoute: () => rootRoute, path: "/services", component: ServicesPage })
+const servicesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/services",
+  validateSearch: (search: Record<string, unknown>) => ({
+    tab: (search.tab as string) || "data-bi",
+  }),
+  component: ServicesPage,
+})
 const productsRoute = createRoute({ getParentRoute: () => rootRoute, path: "/products", component: ProductsPage })
 const workRoute = createRoute({ getParentRoute: () => rootRoute, path: "/work", component: WorkPage })
 const aboutRoute = createRoute({ getParentRoute: () => rootRoute, path: "/about", component: AboutPage })

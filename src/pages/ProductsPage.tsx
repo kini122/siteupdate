@@ -1,3 +1,5 @@
+import { motion } from "motion/react"
+
 import { FaqSection } from "@/components/site/FaqSection"
 import { PageIntro } from "@/components/site/PageIntro"
 import { ProductRow } from "@/components/site/ProductRow"
@@ -16,7 +18,14 @@ export function ProductsPage() {
       <section className="section section--tight">
         <div className="listing-shell product-list">
           {products.map((product, index) => (
-            <ProductRow key={product.id} product={product} index={index} />
+            <motion.div
+              key={product.id}
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: 0.2 + index * 0.12 }}
+            >
+              <ProductRow product={product} index={index} />
+            </motion.div>
           ))}
           <SectionReveal className="placeholder-reveal">
             <div className="placeholder-panel" aria-label="More products coming soon">

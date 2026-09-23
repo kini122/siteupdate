@@ -7,7 +7,7 @@ export function SiteFooter() {
         <div className="footer-inner">
           <div className="footer-brand-column">
             <Link to="/" className="footer-brand" aria-label="Kozker home">
-              <img src="/assets/19d5f3.png" alt="" className="h-8 w-8 object-contain" />
+              <img src="/assets/19d5f3.png" alt="Kozker" className="footer-brand-img" />
               <span>Kozker.</span>
             </Link>
             <p className="footer-note">
@@ -18,7 +18,7 @@ export function SiteFooter() {
           <div className="footer-nav-column">
             <h4 className="footer-nav-heading">Navigation</h4>
             <ul className="footer-nav-list">
-              <li><Link to="/services" className="footer-nav-link">Services</Link></li>
+              <li><Link to="/services" search={{ tab: "data-bi" }} className="footer-nav-link">Services</Link></li>
               <li><Link to="/products" className="footer-nav-link">Products</Link></li>
               <li><Link to="/work" className="footer-nav-link">Work</Link></li>
               <li><Link to="/about" className="footer-nav-link">About</Link></li>
