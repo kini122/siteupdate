@@ -111,7 +111,7 @@ export function MediaCollage({
   const [progress, setProgress] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const trackRef = useRef<HTMLDivElement>(null)
-  const tabRefs = useRef<(HTMLDivElement | null)[]>([])
+  const tabRefs = useRef<(HTMLElement | null)[]>([])
 
   const selectProject = useCallback(
     (index: number) => {

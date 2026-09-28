@@ -7,7 +7,7 @@ import { PageIntro } from "@/components/site/PageIntro"
 import { ProductRow } from "@/components/site/ProductRow"
 import { SiteFooter } from "@/components/site/SiteFooter"
 import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { caseStudiesList, faqItems, products } from "@/data/siteContent"
 
