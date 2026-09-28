@@ -85,7 +85,7 @@ export function SiteHeader() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
-                className="nav-link nav-service-trigger"
+                className={`nav-link nav-service-trigger ${isActive("/services") ? "is-active" : ""}`}
                 type="button"
                 aria-label="Open services menu"
                 data-active={isActive("/services")}
@@ -95,12 +95,13 @@ export function SiteHeader() {
                   className="h-3.5 w-3.5 stroke-[2.2] transition-transform duration-200"
                   aria-hidden="true"
                 />
+                {isActive("/services") && <span className="nav-active-dot">•</span>}
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="start"
-              sideOffset={12}
-              className="services-menu-popover !bg-[#322d2a] !border !border-white/12 !text-white !p-2 !rounded-[16px] !shadow-[0_16px_40px_rgba(0,0,0,0.5)] !min-w-[320px] !z-[120]"
+              sideOffset={14}
+              className="services-menu-popover !bg-[#2a2624] !border !border-white/12 !text-white !p-3 !rounded-[16px] !shadow-[0_16px_40px_rgba(0,0,0,0.5)] !min-w-[340px] !z-[120]"
             >
               {serviceSubLinks.map((link) => (
                 <DropdownMenuItem
@@ -122,10 +123,11 @@ export function SiteHeader() {
             <Link
               key={link.label}
               to={link.to}
-              className="nav-link"
+              className={`nav-link ${isActive(link.to) ? "is-active" : ""}`}
               data-active={isActive(link.to)}
             >
-              {link.label}
+              <span>{link.label}</span>
+              {isActive(link.to) && <span className="nav-active-dot">•</span>}
             </Link>
           ))}
         </nav>

@@ -1,5 +1,6 @@
-import { useSearch } from "@tanstack/react-router"
+import { Link, useSearch } from "@tanstack/react-router"
 import { motion } from "motion/react"
+import { ChevronDown } from "lucide-react"
 
 import { CaseStudyCard } from "@/components/site/CaseStudyCard"
 import { CtaBand } from "@/components/site/CtaBand"
@@ -11,7 +12,7 @@ import { ServiceProcessTimeline } from "@/components/site/ServiceProcessTimeline
 import { ServiceShiftGrid } from "@/components/site/ServiceShiftGrid"
 import { ServiceSolutionGrid } from "@/components/site/ServiceSolutionGrid"
 import { SiteFooter } from "@/components/site/SiteFooter"
-import { caseStudy, servicesDetails, servicesFaqItems } from "@/data/siteContent"
+import { caseStudiesList, servicesDetails, servicesFaqItems } from "@/data/siteContent"
 
 export function ServicesPage() {
   const search = useSearch({ from: "/services" }) as { tab?: string }
@@ -119,16 +120,41 @@ export function ServicesPage() {
         steps={currentService.processSteps}
       />
 
-      {/* Featured Case Study */}
-      <section className="section case-study-section">
+      {/* Featured Case Studies Section (Frame 116 / 115 / 114 with 2 Cards) */}
+      <section id="work" className="section case-study-section" aria-labelledby="services-case-studies-heading">
         <div className="case-study-shell">
-          <SectionReveal className="section-heading">
-            <div className="case-study-topline">
-              <span className="case-badge">Featured Case Study</span>
+          {/* Frame 106 & Frame 105 */}
+          <SectionReveal className="case-study-hero-wrap">
+            <div className="case-study-headings">
+              <h2 id="services-case-studies-heading" className="case-study-section-title">
+                See it in <span className="accent-text">Action</span>
+                <span className="accent-dot">.</span>
+              </h2>
+              <p className="case-study-section-subtext">
+                Explore the respective featured case studies for specific service.
+              </p>
             </div>
-            <h2 className="case-study-title">{caseStudy.title}</h2>
+
+            {/* Frame 105: Service Selector Dropdown Pill */}
+            <div className="case-study-service-pill">
+              <span className="case-study-service-label">{currentService.name}</span>
+              <ChevronDown className="h-4 w-4 text-[#7B776F] stroke-[2]" aria-hidden="true" />
+            </div>
           </SectionReveal>
-          <CaseStudyCard study={caseStudy} />
+
+          {/* Frame 114: Two Side-by-Side Case Study Cards */}
+          <div className="case-studies-grid-two">
+            {caseStudiesList.slice(0, 2).map((study) => (
+              <CaseStudyCard key={study.id} study={study} />
+            ))}
+          </div>
+
+          {/* Bottom Center CTA Button matching Figma Frame 116 / CTA */}
+          <div className="case-studies-bottom-cta">
+            <Link to="/work" className="case-section-cta-btn">
+              <span>View all Work</span>
+            </Link>
+          </div>
         </div>
       </section>
 

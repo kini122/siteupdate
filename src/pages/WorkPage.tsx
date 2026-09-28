@@ -11,22 +11,28 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { caseStudiesList, faqItems, products } from "@/data/siteContent"
 
+const BRANCH_LABELS: Record<string, string> = {
+  "data-bi": "DATA ANALYTICS & BUSINESS INTELLIGENCE",
+  "ai-assistants": "AI CHATBOTS & KNOWLEDGE SYSTEMS",
+  "automation": "WORKFLOW AUTOMATION",
+}
+
 export function WorkPage() {
   const [tab, setTab] = useState("case-studies")
-  const [filter, setFilter] = useState("all")
+  const [filter, setFilter] = useState("data-bi")
 
   const visibleCaseStudies = useMemo(() => {
-    if (filter === "all") return caseStudiesList
-    return caseStudiesList.filter((study) =>
-      study.category.toLowerCase().includes(filter.toLowerCase())
-    )
+    return caseStudiesList.filter((study) => study.branchKey === filter)
   }, [filter])
 
   const visibleProducts = useMemo(() => {
-    if (filter === "all") return products
-    return products.filter((product) =>
-      product.category.toLowerCase().includes(filter.toLowerCase())
-    )
+    if (filter === "ai-assistants") {
+      return products.filter((product) => product.category.toLowerCase().includes("ai"))
+    }
+    if (filter === "automation") {
+      return products.filter((product) => product.category.toLowerCase().includes("recruitment"))
+    }
+    return products
   }, [filter])
 
   return (
@@ -61,34 +67,34 @@ export function WorkPage() {
         </Tabs>
       </motion.div>
 
-      <section className="section section--tight">
-        <div className="listing-shell">
-          {/* Work Filter Bar (Line 41 & Dropdown) */}
+      <section className="section section--tight work-section-main">
+        <div className="work-listing-shell">
+          {/* Frame 105: Category Selector Dropdown matching Figma Frame 105 / 104 */}
           <motion.div
-            className="work-filter-bar"
+            className="work-frame105-container"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.28 }}
           >
-            <span className="work-filter-label">All Work</span>
             <Select value={filter} onValueChange={setFilter}>
-              <SelectTrigger aria-label="Filter work by category" className="work-filter-select">
-                <SelectValue placeholder="All Work" />
+              <SelectTrigger aria-label="Filter work by category" className="work-frame105-trigger">
+                <span className="work-frame105-label">
+                  {BRANCH_LABELS[filter] || "DATA ANALYTICS & BUSINESS INTELLIGENCE"}
+                </span>
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Work</SelectItem>
-                <SelectItem value="e-commerce">E-commerce</SelectItem>
-                <SelectItem value="recruitment">Recruitment</SelectItem>
-                <SelectItem value="ai">AI intelligence</SelectItem>
+              <SelectContent className="work-frame105-content">
+                <SelectItem value="data-bi">DATA ANALYTICS & BUSINESS INTELLIGENCE</SelectItem>
+                <SelectItem value="ai-assistants">AI CHATBOTS & KNOWLEDGE SYSTEMS</SelectItem>
+                <SelectItem value="automation">WORKFLOW AUTOMATION</SelectItem>
               </SelectContent>
             </Select>
           </motion.div>
 
-          {/* Case Studies Tab View */}
+          {/* Case Studies Tab View: 2-Column Side-by-Side Cards (Frame 114 & Frame 156) */}
           {tab === "case-studies" && (
             <AnimatePresence mode="popLayout" initial={false}>
               {visibleCaseStudies.length ? (
-                <div className="work-items-list">
+                <div className="case-studies-grid-two">
                   {visibleCaseStudies.map((study, index) => (
                     <motion.div
                       key={study.id}
@@ -97,16 +103,7 @@ export function WorkPage() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -18 }}
                       transition={{ duration: 0.35, delay: index * 0.08 }}
-                      className="work-list-item"
                     >
-                      {/* Mobile Index Bar (01 / 02) & Divider */}
-                      <div className="work-item-index-bar">
-                        <span className="work-item-num">
-                          {String(index + 1).padStart(2, "0")} / {String(visibleCaseStudies.length).padStart(2, "0")}
-                        </span>
-                        <div className="work-item-divider" aria-hidden="true" />
-                      </div>
-
                       <CaseStudyCard study={study} />
                     </motion.div>
                   ))}

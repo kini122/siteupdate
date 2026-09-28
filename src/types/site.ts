@@ -25,6 +25,13 @@ export interface CaseStudy {
   image: string
   description: string
   stats?: Array<{ value: string; label: string }>
+  quote?: {
+    text: string
+    author: string
+  }
+  ctaText?: string
+  ctaHref?: string
+  branchKey?: "data-bi" | "ai-assistants" | "automation"
 }
 
 export interface TeamMember {

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 
@@ -8,7 +8,8 @@ export interface ProjectPreviewItem {
   image: string
   title: string
   description: string
-  projectTag: string
+  label?: string
+  projectTag?: string
   category?: string
 }
 
@@ -26,40 +27,53 @@ export const defaultProjectItems: ProjectPreviewItem[] = [
     image: "/assets/4a80c6.jpg",
     title: "Business Dashboard",
     description: "Built to cut decision-making time by 20%.",
-    projectTag: "Project 01",
+    label: "01 ANALYTICS & BI",
+    projectTag: "01 ANALYTICS & BI",
     category: "Analytics & BI",
   },
   {
     image: "/assets/e467dd.jpg",
     title: "AI Customer Copilot",
     description: "Automate responses & save 15+ hours per week.",
-    projectTag: "Project 02",
+    label: "02 AI ASSISTANTS",
+    projectTag: "02 AI ASSISTANTS",
     category: "AI Assistants",
   },
   {
     image: "/assets/3132a8.jpg",
-    title: "Decision Engine",
+    title: "Executive Decision Engine",
     description: "Unified metrics across operations and sales.",
-    projectTag: "Project 03",
+    label: "03 BUSINESS INTELLIGENCE",
+    projectTag: "03 BUSINESS INTELLIGENCE",
     category: "Business Intelligence",
   },
   {
     image: "/assets/671883.jpg",
     title: "Mobile Ops Hub",
     description: "Streamlined workflow and team coordination.",
-    projectTag: "Project 04",
+    label: "04 AUTOMATION & OPS",
+    projectTag: "04 AUTOMATION & OPS",
     category: "Automation",
   },
   {
     image: "/assets/d5b56b.jpg",
     title: "Workflow Automation",
     description: "Automated alerts and instant synchronization.",
-    projectTag: "Project 05",
+    label: "05 WORKFLOW SYNC",
+    projectTag: "05 WORKFLOW SYNC",
     category: "Operations",
+  },
+  {
+    image: "/assets/0c83b9.jpg",
+    title: "Knowledge Research AI",
+    description: "Turn scattered info into actionable briefs.",
+    label: "06 ENTERPRISE AI",
+    projectTag: "06 ENTERPRISE AI",
+    category: "Enterprise AI",
   },
 ]
 
-const AUTO_SLIDE_DURATION = 4500 // 4.5 seconds per slide
+const AUTO_SLIDE_DURATION = 4800 // 4.8 seconds per slide
 const PROGRESS_STEP_INTERVAL = 30 // update progress every 30ms
 
 export function MediaCollage({
@@ -68,6 +82,7 @@ export function MediaCollage({
   items,
   title,
   description,
+  label,
 }: MediaCollageProps) {
   const projectList: ProjectPreviewItem[] =
     items ||
@@ -77,7 +92,8 @@ export function MediaCollage({
             image: mainImage,
             title: title || "Business Dashboard",
             description: description || "Built to cut decision-making time by 20%.",
-            projectTag: "Project 01",
+            label: label || "01 ANALYTICS & BI",
+            projectTag: label || "01 ANALYTICS & BI",
           },
           ...(sideImages || []).map((img, idx) => ({
             image: img,
@@ -85,7 +101,8 @@ export function MediaCollage({
             description:
               defaultProjectItems[idx + 1]?.description ||
               "Intelligent systems built around real workflows.",
-            projectTag: `Project 0${idx + 2}`,
+            label: defaultProjectItems[idx + 1]?.label || `0${idx + 2} EXPANDED VIEW`,
+            projectTag: defaultProjectItems[idx + 1]?.projectTag || `0${idx + 2} EXPANDED VIEW`,
           })),
         ]
       : defaultProjectItems)
@@ -94,10 +111,41 @@ export function MediaCollage({
   const [progress, setProgress] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const trackRef = useRef<HTMLDivElement>(null)
+  const tabRefs = useRef<(HTMLDivElement | null)[]>([])
 
-  const activeProject = projectList[activeIndex] || projectList[0]
+  const selectProject = useCallback(
+    (index: number) => {
+      const nextIndex = (index + projectList.length) % projectList.length
+      setActiveIndex(nextIndex)
+      setProgress(0)
+    },
+    [projectList.length]
+  )
 
-  // Auto-play timer and smooth orange loader progression
+  // Auto-scroll track when active tab changes on mobile/overflowing screens
+  useEffect(() => {
+    const activeEl = tabRefs.current[activeIndex]
+    const trackEl = trackRef.current
+    if (activeEl && trackEl) {
+      const isOverflowing = trackEl.scrollWidth > trackEl.clientWidth + 10
+      if (isOverflowing) {
+        // Calculate offset to center active element with neighboring collapsed tabs visible
+        const trackRect = trackEl.getBoundingClientRect()
+        const elRect = activeEl.getBoundingClientRect()
+        const scrollLeftOffset =
+          trackEl.scrollLeft +
+          (elRect.left - trackRect.left) -
+          (trackEl.clientWidth / 2 - elRect.width / 2)
+
+        trackEl.scrollTo({
+          left: Math.max(0, scrollLeftOffset),
+          behavior: "smooth",
+        })
+      }
+    }
+  }, [activeIndex])
+
+  // Auto-play timer with progress bar
   useEffect(() => {
     if (isPaused || projectList.length <= 1) return
 
@@ -116,12 +164,6 @@ export function MediaCollage({
     return () => clearInterval(timer)
   }, [isPaused, projectList.length, activeIndex])
 
-  const selectProject = (index: number) => {
-    const nextIndex = (index + projectList.length) % projectList.length
-    setActiveIndex(nextIndex)
-    setProgress(0)
-  }
-
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "ArrowLeft") {
       event.preventDefault()
@@ -131,154 +173,160 @@ export function MediaCollage({
       event.preventDefault()
       selectProject(activeIndex + 1)
     }
+    if (event.key === "Home") {
+      event.preventDefault()
+      selectProject(0)
+    }
+    if (event.key === "End") {
+      event.preventDefault()
+      selectProject(projectList.length - 1)
+    }
   }
-
-  // Get the 4 side projects in sequential order (excluding currently active project)
-  const sideProjects = projectList
-    .map((item, originalIndex) => ({ ...item, originalIndex }))
-    .filter((_, idx) => idx !== activeIndex)
 
   return (
     <div
       className="project-collage-root"
       role="region"
       aria-roledescription="carousel"
-      aria-label="Selected projects gallery"
+      aria-label="Interactive project and service showcase"
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      ref={trackRef}
     >
-      <div className="project-gallery-layout">
-        {/* Main Left Card (Rectangle 121: 461px x 461px) */}
-        <div
-          className="featured-project-card-wrap"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-        >
-          <article className="featured-dashboard-card">
-            {/* Left Rail (74px wide: Project tag + Orange Vertical Loader Line) */}
-            <div className="featured-left-rail">
-              {/* Project Vertical Tag (e.g. Project 01) */}
-              <span className="featured-project-tag">
-                {activeProject.projectTag}
-              </span>
+      {/* Horizontal In-Place Expanding Accordion Track */}
+      <div
+        className="project-accordion-track"
+        ref={trackRef}
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
+        {projectList.map((item, idx) => {
+          const isExpanded = idx === activeIndex
+          const itemLabel =
+            item.label ||
+            item.projectTag ||
+            `0${idx + 1} ${(item.category || item.title || "SYSTEM").toUpperCase()}`
 
-              {/* Inactive Base Track Line (Line 24) */}
-              <div className="featured-loader-track" aria-hidden="true">
-                {/* Active Orange Loader Line (Line 25) */}
-                <div
-                  className="featured-loader-bar"
-                  style={{ height: `${Math.min(100, Math.max(0, progress))}%` }}
-                />
-              </div>
-            </div>
-
-            {/* Right Image Area (Rectangle 122 & 123: 387px x 461px) */}
-            <div className="featured-image-area">
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={activeProject.title + activeIndex}
-                  className="featured-image-inner"
-                  initial={{ opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.98 }}
-                  transition={{ duration: 0.35, ease: [0.22, 0.61, 0.36, 1] }}
-                >
-                  <img
-                    src={activeProject.image}
-                    alt={activeProject.title}
-                    className="featured-dashboard-img"
-                    loading="eager"
-                  />
-                  {/* Rectangle 123: Dark Gradient Overlay */}
-                  <div className="featured-gradient-overlay" />
-
-                  {/* Copy Overlay at bottom */}
-                  <div className="featured-project-copy">
-                    {activeProject.category && (
-                      <span className="featured-category-badge">
-                        {activeProject.category}
-                      </span>
-                    )}
-                    <h3 className="featured-project-title">
-                      {activeProject.title}
-                    </h3>
-                    <p className="featured-project-desc">
-                      {activeProject.description}
-                    </p>
+          if (isExpanded) {
+            return (
+              <article
+                key={`tab-${idx}-${item.title}`}
+                ref={(el) => {
+                  tabRefs.current[idx] = el
+                }}
+                className="project-accordion-tab is-expanded"
+                role="tabpanel"
+                aria-label={`Expanded view: ${item.title}`}
+                aria-selected={true}
+              >
+                <div className="tab-expanded-card">
+                  {/* Left Rail (Label + Vertical Orange Progress Line) */}
+                  <div className="tab-left-rail">
+                    <span className="tab-rail-label">{itemLabel}</span>
+                    <div className="tab-rail-track" aria-hidden="true">
+                      <div
+                        className="tab-rail-progress"
+                        style={{ height: `${Math.min(100, Math.max(0, progress))}%` }}
+                      />
+                    </div>
                   </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-          </article>
-        </div>
 
-        {/* 4 Right Rectangles (Side Cards: Rectangle 97, 100, 101, 124 - 85px x 461px each) */}
-        <div
-          className="narrow-projects-strip"
-          aria-label="Additional project previews"
-        >
-          {sideProjects.map((item) => (
-            <motion.button
-              key={`${item.image}-${item.originalIndex}`}
+                  {/* Right Image & Content Area */}
+                  <div className="tab-image-area">
+                    <AnimatePresence mode="wait" initial={false}>
+                      <motion.div
+                        key={`img-${item.title}-${idx}`}
+                        className="tab-image-inner"
+                        initial={{ opacity: 0.85, scale: 0.99 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0.85 }}
+                        transition={{ duration: 0.3, ease: [0.22, 0.61, 0.36, 1] }}
+                      >
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="tab-image-cover"
+                          loading="eager"
+                        />
+                        {/* Dark Gradient Overlay for optimal contrast */}
+                        <div className="tab-gradient-overlay" />
+
+                        {/* Title & Description Overlay */}
+                        <div className="tab-content-overlay">
+                          {item.category && (
+                            <span className="tab-category-badge">
+                              {item.category}
+                            </span>
+                          )}
+                          <h3 className="tab-title">{item.title}</h3>
+                          <p className="tab-desc">{item.description}</p>
+                        </div>
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+                </div>
+              </article>
+            )
+          }
+
+          // Collapsed Slim Vertical Tab
+          return (
+            <button
+              key={`tab-${idx}-${item.title}`}
+              ref={(el) => {
+                tabRefs.current[idx] = el
+              }}
               type="button"
-              className="narrow-project-card"
-              aria-label={`Switch to ${item.title} (${item.projectTag})`}
-              onClick={() => selectProject(item.originalIndex)}
-              onMouseEnter={() => selectProject(item.originalIndex)}
-              whileHover={{ y: -5, scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ duration: 0.2 }}
+              className="project-accordion-tab is-collapsed"
+              role="tab"
+              aria-label={`Open tab: ${item.title} (${itemLabel})`}
+              aria-selected={false}
+              onClick={() => selectProject(idx)}
+              onMouseEnter={() => {
+                // Desktop hover-to-expand
+                selectProject(idx)
+              }}
+              onFocus={() => selectProject(idx)}
             >
-              <img
-                src={item.image}
-                alt={item.title}
-                className="narrow-project-img"
-                loading="lazy"
-              />
-              <div className="narrow-project-overlay" />
-
-              {/* Rotated Tag at the bottom */}
-              <span className="narrow-project-num">{item.projectTag}</span>
-
-              {/* Tooltip on hover */}
-              <span className="narrow-project-name-tooltip">
-                {item.title}
-              </span>
-            </motion.button>
-          ))}
-        </div>
+              <div className="tab-collapsed-pill">
+                <span className="tab-collapsed-label">{itemLabel}</span>
+                <span className="tab-collapsed-tooltip">{item.title}</span>
+              </div>
+            </button>
+          )
+        })}
       </div>
 
-      {/* Carousel Controls (Prev, Next, Dots) */}
+      {/* Pagination Controls & Indicator Dots matching reference */}
       <div className="project-gallery-controls">
         <Button
           type="button"
           variant="outline"
           size="icon-sm"
-          aria-label="Previous project preview"
+          aria-label="Previous project tab"
           onClick={() => selectProject(activeIndex - 1)}
           className="gallery-nav-btn"
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <div className="project-gallery-dots" aria-label="Select slide">
-          {projectList.map((_, idx) => (
+
+        <div className="project-gallery-dots" aria-label="Select project slide">
+          {projectList.map((item, idx) => (
             <button
               key={`dot-${idx}`}
               type="button"
               className={`gallery-dot ${idx === activeIndex ? "is-active" : ""}`}
-              aria-label={`Go to slide ${idx + 1}`}
+              aria-label={`Go to ${item.label || item.title}`}
               aria-pressed={idx === activeIndex}
               onClick={() => selectProject(idx)}
             />
           ))}
         </div>
+
         <Button
           type="button"
           variant="outline"
           size="icon-sm"
-          aria-label="Next project preview"
+          aria-label="Next project tab"
           onClick={() => selectProject(activeIndex + 1)}
           className="gallery-nav-btn"
         >

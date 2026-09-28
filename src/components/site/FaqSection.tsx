@@ -12,6 +12,8 @@ interface FaqSectionProps {
 }
 
 export function FaqSection({ items, className = "" }: FaqSectionProps) {
+  const defaultOpenId = items[0]?.id || "businesses"
+
   return (
     <section className={`section section--tight ${className}`}>
       <div className="site-container faq-layout">
@@ -19,7 +21,13 @@ export function FaqSection({ items, className = "" }: FaqSectionProps) {
           <span className="eyebrow">FAQs</span>
           <h2>Got Questions?</h2>
         </div>
-        <Accordion type="single" collapsible className="faq-list" aria-label="Frequently asked questions">
+        <Accordion
+          type="single"
+          collapsible
+          defaultValue={defaultOpenId}
+          className="faq-list"
+          aria-label="Frequently asked questions"
+        >
           {items.map((item, index) => (
             <AccordionItem key={item.id} value={item.id}>
               <AccordionTrigger>
@@ -30,7 +38,6 @@ export function FaqSection({ items, className = "" }: FaqSectionProps) {
             </AccordionItem>
           ))}
         </Accordion>
-
       </div>
     </section>
   )

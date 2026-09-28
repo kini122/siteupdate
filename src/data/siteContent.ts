@@ -52,29 +52,124 @@ export const products: ProductItem[] = [
 export const caseStudy: CaseStudy = {
   id: "techgadgets",
   client: "TechGadgets Pro",
-  category: "E-commerce",
-  title: "E-commerce Store Boosts Conversion Rate by 45%",
+  category: "E-COMMERCE & AI",
+  title: "Boosts Conversion Rate by 45% with our Automation and Chatbot Integration",
   image: asset("33108f.jpg"),
-  description: "Boosts Conversion Rate by 45% with out Automation and Chatbot Conversion Rate by 45% with",
+  description: "End-to-end multi-channel WhatsApp and web copilot delivering 24/7 lead qualification and instant order tracking.",
   stats: [
     { value: "45%", label: "Conversion rate" },
-    { value: "40%", label: "Orders increase" },
+    { value: "40%", label: "Orders Increase" },
   ],
+  quote: {
+    text: "The AI chatbot and WhatsApp automation transformed our customer experience. Sales have never been better.",
+    author: "— Priya Sharma, Founder, TechGadgets Pro",
+  },
+  ctaText: "Start a Conversation",
+  ctaHref: "#contact",
+  branchKey: "ai-assistants",
 }
 
 export const caseStudiesList: CaseStudy[] = [
-  caseStudy,
+  // Branch 1: DATA ANALYTICS & BUSINESS INTELLIGENCE
   {
-    id: "globalops",
+    id: "finscale",
+    client: "FinScale Analytics",
+    category: "FINTECH & BI",
+    title: "Automated Financial Modeling & Real-Time Executive Dashboards",
+    image: asset("60ed30.jpg"),
+    description: "Unified reporting pipeline connecting multi-entity ERP and payment gateways into live board-ready insights.",
+    stats: [
+      { value: "75%", label: "Faster reporting" },
+      { value: "3.2x", label: "ROI in 90 Days" },
+    ],
+    quote: {
+      text: "The automated executive dashboards reduced our month-end reconciliation and reporting from 5 days to 20 minutes.",
+      author: "— Elena Rostova, Head of Finance",
+    },
+    ctaText: "Start a Conversation",
+    ctaHref: "#contact",
+    branchKey: "data-bi",
+  },
+  {
+    id: "globalbi",
     client: "Global Logistics Network",
-    category: "AI intelligence",
-    title: "Cross-Border Logistics Ops Sync & Automation",
+    category: "LOGISTICS BI",
+    title: "Cross-Border Logistics Ops Sync & BI Metrics",
     image: asset("3132a8.jpg"),
-    description: "Automated real-time inventory and shipment reconciliations cutting manual tracking time by 60%.",
+    description: "Automated real-time inventory and shipment reconciliations cutting manual tracking time across regional carriers by 60%.",
     stats: [
       { value: "60%", label: "Time saved" },
       { value: "99.8%", label: "Sync accuracy" },
     ],
+    quote: {
+      text: "Kozker unified our freight tracking and automated 90% of exception alerts. A total game changer for our operations team.",
+      author: "— Marcus Vance, VP of Supply Operations",
+    },
+    ctaText: "Start a Conversation",
+    ctaHref: "#contact",
+    branchKey: "data-bi",
+  },
+
+  // Branch 2: AI CHATBOTS & KNOWLEDGE SYSTEMS
+  caseStudy,
+  {
+    id: "healthops",
+    client: "HealthCore Systems",
+    category: "HEALTHCARE & AI",
+    title: "AI-Powered Patient Triage & Secure EHR Workflow Routing",
+    image: asset("fd345e.jpg"),
+    description: "HIPAA-compliant conversational AI triage assistant handling intake, symptoms assessment, and calendar booking.",
+    stats: [
+      { value: "85%", label: "Response reduction" },
+      { value: "100%", label: "HIPAA Compliance" },
+    ],
+    quote: {
+      text: "Kozker created an intelligent triage pipeline that reduced clinical admin load without missing a single critical case.",
+      author: "— Dr. Aaron Bennett, Chief Medical Officer",
+    },
+    ctaText: "Start a Conversation",
+    ctaHref: "#contact",
+    branchKey: "ai-assistants",
+  },
+
+  // Branch 3: WORKFLOW AUTOMATION
+  {
+    id: "apexautomation",
+    client: "Apex Supply Chain",
+    category: "WORKFLOW AUTOMATION",
+    title: "Automated Multi-Carrier Fulfillment & Exception Pipeline",
+    image: asset("4a80c6.jpg"),
+    description: "Multi-system shipping automation integrating warehouse scanning, customs clearances, and automated carrier alerts.",
+    stats: [
+      { value: "90%", label: "Fewer manual errors" },
+      { value: "14 hrs", label: "Saved per team/wk" },
+    ],
+    quote: {
+      text: "We eliminated 14 hours of manual cross-checking each week. Orders route straight to fulfillment without a hitch.",
+      author: "— Sean Campbell, Director of Logistics",
+    },
+    ctaText: "Start a Conversation",
+    ctaHref: "#contact",
+    branchKey: "automation",
+  },
+  {
+    id: "autoops",
+    client: "Nexus Retail Group",
+    category: "PROCESS INTEGRATION",
+    title: "End-to-End WhatsApp Order & Inventory Sync Automation",
+    image: asset("671883.jpg"),
+    description: "Real-time sync bridging conversational commerce orders directly with inventory databases and payment settlement.",
+    stats: [
+      { value: "4.8x", label: "Speed to dispatch" },
+      { value: "99.9%", label: "Uptime reliability" },
+    ],
+    quote: {
+      text: "The automated workflows sync our order data instantly between WhatsApp, Shopify, and our regional warehouse.",
+      author: "— David Chen, VP of Technology",
+    },
+    ctaText: "Start a Conversation",
+    ctaHref: "#contact",
+    branchKey: "automation",
   },
 ]
 
@@ -167,7 +262,7 @@ export interface ServiceDetail {
   solutionHeading: string
   solutionCards: { title: string; description: string }[]
   processSteps: { num: string; label: string; copy: string }[]
-  collageItems: { image: string; title: string; description: string; projectTag: string; category: string }[]
+  collageItems: { image: string; title: string; description: string; label?: string; projectTag?: string; category: string }[]
 }
 
 export const servicesDetails: Record<string, ServiceDetail> = {
@@ -200,10 +295,11 @@ export const servicesDetails: Record<string, ServiceDetail> = {
       { num: "04", label: "THE EVOLVE", copy: "Improve the system with real feedback and better data." },
     ],
     collageItems: [
-      { image: asset("4a80c6.jpg"), title: "Executive Decision Hub", description: "Unified revenue and pipeline dashboards.", projectTag: "Service 01", category: "Analytics & BI" },
-      { image: asset("3132a8.jpg"), title: "Cross-Border Tax & VAT BI", description: "Real-time ledger and regional reconciliation.", projectTag: "Service 02", category: "Intelligence" },
-      { image: asset("9fa5e8.png"), title: "Real-Time KPI Stream", description: "Live metrics delivered to Slack & web.", projectTag: "Service 03", category: "Data Engine" },
-      { image: asset("d5b56b.jpg"), title: "Automated Reporting", description: "Daily automated exports and alerts.", projectTag: "Service 04", category: "Reporting" },
+      { image: asset("4a80c6.jpg"), title: "Executive Decision Hub", description: "Unified revenue and pipeline dashboards.", label: "01 ANALYTICS & BI", projectTag: "01 ANALYTICS & BI", category: "Analytics & BI" },
+      { image: asset("3132a8.jpg"), title: "Cross-Border Tax & VAT BI", description: "Real-time ledger and regional reconciliation.", label: "02 INTELLIGENCE", projectTag: "02 INTELLIGENCE", category: "Intelligence" },
+      { image: asset("9fa5e8.png"), title: "Real-Time KPI Stream", description: "Live metrics delivered to Slack & web.", label: "03 DATA ENGINE", projectTag: "03 DATA ENGINE", category: "Data Engine" },
+      { image: asset("d5b56b.jpg"), title: "Automated Reporting", description: "Daily automated exports and alerts.", label: "04 REPORTING", projectTag: "04 REPORTING", category: "Reporting" },
+      { image: asset("671883.jpg"), title: "Operations Metrics Hub", description: "End-to-end departmental performance metrics.", label: "05 OPS DASHBOARD", projectTag: "05 OPS DASHBOARD", category: "Operations" },
     ],
   },
   "ai-assistants": {
@@ -235,10 +331,11 @@ export const servicesDetails: Record<string, ServiceDetail> = {
       { num: "04", label: "THE ACCURACY", copy: "Refine precision using real interaction logs and human validation." },
     ],
     collageItems: [
-      { image: asset("e467dd.jpg"), title: "AI Customer Copilot", description: "Automate responses & save 15+ hrs/week.", projectTag: "Service 01", category: "AI Assistants" },
-      { image: asset("0c83b9.jpg"), title: "Knowledge Research AI", description: "Semantic search across internal docs.", projectTag: "Service 02", category: "Enterprise AI" },
-      { image: asset("671883.jpg"), title: "WhatsApp Support Bot", description: "Instant multi-language client answers.", projectTag: "Service 03", category: "Conversational" },
-      { image: asset("33108f.jpg"), title: "Lead Qualification Agent", description: "Auto-qualifies incoming buyers in minutes.", projectTag: "Service 04", category: "Growth AI" },
+      { image: asset("e467dd.jpg"), title: "AI Customer Copilot", description: "Automate responses & save 15+ hrs/week.", label: "01 AI ASSISTANTS", projectTag: "01 AI ASSISTANTS", category: "AI Assistants" },
+      { image: asset("0c83b9.jpg"), title: "Knowledge Research AI", description: "Semantic search across internal docs.", label: "02 ENTERPRISE AI", projectTag: "02 ENTERPRISE AI", category: "Enterprise AI" },
+      { image: asset("671883.jpg"), title: "WhatsApp Support Bot", description: "Instant multi-language client answers.", label: "03 CONVERSATIONAL", projectTag: "03 CONVERSATIONAL", category: "Conversational" },
+      { image: asset("33108f.jpg"), title: "Lead Qualification Agent", description: "Auto-qualifies incoming buyers in minutes.", label: "04 GROWTH AI", projectTag: "04 GROWTH AI", category: "Growth AI" },
+      { image: asset("4a80c6.jpg"), title: "Multi-Channel Copilots", description: "Omnichannel AI across Slack, web and messaging.", label: "05 INTEGRATED AI", projectTag: "05 INTEGRATED AI", category: "Copilots" },
     ],
   },
   "automation": {
@@ -270,10 +367,11 @@ export const servicesDetails: Record<string, ServiceDetail> = {
       { num: "04", label: "THE SCALE", copy: "Monitor speed, error rates, and time saved as business expands." },
     ],
     collageItems: [
-      { image: asset("671883.jpg"), title: "Ops Workflow Automation", description: "Eliminate error-prone spreadsheets with sync.", projectTag: "Service 01", category: "Automation" },
-      { image: asset("d5b56b.jpg"), title: "Inventory Sync Engine", description: "Real-time stock balancing across channels.", projectTag: "Service 02", category: "Operations" },
-      { image: asset("4a80c6.jpg"), title: "Automated Billing & Invoices", description: "Stripe, QuickBooks and tax automation.", projectTag: "Service 03", category: "Finance Ops" },
-      { image: asset("3132a8.jpg"), title: "CRM Lead Router", description: "Instant routing and follow-up notifications.", projectTag: "Service 04", category: "Pipelines" },
+      { image: asset("671883.jpg"), title: "Ops Workflow Automation", description: "Eliminate error-prone spreadsheets with sync.", label: "01 AUTOMATION", projectTag: "01 AUTOMATION", category: "Automation" },
+      { image: asset("d5b56b.jpg"), title: "Inventory Sync Engine", description: "Real-time stock balancing across channels.", label: "02 OPERATIONS", projectTag: "02 OPERATIONS", category: "Operations" },
+      { image: asset("4a80c6.jpg"), title: "Automated Billing & Invoices", description: "Stripe, QuickBooks and tax automation.", label: "03 FINANCE OPS", projectTag: "03 FINANCE OPS", category: "Finance Ops" },
+      { image: asset("3132a8.jpg"), title: "CRM Lead Router", description: "Instant routing and follow-up notifications.", label: "04 PIPELINES", projectTag: "04 PIPELINES", category: "Pipelines" },
+      { image: asset("0c83b9.jpg"), title: "Instant Notification Relay", description: "Proactive alerting for mission-critical events.", label: "05 REALTIME SYNC", projectTag: "05 REALTIME SYNC", category: "Alerts" },
     ],
   },
 }
