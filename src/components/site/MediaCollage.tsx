@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react"
-import { ArrowLeft, ArrowRight } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
-
-import { Button } from "@/components/ui/button"
 
 export interface ProjectPreviewItem {
   image: string
@@ -139,6 +137,11 @@ export function MediaCollage({
 
         trackEl.scrollTo({
           left: Math.max(0, scrollLeftOffset),
+          behavior: "smooth",
+        })
+      } else if (trackEl.scrollLeft > 0) {
+        trackEl.scrollTo({
+          left: 0,
           behavior: "smooth",
         })
       }
@@ -298,16 +301,14 @@ export function MediaCollage({
 
       {/* Pagination Controls & Indicator Dots matching reference */}
       <div className="project-gallery-controls">
-        <Button
+        <button
           type="button"
-          variant="outline"
-          size="icon-sm"
           aria-label="Previous project tab"
           onClick={() => selectProject(activeIndex - 1)}
           className="gallery-nav-btn"
         >
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
+          <ChevronLeft className="h-5 w-5" />
+        </button>
 
         <div className="project-gallery-dots" aria-label="Select project slide">
           {projectList.map((item, idx) => (
@@ -322,16 +323,14 @@ export function MediaCollage({
           ))}
         </div>
 
-        <Button
+        <button
           type="button"
-          variant="outline"
-          size="icon-sm"
           aria-label="Next project tab"
           onClick={() => selectProject(activeIndex + 1)}
           className="gallery-nav-btn"
         >
-          <ArrowRight className="h-4 w-4" />
-        </Button>
+          <ChevronRight className="h-5 w-5" />
+        </button>
       </div>
     </div>
   )

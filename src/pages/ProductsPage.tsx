@@ -5,7 +5,7 @@ import { PageIntro } from "@/components/site/PageIntro"
 import { ProductRow } from "@/components/site/ProductRow"
 import { SectionReveal } from "@/components/site/SectionReveal"
 import { SiteFooter } from "@/components/site/SiteFooter"
-import { faqItems, products } from "@/data/siteContent"
+import { products, productsFaqItems } from "@/data/siteContent"
 
 export function ProductsPage() {
   return (
@@ -34,7 +34,7 @@ export function ProductsPage() {
           </SectionReveal>
         </div>
       </section>
-      <FaqSection items={faqItems} />
+      <FaqSection items={productsFaqItems} />
       <SiteFooter />
     </div>
   )

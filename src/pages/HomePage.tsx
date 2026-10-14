@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Link } from "@tanstack/react-router"
 import { AnimatePresence, motion } from "motion/react"
-import { ChevronDown, Play } from "lucide-react"
+import { Play } from "lucide-react"
 
 import { CaseStudyCard } from "@/components/site/CaseStudyCard"
+import { ServiceDropdown } from "@/components/site/ServiceDropdown"
 import { FaqSection } from "@/components/site/FaqSection"
 import { LogoStrip } from "@/components/site/LogoStrip"
 import { MediaCollage } from "@/components/site/MediaCollage"
@@ -13,39 +14,43 @@ import { SectionReveal } from "@/components/site/SectionReveal"
 import { SignatureBand } from "@/components/site/SignatureBand"
 import { SiteFooter } from "@/components/site/SiteFooter"
 import { SolutionTabs } from "@/components/site/SolutionTabs"
-import { Button } from "@/components/ui/button"
 import { caseStudiesList, faqItems, products, solutionPanels } from "@/data/siteContent"
 
 const clientTestimonials = [
   {
     quote: "The WhatsApp automation has revolutionized our customer communication. Highly recommended!",
-    author: "- Daniel",
-    role: "E-commerce Business",
+    author: "Head of Customer Experience",
+    role: "Direct-to-Consumer E-Commerce Brand",
   },
   {
     quote: "The AI chatbot and reporting workflow transformed our customer experience. Sales have never been better.",
-    author: "- Priya Sharma",
-    role: "Founder, TechGadgets Pro",
+    author: "Founder & Managing Director",
+    role: "Consumer Hardware & D2C Scale-Up",
   },
   {
     quote: "Kozker unified our logistics data and automated exception tracking, cutting manual hours by 60%.",
-    author: "- Marcus Vance",
-    role: "VP Operations, Global Logistics",
+    author: "VP of Supply Chain & Operations",
+    role: "Global Freight & Logistics Provider",
   },
   {
     quote: "Intuitive AI assistants integrated right into our workflow. Answers that used to take hours now take seconds.",
-    author: "- Elena Rostova",
-    role: "Head of Operations, SaaS Co",
+    author: "Head of Operations & Systems",
+    role: "B2B Enterprise SaaS Platform",
   },
 ]
 
 export function HomePage() {
   const [productPreviewOpen, setProductPreviewOpen] = useState(false)
-  const [selectedProductIndex, setSelectedProductIndex] = useState(0)
+  const [caseStudyService, setCaseStudyService] = useState<string>("data-bi")
+
+  const featuredStudies = useMemo(() => {
+    if (caseStudyService === "all") return caseStudiesList.slice(0, 2)
+    return caseStudiesList.filter((study) => study.branchKey === caseStudyService).slice(0, 2)
+  }, [caseStudyService])
   const [testimonialIndex, setTestimonialIndex] = useState(0)
   const [testimonialPaused, setTestimonialPaused] = useState(false)
 
-  const featuredProduct = products[selectedProductIndex] || products[0]
+  const featuredProduct = products[0]
 
   // Testimonial auto-rotation without pagination dots
   useEffect(() => {
@@ -98,9 +103,9 @@ export function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, delay: 0.3 }}
           >
-            <a href="#contact" className="button-primary">
+            <Link to="/contact" className="button-primary">
               Start a Conversation →
-            </a>
+            </Link>
             <a href="#products" className="button-secondary">
               Explore Products
             </a>
@@ -117,23 +122,23 @@ export function HomePage() {
           <div className="metrics-row" aria-label="Kozker results">
             <div className="metric">
               <div className="metric-label">Projects Delivered</div>
+              <div className="metric-value">150+</div>
+            </div>
+            <div className="metric">
+              <div className="metric-label">Hours of Manual Work&nbsp;Cut</div>
+              <div className="metric-value">5,000+</div>
+            </div>
+            <div className="metric">
+              <div className="metric-label">Live Workflows Built</div>
               <div className="metric-value">100+</div>
-            </div>
-            <div className="metric">
-              <div className="metric-label">Client Satisfaction</div>
-              <div className="metric-value">98%</div>
-            </div>
-            <div className="metric">
-              <div className="metric-label">Repeat Business</div>
-              <div className="metric-value">92%</div>
             </div>
           </div>
 
           {/* Testimonial Row (Rectangle 153 spec + Auto-rotate) */}
           <div className="testimonial-row">
             <div className="testimonial-stat">
-              <div className="metric-label">With Client Satisfaction</div>
-              <div className="metric-value">98%</div>
+              <div className="metric-label">Average Launch Time</div>
+              <div className="metric-value">4 Weeks</div>
             </div>
             <article
               className="testimonial-card"
@@ -205,18 +210,28 @@ export function HomePage() {
             </div>
 
             {/* Frame 105: Service Selector Dropdown Pill */}
-            <div className="case-study-service-pill">
-              <span className="case-study-service-label">DATA ANALYTICS &amp; BUSINESS INTELLIGENCE</span>
-              <ChevronDown className="h-4 w-4 text-[#7B776F] stroke-[2]" aria-hidden="true" />
-            </div>
+            <ServiceDropdown
+              value={caseStudyService}
+              onChange={setCaseStudyService}
+              ariaLabel="Filter case studies by service"
+            />
           </SectionReveal>
 
           {/* Frame 114: Two Side-by-Side Case Study Cards */}
-          <div className="case-studies-grid-two">
-            {caseStudiesList.slice(0, 2).map((study) => (
-              <CaseStudyCard key={study.id} study={study} />
-            ))}
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={caseStudyService}
+              className="case-studies-grid-two"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+            >
+              {featuredStudies.map((study) => (
+                <CaseStudyCard key={study.id} study={study} />
+              ))}
+            </motion.div>
+          </AnimatePresence>
 
           {/* Bottom Center CTA Button matching Figma Frame 116 / CTA */}
           <div className="case-studies-bottom-cta">
@@ -265,35 +280,57 @@ export function HomePage() {
             whileHover={{ y: -6 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="dark-product-tag">Product 01</div>
-            <div className="dark-product-card-body">
-              <div className="dark-product-visual">
-                <img
-                  src={featuredProduct.image}
-                  alt={featuredProduct.title}
-                  className="dark-product-img"
-                />
+            {/* Visual Container with Play Overlay */}
+            <div className="dark-product-visual">
+              <img
+                src={featuredProduct.image}
+                alt={featuredProduct.title}
+                className="dark-product-img"
+              />
+              <a
+                href={featuredProduct.demoUrl || "https://www.loom.com/share/a0e96cbbd64e46188561d0eb22c3d0ea"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="dark-product-play-overlay"
+                aria-label="Watch Recruitment App Admin Console and AI Copilot Tour on Loom"
+              >
+                <span className="dark-product-play-circle">
+                  <Play className="h-5 w-5 fill-current ml-0.5" />
+                </span>
+              </a>
+            </div>
+
+            {/* Information Body with Generous Padding and No Clutter */}
+            <div className="dark-product-info">
+              <div className="dark-product-meta-row">
+                <span className="dark-product-badge">AI Recruitment Operations</span>
+                <span className="dark-product-version">v1.0.8-PRO</span>
               </div>
-              <div className="dark-product-info">
-                <h3>{featuredProduct.title}</h3>
-                <p>{featuredProduct.description}</p>
-                <div className="dark-product-actions">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => {
-                      setSelectedProductIndex(0)
-                      setProductPreviewOpen(true)
-                    }}
-                    className="demo-btn"
-                  >
-                    <Play className="h-4 w-4 fill-current" />
-                    Watch 1 Min Demo
-                  </Button>
-                  <Link to="/products" className="text-link">
-                    Explore Product →
-                  </Link>
-                </div>
+
+              <h3 className="dark-product-title">{featuredProduct.title}</h3>
+              <p className="dark-product-desc">{featuredProduct.description}</p>
+
+              <div className="dark-product-actions">
+                <a
+                  href={featuredProduct.demoUrl || "https://www.loom.com/share/a0e96cbbd64e46188561d0eb22c3d0ea"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="dark-product-btn-demo"
+                  title="Recruitment App Admin Console and AI Copilot Tour"
+                >
+                  <Play className="h-4 w-4 fill-current" />
+                  <span>Watch 1 Min Demo</span>
+                </a>
+                <a
+                  href={featuredProduct.exploreUrl || "https://recruiter-landing-page-olive.vercel.app/"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="dark-product-btn-explore"
+                  title="Kozker Recruiter AI | AI Recruitment Operations Platform"
+                >
+                  <span>Explore Product</span>
+                  <span className="arrow-icon" aria-hidden="true">→</span>
+                </a>
               </div>
             </div>
           </motion.article>

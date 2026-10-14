@@ -23,8 +23,6 @@ const primaryNavLinks = [
   { label: "Partners", to: "/partners" as const },
 ]
 
-const contactHref = "mailto:hello@kozker.com?subject=Kozker%20consultation"
-
 export function SiteHeader() {
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -101,20 +99,22 @@ export function SiteHeader() {
             <DropdownMenuContent
               align="start"
               sideOffset={14}
-              className="services-menu-popover !bg-[#2a2624] !border !border-white/12 !text-white !p-3 !rounded-[16px] !shadow-[0_16px_40px_rgba(0,0,0,0.5)] !min-w-[340px] !z-[120]"
+              className="services-menu-popover !bg-[#1F1C1B] !border !border-white/12 !text-white !p-[10px] !rounded-[18px] !shadow-[0_20px_50px_rgba(0,0,0,0.55)] !w-auto !min-w-[440px] !z-[120]"
             >
-              {serviceSubLinks.map((link) => (
-                <DropdownMenuItem
-                  key={link.num + link.label}
-                  asChild
-                  className="services-menu-item !p-0 !bg-transparent focus:!bg-transparent data-[highlighted]:!bg-transparent focus:!outline-none"
-                >
-                  <Link to={link.to} search={link.search} className="services-menu-link">
-                    <span className="services-menu-num">{link.num}</span>
-                    <span className="services-menu-title">{link.label}</span>
-                  </Link>
-                </DropdownMenuItem>
-              ))}
+              <div className="services-menu-list">
+                {serviceSubLinks.map((link) => (
+                  <DropdownMenuItem
+                    key={link.num + link.label}
+                    asChild
+                    className="services-menu-item !p-0 !bg-transparent focus:!bg-transparent data-[highlighted]:!bg-transparent focus:!outline-none"
+                  >
+                    <Link to={link.to} search={link.search} className="services-menu-link">
+                      <span className="services-menu-num">{link.num}</span>
+                      <span className="services-menu-title">{link.label}</span>
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </div>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -133,9 +133,13 @@ export function SiteHeader() {
         </nav>
 
         {/* Desktop Contact CTA Button */}
-        <a href={contactHref} className="nav-contact">
+        <Link
+          to="/contact"
+          className={`nav-contact ${isActive("/contact") ? "is-active" : ""}`}
+          data-active={isActive("/contact")}
+        >
           Contact
-        </a>
+        </Link>
 
         {/* Mobile Hamburger Trigger (Image 1: 3-line hamburger) */}
         <button
@@ -288,13 +292,13 @@ export function SiteHeader() {
 
               {/* Bottom CTA Button */}
               <div className="mobile-nav-footer">
-                <a
-                  href={contactHref}
+                <Link
+                  to="/contact"
                   onClick={closeMobileMenu}
                   className="mobile-contact-btn"
                 >
                   Contact Us
-                </a>
+                </Link>
               </div>
             </motion.div>
           </div>

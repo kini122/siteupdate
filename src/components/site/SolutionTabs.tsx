@@ -1,8 +1,15 @@
 import { useState } from "react"
+import { Link } from "@tanstack/react-router"
 import { AnimatePresence, motion } from "motion/react"
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { ServiceTab, SolutionPanel } from "@/types/site"
+
+const serviceTabSlugs: Record<ServiceTab, string> = {
+  "Data & BI": "data-bi",
+  "AI Assistants": "ai-assistants",
+  Automation: "automation",
+}
 
 interface SolutionTabsProps {
   panels: Record<ServiceTab, SolutionPanel>
@@ -11,10 +18,23 @@ interface SolutionTabsProps {
 }
 
 const toolNames: Record<string, string> = {
+  // Data & BI:
   "53cb26.png": "Microsoft Power BI",
   "0c5d97.png": "Python Coding Editor & IDE App",
   "57de97.png": "SQL Playground",
   "e8263c.png": "API Requester - HTTP Client",
+
+  // AI Assistants & Knowledge Systems:
+  "openai.svg": "OpenAI - Models & Embeddings",
+  "anthropic.svg": "Anthropic Claude - Enterprise Intelligence",
+  "langchain.svg": "LangChain - Agent & RAG Framework",
+  "huggingface.svg": "Hugging Face - Open AI Ecosystem",
+
+  // Workflow Automation:
+  "make.svg": "Make - Visual Integration & Logic",
+  "zapier.svg": "Zapier - Cloud App Connector",
+  "n8n.svg": "n8n - Node Automation Engine",
+  "airtable.svg": "Airtable - Connected Database",
 }
 
 interface AnimatedStrikeProps {
@@ -116,9 +136,13 @@ export function SolutionTabs({
               </ul>
             </div>
 
-            <a className="solution-action-link" href="#contact">
+            <Link
+              to="/services"
+              search={{ tab: serviceTabSlugs[panel.id] }}
+              className="solution-action-link"
+            >
               {panel.actionLabel} <span className="arrow-hover">→</span>
-            </a>
+            </Link>
           </div>
 
           {/* Right Column Visual / Comparisons */}

@@ -77,15 +77,20 @@ export function AboutPage() {
                 brand established in 2022. We began with a simple vision: to make
                 advanced technology accessible to businesses of all sizes.
               </p>
+              <p>
+                Too many growing companies get caught between off-the-shelf software
+                that doesn&apos;t fit their workflows and enterprise systems that cost too
+                much to build and maintain. We bridge that divide—delivering custom,
+                interconnected systems that fit into daily operations from day one.
+              </p>
               <p className="story-highlight">
                 Our startup is young, our experience isn&apos;t.
               </p>
             </div>
 
             <Accordion
-              type="single"
-              collapsible
-              defaultValue="vision"
+              type="multiple"
+              defaultValue={["vision", "mission"]}
               className="story-accordion"
               aria-label="Our story details"
             >
@@ -95,8 +100,16 @@ export function AboutPage() {
                   <span className="faq-question-text">THE VISION</span>
                 </AccordionTrigger>
                 <AccordionContent>
-                  Make advanced technology more accessible and useful to the businesses
-                  that need it.
+                  <p>
+                    Make advanced technology more accessible and useful to the businesses
+                    that need it.
+                  </p>
+                  <p>
+                    We envision an operating standard where data intelligence, private
+                    assistants, and workflow automation aren&apos;t exclusive to massive tech
+                    enterprises, but practical tools that lean teams use every day to outpace
+                    operational friction and scale confidently.
+                  </p>
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="mission">
@@ -105,11 +118,18 @@ export function AboutPage() {
                   <span className="faq-question-text">OUR MISSION</span>
                 </AccordionTrigger>
                 <AccordionContent>
-                  Build systems that help people spend less time searching and more
-                  time deciding.
+                  <p>
+                    Build systems that help people spend less time searching and more
+                    time deciding.
+                  </p>
+                  <p>
+                    We engineer dependable, low-overhead software layers that integrate
+                    directly into existing stacks—eliminating repetitive manual work,
+                    reconciling disconnected data, and giving operators clear, reliable
+                    visibility that compounds over time.
+                  </p>
                 </AccordionContent>
               </AccordionItem>
-
             </Accordion>
           </div>
 

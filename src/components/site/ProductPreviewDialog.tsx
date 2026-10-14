@@ -1,3 +1,5 @@
+import { Play } from "lucide-react"
+
 import {
   Dialog,
   DialogContent,
@@ -31,6 +33,41 @@ export function ProductPreviewDialog({ product, open, onOpenChange }: ProductPre
             {product.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
           </ul>
         </div>
+        {(product.demoUrl || product.exploreUrl || product.detailsUrl) && (
+          <div className="product-preview-dialog-actions" style={{ display: "flex", gap: "12px", marginTop: "20px", flexWrap: "wrap" }}>
+            {product.demoUrl && (
+              <a
+                href={product.demoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="dark-product-btn-demo"
+              >
+                <Play className="h-4 w-4 fill-current mr-1.5" />
+                Watch Video Tour
+              </a>
+            )}
+            {product.exploreUrl && (
+              <a
+                href={product.exploreUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="dark-product-btn-explore"
+              >
+                {product.id === "ai-tools" ? "Try Product →" : "Explore Live Platform →"}
+              </a>
+            )}
+            {product.detailsUrl && (
+              <a
+                href={product.detailsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="dark-product-btn-demo"
+              >
+                Details / Platform Home
+              </a>
+            )}
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   )

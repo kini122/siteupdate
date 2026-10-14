@@ -1,8 +1,11 @@
+import { useState } from "react"
 import { motion } from "motion/react"
+import { Link } from "@tanstack/react-router"
 import { ArrowRight, Layers, Rocket, TrendingUp, Users2, Workflow } from "lucide-react"
 
 import { CtaBand } from "@/components/site/CtaBand"
 import { FaqSection } from "@/components/site/FaqSection"
+import { PartnerModelDialog, type PartnerCaseItem } from "@/components/site/PartnerModelDialog"
 import { SectionReveal } from "@/components/site/SectionReveal"
 import { SiteFooter } from "@/components/site/SiteFooter"
 import { partnershipFaqItems } from "@/data/siteContent"
@@ -52,7 +55,7 @@ const processCards = [
   },
 ]
 
-const partnerCases = [
+const partnerCases: PartnerCaseItem[] = [
   {
     id: "case-1",
     title: "HR & Recruitment Agencies",
@@ -62,6 +65,34 @@ const partnerCases = [
       "Deliver bespoke candidate scoring, automated initial screening, and seamless workflow integrations for your clients.",
     tag: "AI Automation",
     image: "/assets/60ed30.jpg",
+    overview:
+      "Designed specifically for recruitment firms, talent consultancies, and HR agencies seeking to modernize their client offerings. Under this partnership model, Kozker provides white-labeled AI screening, candidate ranking algorithms, and automated pipeline workflows that you can package directly into your client retainers.",
+    capabilities: [
+      {
+        title: "AI Candidate Scoring & Matching",
+        desc: "Automate resume parsing, semantic ranking, and skill-matching against exact job benchmarks in real-time.",
+      },
+      {
+        title: "WhatsApp & Web Screening Bots",
+        desc: "Deploy interactive multi-language intake assistants that pre-qualify applicants 24/7 without recruiter overhead.",
+      },
+      {
+        title: "White-Label Client Dashboards",
+        desc: "Deliver branded client-facing portals displaying live candidate pipeline status, match scores, and hiring metrics.",
+      },
+      {
+        title: "ATS & HRIS Seamless Integrations",
+        desc: "Bi-directional data sync with tools like Greenhouse, Lever, Bullhorn, Workday, and Google Workspace.",
+      },
+      {
+        title: "Predictable Recurring Rev-Share",
+        desc: "Earn recurring monthly revenue shares or white-label margin for every client workflow deployed on Kozker.",
+      },
+    ],
+    idealFor: "Recruitment firms, talent consultancies, executive search agencies, and fractional HR leaders.",
+    prefilledSubject: "General Inquiry",
+    prefilledMessage:
+      "Hi Kozker Team,\n\nI would like to enquire about the HR & Recruitment Agencies Partnership Model. We are interested in expanding our client offerings with bespoke candidate scoring, automated initial screening, and workflow integrations.\n\nPlease share details on technical onboarding, agency terms, and implementation timelines.\n\nThanks!",
   },
   {
     id: "case-2",
@@ -72,10 +103,40 @@ const partnerCases = [
       "Partner with our engineering team to co-build enterprise-grade data intelligence systems tailored to complex operations.",
     tag: "Enterprise Partner",
     image: "/assets/3132a8.jpg",
+    overview:
+      "Engineered for enterprise operators, scaling companies, and specialized platforms managing high-stakes operational complexity. Partner side-by-side with Kozker's senior systems engineers to co-architect, build, and deploy high-security data intelligence layers, internal knowledge assistants, and autonomous workflow pipelines tailored to your exact workflows.",
+    capabilities: [
+      {
+        title: "Dedicated Engineering Squad",
+        desc: "Direct access to senior data architects, AI engineers, and integration specialists working as an extension of your team.",
+      },
+      {
+        title: "Private Knowledge Systems (RAG)",
+        desc: "Isolated enterprise AI models referencing verified internal SOPs, technical documents, and historical databases.",
+      },
+      {
+        title: "Enterprise Data Consolidation",
+        desc: "Unified ETL data pipelines reconciling ERPs, CRMs, logistics ledgers, and cloud APIs into live dashboards.",
+      },
+      {
+        title: "Strict IP Protection & Compliance",
+        desc: "Comprehensive bilateral NDAs, 100% client code and IP ownership, and SOC 2 / HIPAA compliance standards.",
+      },
+      {
+        title: "Milestone-Driven Delivery",
+        desc: "Fast, focused sprints delivering a working, battle-tested production system in 3 to 4 weeks.",
+      },
+    ],
+    idealFor: "Enterprises, supply chain operators, healthcare platforms, and high-growth B2B companies with complex workflows.",
+    prefilledSubject: "General Inquiry",
+    prefilledMessage:
+      "Hi Kozker Team,\n\nI would like to enquire about the Enterprise Solutions Co-Development Partnership Model. We are looking to collaborate with your engineering team to build custom knowledge systems and mission-critical automation pipelines for our operations.\n\nPlease reach out to schedule an architecture alignment session.\n\nThanks!",
   },
 ]
 
 export function PartnershipPage() {
+  const [selectedModel, setSelectedModel] = useState<PartnerCaseItem | null>(null)
+  const [dialogOpen, setDialogOpen] = useState(false)
   return (
     <div className="partnership-page-root">
       {/* Partnership Hero */}
@@ -107,7 +168,7 @@ export function PartnershipPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <a href="#contact" className="button-primary">Become a Partner</a>
+            <Link to="/contact" className="button-primary">Become a Partner</Link>
           </motion.div>
         </div>
       </section>
@@ -185,7 +246,6 @@ export function PartnershipPage() {
               >
                 <div className="partner-case-img-wrap">
                   <img src={item.image} alt={item.headline} loading="lazy" />
-                  <span className="partner-case-tag">{item.tag}</span>
                 </div>
                 <div className="partner-case-card-body">
                   <div className="partner-case-meta">
@@ -194,10 +254,17 @@ export function PartnershipPage() {
                   </div>
                   <h3 className="partner-case-headline">{item.headline}</h3>
                   <p className="partner-case-description">{item.description}</p>
-                  <a href="#contact" className="partner-case-cta">
+                  <button
+                    type="button"
+                    className="partner-case-cta"
+                    onClick={() => {
+                      setSelectedModel(item)
+                      setDialogOpen(true)
+                    }}
+                  >
                     <span>Explore Model</span>
                     <ArrowRight className="h-4 w-4" />
-                  </a>
+                  </button>
                 </div>
               </motion.article>
             ))}
@@ -319,6 +386,13 @@ export function PartnershipPage() {
 
       {/* CTA Band */}
       <CtaBand buttonLabel="Get Consultation" />
+
+      {/* Partner Model Dialog Modal */}
+      <PartnerModelDialog
+        model={selectedModel}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+      />
 
       {/* Footer */}
       <SiteFooter />

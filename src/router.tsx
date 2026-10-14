@@ -2,6 +2,7 @@ import { createRootRoute, createRoute, createRouter } from "@tanstack/react-rout
 
 import { SiteLayout } from "@/components/site/SiteLayout"
 import { AboutPage } from "@/pages/AboutPage"
+import { ContactPage } from "@/pages/ContactPage"
 import { HomePage } from "@/pages/HomePage"
 import { PartnershipPage } from "@/pages/PartnershipPage"
 import { ProductsPage } from "@/pages/ProductsPage"
@@ -23,6 +24,20 @@ const productsRoute = createRoute({ getParentRoute: () => rootRoute, path: "/pro
 const workRoute = createRoute({ getParentRoute: () => rootRoute, path: "/work", component: WorkPage })
 const aboutRoute = createRoute({ getParentRoute: () => rootRoute, path: "/about", component: AboutPage })
 const partnersRoute = createRoute({ getParentRoute: () => rootRoute, path: "/partners", component: PartnershipPage })
+interface ContactSearch {
+  subject?: string
+  message?: string
+}
+
+const contactRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/contact",
+  validateSearch: (search: Record<string, unknown>): ContactSearch => ({
+    subject: search.subject ? String(search.subject) : undefined,
+    message: search.message ? String(search.message) : undefined,
+  }),
+  component: ContactPage,
+})
 
 const routeTree = rootRoute.addChildren([
   homeRoute,
@@ -31,9 +46,13 @@ const routeTree = rootRoute.addChildren([
   workRoute,
   aboutRoute,
   partnersRoute,
+  contactRoute,
 ])
 
-export const router = createRouter({ routeTree })
+export const router = createRouter({
+  routeTree,
+  scrollRestoration: true,
+})
 
 declare module "@tanstack/react-router" {
   interface Register {

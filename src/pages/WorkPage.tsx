@@ -7,25 +7,21 @@ import { PageIntro } from "@/components/site/PageIntro"
 import { ProductRow } from "@/components/site/ProductRow"
 import { SiteFooter } from "@/components/site/SiteFooter"
 import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select"
+import { ServiceDropdown } from "@/components/site/ServiceDropdown"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { caseStudiesList, faqItems, products } from "@/data/siteContent"
-
-const BRANCH_LABELS: Record<string, string> = {
-  "data-bi": "DATA ANALYTICS & BUSINESS INTELLIGENCE",
-  "ai-assistants": "AI CHATBOTS & KNOWLEDGE SYSTEMS",
-  "automation": "WORKFLOW AUTOMATION",
-}
+import { caseStudiesList, products, workFaqItems } from "@/data/siteContent"
 
 export function WorkPage() {
   const [tab, setTab] = useState("case-studies")
-  const [filter, setFilter] = useState("data-bi")
+  const [filter, setFilter] = useState("all")
 
   const visibleCaseStudies = useMemo(() => {
+    if (filter === "all") return caseStudiesList
     return caseStudiesList.filter((study) => study.branchKey === filter)
   }, [filter])
 
   const visibleProducts = useMemo(() => {
+    if (filter === "all") return products
     if (filter === "ai-assistants") {
       return products.filter((product) => product.category.toLowerCase().includes("ai"))
     }
@@ -76,18 +72,11 @@ export function WorkPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.28 }}
           >
-            <Select value={filter} onValueChange={setFilter}>
-              <SelectTrigger aria-label="Filter work by category" className="work-frame105-trigger">
-                <span className="work-frame105-label">
-                  {BRANCH_LABELS[filter] || "DATA ANALYTICS & BUSINESS INTELLIGENCE"}
-                </span>
-              </SelectTrigger>
-              <SelectContent className="work-frame105-content">
-                <SelectItem value="data-bi">DATA ANALYTICS & BUSINESS INTELLIGENCE</SelectItem>
-                <SelectItem value="ai-assistants">AI CHATBOTS & KNOWLEDGE SYSTEMS</SelectItem>
-                <SelectItem value="automation">WORKFLOW AUTOMATION</SelectItem>
-              </SelectContent>
-            </Select>
+            <ServiceDropdown
+              value={filter}
+              onChange={setFilter}
+              ariaLabel="Filter work by category"
+            />
           </motion.div>
 
           {/* Case Studies Tab View: 2-Column Side-by-Side Cards (Frame 114 & Frame 156) */}
@@ -167,7 +156,7 @@ export function WorkPage() {
         </div>
       </section>
 
-      <FaqSection items={faqItems} />
+      <FaqSection items={workFaqItems} />
       <SiteFooter />
     </div>
   )

@@ -27,11 +27,29 @@ export function ProductRow({ product, index, showIndex = true }: ProductRowProps
           role="button"
           tabIndex={0}
           aria-label={`Preview ${product.title.toLowerCase()}`}
-          onClick={() => setPreviewOpen(true)}
+          onClick={() => {
+            if (product.demoUrl) {
+              window.open(product.demoUrl, "_blank", "noopener,noreferrer")
+            } else if (product.exploreUrl) {
+              window.open(product.exploreUrl, "_blank", "noopener,noreferrer")
+            } else if (product.detailsUrl) {
+              window.open(product.detailsUrl, "_blank", "noopener,noreferrer")
+            } else {
+              setPreviewOpen(true)
+            }
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault()
-              setPreviewOpen(true)
+              if (product.demoUrl) {
+                window.open(product.demoUrl, "_blank", "noopener,noreferrer")
+              } else if (product.exploreUrl) {
+                window.open(product.exploreUrl, "_blank", "noopener,noreferrer")
+              } else if (product.detailsUrl) {
+                window.open(product.detailsUrl, "_blank", "noopener,noreferrer")
+              } else {
+                setPreviewOpen(true)
+              }
             }
           }}
         >
@@ -41,12 +59,14 @@ export function ProductRow({ product, index, showIndex = true }: ProductRowProps
             loading={index > 0 ? "lazy" : "eager"}
             className="product-img"
           />
-          {/* Centered Play Button on both Desktop and Mobile */}
-          <div className="product-play-center-btn" aria-hidden="true">
-            <div className="product-play-circle">
-              <Play className="product-play-icon" />
+          {/* Centered Play Button when video demo exists */}
+          {product.demoUrl && (
+            <div className="product-play-center-btn" aria-hidden="true">
+              <div className="product-play-circle">
+                <Play className="product-play-icon" />
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="product-listing-copy">
@@ -59,13 +79,75 @@ export function ProductRow({ product, index, showIndex = true }: ProductRowProps
             ))}
           </ul>
           <div className="product-action-wrap">
-            <button
-              type="button"
-              className="product-try-btn"
-              onClick={() => setPreviewOpen(true)}
-            >
-              Try Product
-            </button>
+            {product.exploreUrl ? (
+              <a
+                href={product.exploreUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="product-try-btn"
+              >
+                {product.id === "ai-tools" ? "Try Product →" : "Explore Product →"}
+              </a>
+            ) : (
+              <button
+                type="button"
+                className="product-try-btn"
+                onClick={() => setPreviewOpen(true)}
+              >
+                Try Product
+              </button>
+            )}
+            {product.demoUrl && (
+              <a
+                href={product.demoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="product-demo-btn"
+              >
+                <Play className="h-4 w-4 fill-current mr-1.5" />
+                Watch Demo
+              </a>
+            )}
+            {product.detailsUrl ? (
+              <a
+                href={product.detailsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="product-details-btn"
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "#757575",
+                  fontSize: "14px",
+                  cursor: "pointer",
+                  padding: "8px 12px",
+                  textDecoration: "underline",
+                  textUnderlineOffset: "3px",
+                  display: "inline-flex",
+                  alignItems: "center",
+                }}
+              >
+                Details
+              </a>
+            ) : (
+              <button
+                type="button"
+                className="product-details-btn"
+                onClick={() => setPreviewOpen(true)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "#757575",
+                  fontSize: "14px",
+                  cursor: "pointer",
+                  padding: "8px 12px",
+                  textDecoration: "underline",
+                  textUnderlineOffset: "3px",
+                }}
+              >
+                Details
+              </button>
+            )}
           </div>
         </div>
       </div>

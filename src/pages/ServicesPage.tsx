@@ -1,8 +1,9 @@
+import { useEffect, useMemo, useState } from "react"
 import { Link, useSearch } from "@tanstack/react-router"
-import { motion } from "motion/react"
-import { ChevronDown } from "lucide-react"
+import { AnimatePresence, motion } from "motion/react"
 
 import { CaseStudyCard } from "@/components/site/CaseStudyCard"
+import { ServiceDropdown } from "@/components/site/ServiceDropdown"
 import { CtaBand } from "@/components/site/CtaBand"
 import { FaqSection } from "@/components/site/FaqSection"
 import { LogoStrip } from "@/components/site/LogoStrip"
@@ -18,6 +19,17 @@ export function ServicesPage() {
   const search = useSearch({ from: "/services" }) as { tab?: string }
   const activeTabId = search.tab && servicesDetails[search.tab] ? search.tab : "data-bi"
   const currentService = servicesDetails[activeTabId] || servicesDetails["data-bi"]
+
+  const [selectedService, setSelectedService] = useState<string>(activeTabId)
+
+  useEffect(() => {
+    setSelectedService(activeTabId)
+  }, [activeTabId])
+
+  const featuredStudies = useMemo(() => {
+    if (selectedService === "all") return caseStudiesList.slice(0, 2)
+    return caseStudiesList.filter((study) => study.branchKey === selectedService).slice(0, 2)
+  }, [selectedService])
 
   return (
     <div className="services-page-root">
@@ -84,9 +96,10 @@ export function ServicesPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.26 }}
             >
-              <a className="service-hero-cta-btn" href="#contact">
-                Get Consultation →
-              </a>
+              <Link className="service-hero-cta-btn" to="/contact">
+                <span>Get Consultation</span>
+                <span className="service-hero-cta-arrow" aria-hidden="true">→</span>
+              </Link>
             </motion.div>
           </div>
 
@@ -136,18 +149,28 @@ export function ServicesPage() {
             </div>
 
             {/* Frame 105: Service Selector Dropdown Pill */}
-            <div className="case-study-service-pill">
-              <span className="case-study-service-label">{currentService.name}</span>
-              <ChevronDown className="h-4 w-4 text-[#7B776F] stroke-[2]" aria-hidden="true" />
-            </div>
+            <ServiceDropdown
+              value={selectedService}
+              onChange={setSelectedService}
+              ariaLabel="Filter case studies by service"
+            />
           </SectionReveal>
 
           {/* Frame 114: Two Side-by-Side Case Study Cards */}
-          <div className="case-studies-grid-two">
-            {caseStudiesList.slice(0, 2).map((study) => (
-              <CaseStudyCard key={study.id} study={study} />
-            ))}
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={selectedService}
+              className="case-studies-grid-two"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+            >
+              {featuredStudies.map((study) => (
+                <CaseStudyCard key={study.id} study={study} />
+              ))}
+            </motion.div>
+          </AnimatePresence>
 
           {/* Bottom Center CTA Button matching Figma Frame 116 / CTA */}
           <div className="case-studies-bottom-cta">

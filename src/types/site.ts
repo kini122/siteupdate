@@ -1,4 +1,4 @@
-export type SiteRoute = "/" | "/services" | "/products" | "/work" | "/about" | "/partners"
+export type SiteRoute = "/" | "/services" | "/products" | "/work" | "/about" | "/partners" | "/contact"
 
 export type ServiceTab = "Data & BI" | "AI Assistants" | "Automation"
 
@@ -15,6 +15,9 @@ export interface ProductItem {
   description: string
   bullets: string[]
   category: string
+  demoUrl?: string
+  exploreUrl?: string
+  detailsUrl?: string
 }
 
 export interface CaseStudy {

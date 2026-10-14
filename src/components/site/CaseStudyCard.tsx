@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router"
 import { motion } from "motion/react"
 import { ArrowRight, Quote } from "lucide-react"
 
@@ -59,10 +60,10 @@ export function CaseStudyCard({ study }: CaseStudyCardProps) {
 
         {/* Bottom CTA Button */}
         <div className="case-card-cta-wrap">
-          <a href={study.ctaHref || "#contact"} className="case-card-cta-btn">
+          <Link to={study.ctaHref || "/contact"} className="case-card-cta-btn">
             <span>{study.ctaText || "Start a Conversation"}</span>
             <ArrowRight className="h-4 w-4" />
-          </a>
+          </Link>
         </div>
       </div>
     </motion.article>
