@@ -494,19 +494,33 @@ The Services page dynamically loads content across three distinct service domain
 * **Badge**: `Models`
 * **Section Heading**: `Choose your Partnership`
 * **Section Subtext**: *"Simple systems that save time, reduce manual work, and keep your business moving."*
-* **Model 1: Revenue Share**:
-  - Tag: `Revenue Share`
-  - Title: `Referral & Revenue Share`
-  - Category: `PARTNERSHIP MODEL`
-  - Headline: *"Earn recurring revenue by bringing modern AI and automation to your client network."*
-  - Description: *"Ideal for consultants, agencies, and advisors who want to offer cutting-edge engineering without building in-house."*
+* **Model 1: HR & Recruitment Agencies**:
+  - Tag: `AI Automation`
+  - Title: `HR & Recruitment Agencies`
+  - Category: `Agency Partnership`
+  - Headline: *"Expand Client Offerings with AI Intelligence"*
+  - Description: *"Deliver bespoke candidate scoring, automated initial screening, and seamless workflow integrations for your clients."*
   - CTA Button: `Explore Model →`
-* **Model 2: Co-Build**:
-  - Tag: `Co-Build`
-  - Title: `Joint Product Development`
-  - Category: `CO-INNOVATION`
-  - Headline: *"Build bespoke enterprise products together with shared IP and joint go-to-market."*
-  - Description: *"For industry leaders looking to productize internal operational workflows into market-ready SaaS."*
+* **Model 2: Enterprise Solutions**:
+  - Tag: `Enterprise Partner`
+  - Title: `Enterprise Solutions`
+  - Category: `Co-Development`
+  - Headline: *"Custom Knowledge Systems & Automation"*
+  - Description: *"Partner with our engineering team to co-build enterprise-grade data intelligence systems tailored to complex operations."*
+  - CTA Button: `Explore Model →`
+* **Model 3: CA & Accounting Firms**:
+  - Tag: `FinTech & Tax`
+  - Title: `CA & Accounting Firms`
+  - Category: `Practice Partnership`
+  - Headline: *"Expand Client Offerings with AI Intelligence"*
+  - Description: *"Deploy white-labeled AI agents for Indian compliance, reconciliation, audit workflows, and live client dashboards across your engagements."*
+  - CTA Button: `Explore Model →`
+* **Model 4: Strategic Alliances**:
+  - Tag: `Strategic Partner`
+  - Title: `Strategic Alliances`
+  - Category: `General Partnership`
+  - Headline: *"Co-Innovate, Refer, or Integrate with Kozker"*
+  - Description: *"Partner across technology integrations, joint solutions, and referral channels to deliver end-to-end data and AI transformation."*
   - CTA Button: `Explore Model →`
 
 ### 8.4 Section 3: "The Process"

@@ -132,6 +132,102 @@ const partnerCases: PartnerCaseItem[] = [
     prefilledMessage:
       "Hi Kozker Team,\n\nI would like to enquire about the Enterprise Solutions Co-Development Partnership Model. We are looking to collaborate with your engineering team to build custom knowledge systems and mission-critical automation pipelines for our operations.\n\nPlease reach out to schedule an architecture alignment session.\n\nThanks!",
   },
+  {
+    id: "case-3",
+    title: "CA & Accounting Firms",
+    category: "Practice Partnership",
+    headline: "Expand Client Offerings with AI Intelligence",
+    description:
+      "Deploy white-labeled AI agents for Indian compliance, reconciliation, audit workflows, and live client dashboards across your engagements.",
+    tag: "FinTech & Tax",
+    image: "/assets/ca-accounting-partner.jpg",
+    overview:
+      "Designed specifically for chartered accountancy firms, audit practices, and tax and accounting consultancies looking to modernize how they serve clients. Under this partnership model, Kozker provides white-labeled AI agents for compliance, reconciliation, audit, and advisory workflows, built around Indian regulatory standards, that you can package directly into your client engagements and retainers.",
+    capabilities: [
+      {
+        title: "Compliance Automation Agents",
+        desc: "Automate GST, TDS, ITR, MCA21 v3, and FEMA workflows, from document collection and data validation to filing-ready outputs and deadline tracking, with Indian regulatory depth built in.",
+      },
+      {
+        title: "Accounting & Reconciliation Intelligence",
+        desc: "Eliminate manual matching with automated bank, GST (2A/2B vs. books), and ledger reconciliation. Intelligent document processing extracts data from invoices, statements, and notices, cutting processing time by up to 80%.",
+      },
+      {
+        title: "Audit & Tax Advisory Workflows",
+        desc: "Run structured audit checklists, working papers, and exception flagging aligned to revised audit standards. AI-assisted tax research and advisory drafts help your team deliver faster, more consistent opinions.",
+      },
+      {
+        title: "White-Label Client Dashboards",
+        desc: "Deliver branded Power BI-style portals showing live financial performance, compliance status, pending actions, and key business metrics. Clients can ask questions in plain English and get instant answers from their own data.",
+      },
+      {
+        title: "Practice Management & Client Workflows",
+        desc: "Manage engagements, staff allocation, document requests, approvals, and client communication from one connected system, replacing scattered Excel sheets and informal channels. Automated reminders and correspondence free your team for billable work.",
+      },
+      {
+        title: "Tally, Zoho & ERP Integrations",
+        desc: "Seamless data sync with Tally, Zoho Books, QuickBooks, SAP, government portals, and Google Workspace, so your existing tools keep working while AI runs on top.",
+      },
+      {
+        title: "Fully Autonomous Agents, Not Just Chatbots",
+        desc: "Agents that act, not just respond: they execute multi-step tasks, follow up on pending items, and escalate only what needs professional judgment.",
+      },
+      {
+        title: "Data Privacy by Design",
+        desc: "Your client data stays under your control, with no retention between sessions and no use for model training. Formal processing agreements and NDAs cover data and process confidentiality.",
+      },
+      {
+        title: "Predictable Recurring Rev-Share",
+        desc: "Earn recurring monthly revenue shares or white-label margin for every client workflow deployed on Kozker. Options range from profit-sharing and white-labeling to full ownership.",
+      },
+    ],
+    idealFor: "Chartered accountancy firms, audit practices, tax advisory consultancies, and fractional CFO leaders.",
+    prefilledSubject: "General Inquiry",
+    prefilledMessage:
+      "Hi Kozker Team,\n\nI would like to enquire about the CA & Accounting Firms Partnership Model. We are interested in expanding our client offerings with compliance automation, reconciliation, audit workflows, and client dashboards.\n\nPlease share details on technical onboarding, partner terms, and implementation timelines.\n\nThanks!",
+  },
+  {
+    id: "case-4",
+    title: "Strategic Alliances",
+    category: "General Partnership",
+    headline: "Co-Innovate, Refer, or Integrate with Kozker",
+    description:
+      "Partner across technology integrations, joint solutions, and referral channels to deliver end-to-end data and AI transformation.",
+    tag: "Strategic Partner",
+    image: "/assets/strategic-alliance-partner.jpg",
+    overview:
+      "Engineered for technology consultancies, digital agencies, system integrators, and independent software vendors looking to deliver cutting-edge data and AI capabilities to their clients. Through our general partnership framework, you can refer client opportunities, co-build custom software modules, or integrate existing software products directly with Kozker's engineering squad and autonomous AI infrastructure.",
+    capabilities: [
+      {
+        title: "Bi-Directional Referral Network",
+        desc: "Earn competitive referral commissions or recurring revenue shares by introducing businesses that need custom AI automation, predictive data models, or workflow modernization.",
+      },
+      {
+        title: "Technical Co-Development & APIs",
+        desc: "Collaborate directly with our engineering squad to co-build specialized software modules, custom APIs, and turnkey solution templates for shared enterprise clients.",
+      },
+      {
+        title: "Joint Go-To-Market & Co-Selling",
+        desc: "Team up on joint client proposals, enterprise RFP responses, and co-branded case studies, combining your domain expertise with our technical AI delivery capabilities.",
+      },
+      {
+        title: "White-Label Solution Delivery",
+        desc: "Deploy Kozker-built automation pipelines, knowledge systems, and business intelligence dashboards under your own brand identity and client retainers.",
+      },
+      {
+        title: "Dedicated Architecture Support",
+        desc: "Access senior solutions architects for pre-sales discovery calls, technical feasibility assessments, and architecture blueprinting with prospective clients.",
+      },
+      {
+        title: "Rapid Production Deployment",
+        desc: "Accelerate time-to-market with tested enterprise frameworks, secure data pipelines, and production-grade AI models delivered in fast 3-to-4 week engineering sprints.",
+      },
+    ],
+    idealFor: "Digital agencies, IT consultancies, software development houses, SaaS platforms, and technology advisors.",
+    prefilledSubject: "General Inquiry",
+    prefilledMessage:
+      "Hi Kozker Team,\n\nI would like to enquire about the Strategic Alliances General Partnership Model. We are interested in exploring collaboration opportunities, including co-development, technology integrations, and joint client engagements.\n\nPlease share partner program details, integration possibilities, and commercial structures.\n\nThanks!",
+  },
 ]
 
 export function PartnershipPage() {
