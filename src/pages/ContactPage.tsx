@@ -6,6 +6,7 @@ import { ArrowUpRight, CheckCircle2, Instagram, Linkedin } from "lucide-react"
 import { FaqSection } from "@/components/site/FaqSection"
 import { SignatureBand } from "@/components/site/SignatureBand"
 import { SiteFooter } from "@/components/site/SiteFooter"
+import { SeoHead } from "@/components/seo/SeoHead"
 import { contactDetails, contactFaqItems } from "@/data/siteContent"
 
 const subjectOptions = [
@@ -151,6 +152,24 @@ export function ContactPage() {
 
   return (
     <div className="contact-page-root">
+      <SeoHead
+        title="Start a Conversation | Kozker"
+        description="Get in touch with Kozker to discuss your company's data analytics, custom AI assistant, or workflow automation requirements. Fast turnaround and direct founder engagement."
+        canonicalPath="/contact"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          name: "Contact Kozker",
+          url: "https://kozker.com/contact",
+          description: "Get in touch with Kozker for custom software, AI automations, and data analytics inquiries.",
+          mainEntity: {
+            "@type": "Organization",
+            name: "Kozker",
+            email: "contact@kozker.com",
+            url: "https://kozker.com",
+          },
+        }}
+      />
       {/* Editorial Hero */}
       <section className="page-hero editorial-hero" aria-labelledby="contact-title">
         <div className="site-container">

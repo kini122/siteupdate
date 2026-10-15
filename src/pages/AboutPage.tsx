@@ -10,11 +10,50 @@ import {
 import { CtaBand } from "@/components/site/CtaBand"
 import { SectionReveal } from "@/components/site/SectionReveal"
 import { SiteFooter } from "@/components/site/SiteFooter"
+import { SeoHead } from "@/components/seo/SeoHead"
 import { teamMembers } from "@/data/siteContent"
+import { TEMPORARY_SECTION_VISIBILITY } from "@/config/visibility"
 
 export function AboutPage() {
   return (
     <div className="about-page-root">
+      <SeoHead
+        title="About Kozker — Our Story, Mission & Founder | Kozker"
+        description="Learn about Kozker's story and mission to make advanced technology accessible. Founded by Govind Bhat, we bridge the divide between off-the-shelf software and costly enterprise builds."
+        canonicalPath="/about"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "AboutPage",
+              name: "About Kozker",
+              url: "https://kozker.com/about",
+              description: "Our startup is young, our experience isn't. We engineer custom, interconnected systems that fit into daily operations from day one.",
+            },
+            {
+              "@type": "FAQPage",
+              mainEntity: [
+                {
+                  "@type": "Question",
+                  name: "What is Kozker's Vision?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Make advanced technology more accessible and useful to the businesses that need it. We envision an operating standard where data intelligence, private assistants, and workflow automation are practical tools lean teams use every day.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "What is Kozker's Mission?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Build systems that help people spend less time searching and more time deciding. We engineer dependable, low-overhead software layers that integrate directly into existing stacks.",
+                  },
+                },
+              ],
+            },
+          ],
+        }}
+      />
       {/* Editorial Hero */}
       <section className="page-hero editorial-hero" aria-labelledby="about-title">
         <div className="site-container">
@@ -48,20 +87,23 @@ export function AboutPage() {
           </motion.p>
         </div>
 
-        <div className="site-container">
-          <motion.div
-            className="image-frame about-hero-image"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-          >
-            <img
-              src="/assets/887522.png"
-              alt="Kozker team working together"
-              loading="eager"
-            />
-          </motion.div>
-        </div>
+        {/* Hero Team Image (Temporarily hidden - restore in src/config/visibility.ts) */}
+        {TEMPORARY_SECTION_VISIBILITY.aboutHeroTeamImage && (
+          <div className="site-container">
+            <motion.div
+              className="image-frame about-hero-image"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.3 }}
+            >
+              <img
+                src="/assets/887522.png"
+                alt="Kozker team working together"
+                loading="eager"
+              />
+            </motion.div>
+          </div>
+        )}
       </section>
 
       {/* Story Section */}
@@ -141,7 +183,7 @@ export function AboutPage() {
           </SectionReveal>
 
           <div className="founder-row">
-            <div className="image-frame founder-spotlight-img">
+            <div className="founder-photo-frame">
               <img
                 src="/assets/642e0f.png"
                 alt="Govind Bhat, Founder of Kozker"
@@ -152,44 +194,45 @@ export function AboutPage() {
               <h3>Govind Bhat</h3>
               <div className="role">Founder of Kozker</div>
               <p>
-                “Bring data from across your business into one clear view, so teams
-                spend less time searching and more time deciding.”
+                “Running a business shouldn&apos;t feel like wrestling with your own software every single day. We built Kozker to bring data from across your entire operation into one clear, honest view—so your team stops drowning in tabs, and spends less time searching and more time deciding.”
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Team Section */}
-      <section className="team-section">
-        <div className="site-container">
-          <SectionReveal className="team-intro">
-            <h2>
-              The Team<span className="accent-dot">.</span>
-            </h2>
-            <p className="muted-copy">
-              We&apos;re on a mission to help businesses leverage cutting-edge
-              technology to grow, innovate, and succeed in the digital age.
-            </p>
-          </SectionReveal>
-          <div className="team-grid">
-            {teamMembers.map((member, idx) => (
-              <motion.article
-                key={`${member.id}-${idx}`}
-                className="team-card group"
-                whileHover={{ y: -6 }}
-                transition={{ duration: 0.2 }}
-              >
-                <div className="image-frame">
-                  <img src={member.image} alt={member.name} loading="lazy" />
-                </div>
-                <h3>{member.name}</h3>
-                <p>{member.role}</p>
-              </motion.article>
-            ))}
+      {/* Team Section (Temporarily hidden - restore in src/config/visibility.ts) */}
+      {TEMPORARY_SECTION_VISIBILITY.aboutTeamSection && (
+        <section className="team-section">
+          <div className="site-container">
+            <SectionReveal className="team-intro">
+              <h2>
+                The Team<span className="accent-dot">.</span>
+              </h2>
+              <p className="muted-copy">
+                We&apos;re on a mission to help businesses leverage cutting-edge
+                technology to grow, innovate, and succeed in the digital age.
+              </p>
+            </SectionReveal>
+            <div className="team-grid">
+              {teamMembers.map((member, idx) => (
+                <motion.article
+                  key={`${member.id}-${idx}`}
+                  className="team-card group"
+                  whileHover={{ y: -6 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="image-frame">
+                    <img src={member.image} alt={member.name} loading="lazy" />
+                  </div>
+                  <h3>{member.name}</h3>
+                  <p>{member.role}</p>
+                </motion.article>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* What We Build Band */}
       <section className="what-build-band">

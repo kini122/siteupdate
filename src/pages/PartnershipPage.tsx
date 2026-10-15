@@ -8,6 +8,7 @@ import { FaqSection } from "@/components/site/FaqSection"
 import { PartnerModelDialog, type PartnerCaseItem } from "@/components/site/PartnerModelDialog"
 import { SectionReveal } from "@/components/site/SectionReveal"
 import { SiteFooter } from "@/components/site/SiteFooter"
+import { SeoHead } from "@/components/seo/SeoHead"
 import { partnershipFaqItems } from "@/data/siteContent"
 
 const whyUsCards = [
@@ -140,7 +141,7 @@ const partnerCases: PartnerCaseItem[] = [
     description:
       "Deploy white-labeled AI agents for Indian compliance, reconciliation, audit workflows, and live client dashboards across your engagements.",
     tag: "FinTech & Tax",
-    image: "/assets/ca-accounting-partner.jpg",
+    image: "/assets/4a80c6.jpg",
     overview:
       "Designed specifically for chartered accountancy firms, audit practices, and tax and accounting consultancies looking to modernize how they serve clients. Under this partnership model, Kozker provides white-labeled AI agents for compliance, reconciliation, audit, and advisory workflows, built around Indian regulatory standards, that you can package directly into your client engagements and retainers.",
     capabilities: [
@@ -194,7 +195,7 @@ const partnerCases: PartnerCaseItem[] = [
     description:
       "Partner across technology integrations, joint solutions, and referral channels to deliver end-to-end data and AI transformation.",
     tag: "Strategic Partner",
-    image: "/assets/strategic-alliance-partner.jpg",
+    image: "/assets/671883.jpg",
     overview:
       "Engineered for technology consultancies, digital agencies, system integrators, and independent software vendors looking to deliver cutting-edge data and AI capabilities to their clients. Through our general partnership framework, you can refer client opportunities, co-build custom software modules, or integrate existing software products directly with Kozker's engineering squad and autonomous AI infrastructure.",
     capabilities: [
@@ -235,6 +236,11 @@ export function PartnershipPage() {
   const [dialogOpen, setDialogOpen] = useState(false)
   return (
     <div className="partnership-page-root">
+      <SeoHead
+        title="Partnerships — Co-Building Scalable Systems | Kozker"
+        description="Partner with Kozker to deliver tailored AI tools, automated workflow systems, and data pipelines to your clients, networks, and portfolio companies."
+        canonicalPath="/partners"
+      />
       {/* Partnership Hero */}
       <section className="page-hero partnership-hero" aria-labelledby="partner-title">
         <div className="site-container">

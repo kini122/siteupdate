@@ -1,0 +1,33 @@
+# =========================================================================
+# Robots.txt for Kozker (https://kozker.com)
+# Technical SEO: Crawling & Indexing Directives
+# =========================================================================
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /*?*subject=
+Disallow: /*?*message=
+
+# Disallow low-value query parameters
+Disallow: /*?*fbclid=
+Disallow: /*?*utm_*=
+
+# Googlebot specific rules
+User-agent: Googlebot
+Allow: /
+Allow: /assets/
+Disallow: /admin
+Disallow: /admin/*
+
+# Bingbot specific rules
+User-agent: Bingbot
+Allow: /
+Allow: /assets/
+Disallow: /admin
+Disallow: /admin/*
+
+# Host & Dynamic XML Sitemap
+Host: https://kozker.com
+Sitemap: https://kozker.com/sitemap.xml

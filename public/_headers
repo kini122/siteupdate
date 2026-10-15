@@ -1,0 +1,36 @@
+# =========================================================================
+# Security & Performance Headers (Cloudflare Pages & Netlify)
+# =========================================================================
+
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Cache static hashed assets for 1 year
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Cache images & media
+/*.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/*.jpg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/*.svg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/*.ico
+  Cache-Control: public, max-age=604800
+
+# HTML Shell & Rendered Pages (Edge SWR Caching: 1h CDN edge cache, 24h background revalidation)
+/
+  Cache-Control: public, max-age=60, s-maxage=3600, stale-while-revalidate=86400
+/index.html
+  Cache-Control: public, max-age=60, s-maxage=3600, stale-while-revalidate=86400
+
+# XML Sitemap and Robots
+/sitemap.xml
+  Cache-Control: public, max-age=86400
+/robots.txt
+  Cache-Control: public, max-age=86400

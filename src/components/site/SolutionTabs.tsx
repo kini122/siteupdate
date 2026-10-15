@@ -79,12 +79,12 @@ export function SolutionTabs({
           aria-label="Solution categories"
           className="items-center justify-center"
         >
-          <TabsList className="shift-tabs-pill">
+          <TabsList className="shift-tabs-pill [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {tabKeys.map((tab) => (
               <TabsTrigger
                 key={tab}
                 value={tab}
-                className="shift-tab-button"
+                className="shift-tab-button after:hidden after:content-none"
               >
                 {tab}
               </TabsTrigger>

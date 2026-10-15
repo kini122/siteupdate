@@ -14,7 +14,10 @@ import { SectionReveal } from "@/components/site/SectionReveal"
 import { SignatureBand } from "@/components/site/SignatureBand"
 import { SiteFooter } from "@/components/site/SiteFooter"
 import { SolutionTabs } from "@/components/site/SolutionTabs"
-import { caseStudiesList, faqItems, products, solutionPanels } from "@/data/siteContent"
+import { SeoHead } from "@/components/seo/SeoHead"
+import { faqItems, products, solutionPanels } from "@/data/siteContent"
+import { useCaseStudies } from "@/hooks/useCaseStudies"
+import { TEMPORARY_SECTION_VISIBILITY } from "@/config/visibility"
 
 const clientTestimonials = [
   {
@@ -40,13 +43,14 @@ const clientTestimonials = [
 ]
 
 export function HomePage() {
+  const { caseStudies } = useCaseStudies()
   const [productPreviewOpen, setProductPreviewOpen] = useState(false)
   const [caseStudyService, setCaseStudyService] = useState<string>("data-bi")
 
   const featuredStudies = useMemo(() => {
-    if (caseStudyService === "all") return caseStudiesList.slice(0, 2)
-    return caseStudiesList.filter((study) => study.branchKey === caseStudyService).slice(0, 2)
-  }, [caseStudyService])
+    if (caseStudyService === "all") return caseStudies.slice(0, 2)
+    return caseStudies.filter((study) => study.branchKey === caseStudyService).slice(0, 2)
+  }, [caseStudyService, caseStudies])
   const [testimonialIndex, setTestimonialIndex] = useState(0)
   const [testimonialPaused, setTestimonialPaused] = useState(false)
 
@@ -63,6 +67,18 @@ export function HomePage() {
 
   return (
     <div className="home-page-root">
+      <SeoHead
+        title="Kozker Tech | Data, AI & Automation"
+        description="We build intelligent systems and products that help businesses work faster, automate the busywork, and make better decisions."
+        canonicalPath="/"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Kozker Tech",
+          url: "https://kozker.com/",
+          description: "We build intelligent systems and products that help businesses work faster, automate the busywork, and make better decisions.",
+        }}
+      />
       {/* Hero Section */}
       <section className="page-hero home-hero" aria-labelledby="home-title">
         <div className="site-container">
@@ -186,11 +202,13 @@ export function HomePage() {
 
           <SolutionTabs panels={solutionPanels} />
 
-          {/* Partner Logos Strip */}
-          <div className="partner-strip-wrapper">
-            <p className="partner-strip-label">Helping businesses build simpler ways</p>
-            <LogoStrip />
-          </div>
+          {/* Partner Logos Strip (Temporarily hidden - restore in src/config/visibility.ts) */}
+          {TEMPORARY_SECTION_VISIBILITY.helpingBusinessesLogoStrip && (
+            <div className="partner-strip-wrapper">
+              <p className="partner-strip-label">Helping businesses build simpler ways</p>
+              <LogoStrip />
+            </div>
+          )}
         </div>
       </section>
 

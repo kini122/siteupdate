@@ -4,10 +4,12 @@ import { SiteLayout } from "@/components/site/SiteLayout"
 import { AboutPage } from "@/pages/AboutPage"
 import { ContactPage } from "@/pages/ContactPage"
 import { HomePage } from "@/pages/HomePage"
+import { NotFoundPage } from "@/pages/NotFoundPage"
 import { PartnershipPage } from "@/pages/PartnershipPage"
 import { ProductsPage } from "@/pages/ProductsPage"
 import { ServicesPage } from "@/pages/ServicesPage"
 import { WorkPage } from "@/pages/WorkPage"
+import { AdminPage } from "@/pages/admin/AdminPage"
 
 const rootRoute = createRootRoute({ component: SiteLayout })
 
@@ -24,6 +26,7 @@ const productsRoute = createRoute({ getParentRoute: () => rootRoute, path: "/pro
 const workRoute = createRoute({ getParentRoute: () => rootRoute, path: "/work", component: WorkPage })
 const aboutRoute = createRoute({ getParentRoute: () => rootRoute, path: "/about", component: AboutPage })
 const partnersRoute = createRoute({ getParentRoute: () => rootRoute, path: "/partners", component: PartnershipPage })
+const adminRoute = createRoute({ getParentRoute: () => rootRoute, path: "/admin", component: AdminPage })
 interface ContactSearch {
   subject?: string
   message?: string
@@ -47,11 +50,14 @@ const routeTree = rootRoute.addChildren([
   aboutRoute,
   partnersRoute,
   contactRoute,
+  adminRoute,
 ])
 
 export const router = createRouter({
   routeTree,
   scrollRestoration: true,
+  defaultNotFoundComponent: NotFoundPage,
+  trailingSlash: "never",
 })
 
 declare module "@tanstack/react-router" {

@@ -13,9 +13,13 @@ import { ServiceProcessTimeline } from "@/components/site/ServiceProcessTimeline
 import { ServiceShiftGrid } from "@/components/site/ServiceShiftGrid"
 import { ServiceSolutionGrid } from "@/components/site/ServiceSolutionGrid"
 import { SiteFooter } from "@/components/site/SiteFooter"
-import { caseStudiesList, servicesDetails, servicesFaqItems } from "@/data/siteContent"
+import { SeoHead } from "@/components/seo/SeoHead"
+import { servicesDetails, servicesFaqItems } from "@/data/siteContent"
+import { useCaseStudies } from "@/hooks/useCaseStudies"
+import { TEMPORARY_SECTION_VISIBILITY } from "@/config/visibility"
 
 export function ServicesPage() {
+  const { caseStudies } = useCaseStudies()
   const search = useSearch({ from: "/services" }) as { tab?: string }
   const activeTabId = search.tab && servicesDetails[search.tab] ? search.tab : "data-bi"
   const currentService = servicesDetails[activeTabId] || servicesDetails["data-bi"]
@@ -27,12 +31,28 @@ export function ServicesPage() {
   }, [activeTabId])
 
   const featuredStudies = useMemo(() => {
-    if (selectedService === "all") return caseStudiesList.slice(0, 2)
-    return caseStudiesList.filter((study) => study.branchKey === selectedService).slice(0, 2)
-  }, [selectedService])
+    if (selectedService === "all") return caseStudies.slice(0, 2)
+    return caseStudies.filter((study) => study.branchKey === selectedService).slice(0, 2)
+  }, [selectedService, caseStudies])
 
   return (
     <div className="services-page-root">
+      <SeoHead
+        title="Services — Data Analytics, AI Assistants & Automation | Kozker"
+        description="Explore Kozker's engineering services: unified financial & operational BI, custom private AI copilots, and end-to-end webhook workflow automation."
+        canonicalPath="/services"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: "Kozker Technology Services",
+          serviceType: "Data Analytics, AI Development, Workflow Automation",
+          provider: {
+            "@type": "Organization",
+            name: "Kozker",
+            url: "https://kozker.com",
+          },
+        }}
+      />
       {/* Service Hero Section (Frame 41 & Media Collage) */}
       <section className="page-hero services-hero" aria-labelledby="service-title">
         <div className="service-hero-grid">
@@ -181,15 +201,17 @@ export function ServicesPage() {
         </div>
       </section>
 
-      {/* Service Logos Strip */}
-      <section className="section section--tight service-logos-section">
-        <div className="site-container">
-          <div className="partner-strip-wrapper">
-            <p className="partner-strip-label">Helping businesses build simpler ways</p>
-            <LogoStrip />
+      {/* Service Logos Strip (Temporarily hidden - restore in src/config/visibility.ts) */}
+      {TEMPORARY_SECTION_VISIBILITY.helpingBusinessesLogoStrip && (
+        <section className="section section--tight service-logos-section">
+          <div className="site-container">
+            <div className="partner-strip-wrapper">
+              <p className="partner-strip-label">Helping businesses build simpler ways</p>
+              <LogoStrip />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* FAQs */}
       <FaqSection items={servicesFaqItems} />

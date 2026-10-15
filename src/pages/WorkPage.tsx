@@ -9,16 +9,19 @@ import { SiteFooter } from "@/components/site/SiteFooter"
 import { Button } from "@/components/ui/button"
 import { ServiceDropdown } from "@/components/site/ServiceDropdown"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { caseStudiesList, products, workFaqItems } from "@/data/siteContent"
+import { products, workFaqItems } from "@/data/siteContent"
+import { useCaseStudies } from "@/hooks/useCaseStudies"
+import { SeoHead } from "@/components/seo/SeoHead"
 
 export function WorkPage() {
+  const { caseStudies } = useCaseStudies()
   const [tab, setTab] = useState("case-studies")
   const [filter, setFilter] = useState("all")
 
   const visibleCaseStudies = useMemo(() => {
-    if (filter === "all") return caseStudiesList
-    return caseStudiesList.filter((study) => study.branchKey === filter)
-  }, [filter])
+    if (filter === "all") return caseStudies
+    return caseStudies.filter((study) => study.branchKey === filter)
+  }, [filter, caseStudies])
 
   const visibleProducts = useMemo(() => {
     if (filter === "all") return products
@@ -33,6 +36,18 @@ export function WorkPage() {
 
   return (
     <div className="work-page-root">
+      <SeoHead
+        title="Work & Case Studies — Proven ROI & Automation | Kozker"
+        description="Explore documented client case studies showing how Kozker built custom BI dashboards, AI copilots, and workflow automations that delivered up to 75% faster reporting and 3.2x ROI."
+        canonicalPath="/work"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "Kozker Case Studies & Client Outcomes",
+          url: "https://kozker.com/work",
+          description: "Documented engineering case studies showing measurable ROI across FinTech, E-Commerce, Logistics, Healthcare, and Operations.",
+        }}
+      />
       <PageIntro
         eyebrow="Portfolio"
         title="Our Work"

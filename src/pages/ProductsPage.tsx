@@ -6,10 +6,23 @@ import { ProductRow } from "@/components/site/ProductRow"
 import { SectionReveal } from "@/components/site/SectionReveal"
 import { SiteFooter } from "@/components/site/SiteFooter"
 import { products, productsFaqItems } from "@/data/siteContent"
+import { SeoHead } from "@/components/seo/SeoHead"
 
 export function ProductsPage() {
   return (
     <div className="products-page">
+      <SeoHead
+        title="Products — Intelligent Business Tools | Kozker"
+        description="Explore proprietary software tools engineered and operated by Kozker, including AI recruitment platforms, automated workflow consoles, and enterprise integrations."
+        canonicalPath="/products"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "Kozker Software Products",
+          url: "https://kozker.com/products",
+          description: "Tools built around real business problems.",
+        }}
+      />
       <PageIntro
         eyebrow="Products"
         title="Products"

@@ -20,6 +20,11 @@ export interface ProductItem {
   detailsUrl?: string
 }
 
+export interface CaseStudyCapability {
+  title: string
+  desc: string
+}
+
 export interface CaseStudy {
   id: string
   client: string
@@ -35,6 +40,17 @@ export interface CaseStudy {
   ctaText?: string
   ctaHref?: string
   branchKey?: "data-bi" | "ai-assistants" | "automation"
+  industry?: string
+  timeline?: string
+  overview?: string
+  challenge?: string
+  solution?: string
+  deliverables?: CaseStudyCapability[]
+  techStack?: string[]
+  prefilledSubject?: string
+  prefilledMessage?: string
+  sortOrder?: number
+  isPublished?: boolean
 }
 
 export interface TeamMember {

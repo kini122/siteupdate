@@ -1,0 +1,47 @@
+# =========================================================================
+# Production Caddyfile for Kozker (https://kozker.com)
+# Native HTTP/2, HTTP/3 (QUIC), Brotli, and Canonical 301 Redirects
+# =========================================================================
+
+# 1. Redirect www.kozker.com to canonical apex https://kozker.com
+www.kozker.com {
+    redir https://kozker.com{uri} permanent
+}
+
+# 2. Main Site: Native HTTP/3 (QUIC), Automatic HTTPS, and Compression
+kozker.com {
+    root * /var/www/kozker/dist
+
+    # Modern Brotli & Gzip compression
+    encode zstd gzip br
+
+    # Security Headers
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    }
+
+    # Cache static hashed assets
+    @static path /assets/*
+    header @static Cache-Control "public, max-age=31536000, immutable"
+
+    # HTML Document Shell with Edge & Crawler SWR Caching
+    @html path /index.html /
+    header @html Cache-Control "public, max-age=60, s-maxage=3600, stale-while-revalidate=86400"
+
+    # Trailing Slash Normalization (strip trailing slashes, 301)
+    @trailing_slash path_regexp dir ^/(.+)/$
+    redir @trailing_slash /{re.dir.1} permanent
+
+    # Case Standardization (301 Permanent Redirect uppercase to lowercase)
+    @case_variants path_regexp core (?i)^/(about|services|products|work|partners|contact|admin)/?$
+    @not_canonical not path /about /services /products /work /partners /contact /admin
+    redir @case_variants and @not_canonical /{re.core.1} permanent
+
+    # SPA Fallback
+    try_files {path} /index.html
+    file_server
+}

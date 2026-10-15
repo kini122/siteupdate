@@ -1,0 +1,52 @@
+# =========================================================================
+# Technical SEO Canonical Redirects & SPA Rewrite Rules
+# Compatible with Cloudflare Pages, Netlify, and Edge Routers
+# =========================================================================
+
+# 1. Canonical Protocol & Domain: 301 Permanent Redirect www to apex domain
+https://www.kozker.com/* https://kozker.com/:splat 301!
+http://www.kozker.com/*  https://kozker.com/:splat 301!
+http://kozker.com/*      https://kozker.com/:splat 301!
+
+# 2. Trailing Slash Normalization: 301 Permanent Redirects (/route/ -> /route)
+/services/               /services                301!
+/products/               /products                301!
+/work/                   /work                    301!
+/about/                  /about                   301!
+/partners/               /partners                301!
+/contact/                /contact                 301!
+/admin/                  /admin                   301!
+
+# 3. Case Standardization: 301 Permanent Redirects (uppercase -> lowercase)
+/Services                /services                301!
+/Services/               /services                301!
+/SERVICES                /services                301!
+/SERVICES/               /services                301!
+/Products                /products                301!
+/Products/               /products                301!
+/PRODUCTS                /products                301!
+/PRODUCTS/               /products                301!
+/Work                    /work                    301!
+/Work/                   /work                    301!
+/WORK                    /work                    301!
+/WORK/                   /work                    301!
+/About                   /about                   301!
+/About/                  /about                   301!
+/ABOUT                   /about                   301!
+/ABOUT/                  /about                   301!
+/Partners                /partners                301!
+/Partners/               /partners                301!
+/PARTNERS                /partners                301!
+/PARTNERS/               /partners                301!
+/Contact                 /contact                 301!
+/Contact/                /contact                 301!
+/CONTACT                 /contact                 301!
+/CONTACT/                /contact                 301!
+/Admin                   /admin                   301!
+/Admin/                  /admin                   301!
+/ADMIN                   /admin                   301!
+/ADMIN/                  /admin                   301!
+
+# 4. SPA Route Fallback
+/*                       /index.html              200
+
