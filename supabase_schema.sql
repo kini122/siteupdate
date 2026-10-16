@@ -4,9 +4,74 @@
 -- (Dashboard > SQL Editor > New query > Paste & Run)
 -- ==============================================================================
 
+-- ==============================================================================
+-- 🚀 MIGRATION SCRIPT: PRESERVE EXISTING CASE STUDIES & ADD SEO SLUG SUPPORT
+-- If your Supabase database already has a case_studies table, run this block:
+-- ==============================================================================
+DO $$
+BEGIN
+  -- 1. Add slug column if not present
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' AND table_name = 'case_studies' AND column_name = 'slug'
+  ) THEN
+    ALTER TABLE public.case_studies ADD COLUMN slug TEXT;
+  END IF;
+
+  -- 2. Add published column alias if not present (queries like `WHERE published = true`)
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' AND table_name = 'case_studies' AND column_name = 'published'
+  ) THEN
+    ALTER TABLE public.case_studies ADD COLUMN published BOOLEAN GENERATED ALWAYS AS (is_published) STORED;
+  END IF;
+END $$;
+
+-- 3. Populate SEO Slugs for the 6 existing Case Studies (Exact preservation)
+UPDATE public.case_studies
+SET slug = 'automated-financial-modeling-real-time-executive-dashboards'
+WHERE id = 'finscale' AND (slug IS NULL OR slug = '');
+
+UPDATE public.case_studies
+SET slug = 'cross-border-logistics-ops-sync-bi-metrics'
+WHERE id = 'globalbi' AND (slug IS NULL OR slug = '');
+
+UPDATE public.case_studies
+SET slug = 'boosts-conversion-rate-by-45-percent-automation-chatbot'
+WHERE id = 'techgadgets' AND (slug IS NULL OR slug = '');
+
+UPDATE public.case_studies
+SET slug = 'ai-powered-patient-triage-ehr-routing'
+WHERE id = 'healthops' AND (slug IS NULL OR slug = '');
+
+UPDATE public.case_studies
+SET slug = 'automated-multi-carrier-fulfillment-exception-pipeline'
+WHERE id = 'apexautomation' AND (slug IS NULL OR slug = '');
+
+UPDATE public.case_studies
+SET slug = 'end-to-end-whatsapp-order-inventory-sync-automation'
+WHERE id = 'autoops' AND (slug IS NULL OR slug = '');
+
+-- Fallback clean slug generation for any custom records
+UPDATE public.case_studies
+SET slug = LOWER(REGEXP_REPLACE(REGEXP_REPLACE(COALESCE(title, client, id), '[^a-zA-Z0-9\s-]', '', 'g'), '\s+', '-', 'g'))
+WHERE slug IS NULL OR slug = '';
+
+-- 4. Enforce constraints and unique index
+ALTER TABLE public.case_studies ALTER COLUMN slug SET NOT NULL;
+ALTER TABLE public.case_studies DROP CONSTRAINT IF EXISTS unique_case_study_slug;
+ALTER TABLE public.case_studies ADD CONSTRAINT unique_case_study_slug UNIQUE (slug);
+CREATE INDEX IF NOT EXISTS idx_case_studies_slug ON public.case_studies (slug);
+
+
+-- ==============================================================================
+-- FULL TABLE DEFINITION (For New Installations or Fresh Setups)
+-- ==============================================================================
+
 -- 1. Create case_studies table
 CREATE TABLE IF NOT EXISTS public.case_studies (
   id TEXT PRIMARY KEY,
+  slug TEXT NOT NULL UNIQUE,
   client TEXT NOT NULL,
   category TEXT NOT NULL,
   title TEXT NOT NULL,
@@ -28,6 +93,7 @@ CREATE TABLE IF NOT EXISTS public.case_studies (
   prefilled_message TEXT DEFAULT '',
   sort_order INT DEFAULT 0,
   is_published BOOLEAN DEFAULT true,
+  published BOOLEAN GENERATED ALWAYS AS (is_published) STORED,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -66,6 +132,9 @@ CREATE POLICY "Authenticated users can delete case studies"
 -- ==============================================================================
 -- 3. HIGH-PERFORMANCE B-TREE INDEXES (Eliminates Seq-Scans, Minimizes Egress & CPU)
 -- ==============================================================================
+CREATE INDEX IF NOT EXISTS idx_case_studies_slug
+  ON public.case_studies (slug);
+
 CREATE INDEX IF NOT EXISTS idx_case_studies_published_sort 
   ON public.case_studies (is_published, sort_order ASC);
 
@@ -78,6 +147,27 @@ CREATE INDEX IF NOT EXISTS idx_case_studies_category
 CREATE INDEX IF NOT EXISTS idx_case_studies_updated_at 
   ON public.case_studies (updated_at DESC);
 
+-- Automatic Slug Generator Trigger Function (Ensures Slugs are always clean and populated)
+CREATE OR REPLACE FUNCTION public.generate_case_study_slug()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.slug IS NULL OR TRIM(NEW.slug) = '' THEN
+    NEW.slug := LOWER(REGEXP_REPLACE(REGEXP_REPLACE(NEW.title, '[^a-zA-Z0-9\s-]', '', 'g'), '\s+', '-', 'g'));
+    NEW.slug := TRIM(BOTH '-' FROM NEW.slug);
+  ELSE
+    NEW.slug := LOWER(REGEXP_REPLACE(REGEXP_REPLACE(NEW.slug, '[^a-zA-Z0-9\s-]', '', 'g'), '\s+', '-', 'g'));
+    NEW.slug := TRIM(BOTH '-' FROM NEW.slug);
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_generate_case_study_slug ON public.case_studies;
+CREATE TRIGGER trg_generate_case_study_slug
+BEFORE INSERT OR UPDATE OF title, slug ON public.case_studies
+FOR EACH ROW
+EXECUTE FUNCTION public.generate_case_study_slug();
+
 -- Enable Realtime publication for instant client-side on-demand cache busting
 DO $$
 BEGIN
@@ -89,7 +179,6 @@ BEGIN
   END IF;
 EXCEPTION
   WHEN OTHERS THEN
-    -- In environments where supabase_realtime publication is not predefined, ignore
     NULL;
 END $$;
 
@@ -126,194 +215,238 @@ CREATE POLICY "Authenticated users can delete case study media"
   TO authenticated
   USING (bucket_id = 'case-study-media');
 
--- 4. SEED DATA: Insert Current 6 Rich Case Studies
+-- ==============================================================================
+-- 5. SEED DATA: Insert 6 Comprehensive Production Case Studies
+-- ==============================================================================
 INSERT INTO public.case_studies (
-  id, client, category, title, image, description, industry, timeline,
+  id, slug, client, category, title, image, description, industry, timeline,
   overview, challenge, solution, stats, quote, deliverables, tech_stack,
   branch_key, cta_text, cta_href, prefilled_subject, prefilled_message, sort_order, is_published
 )
 VALUES
--- 1. FinScale Analytics
+-- Case Study 1: Multilingual AI Equine Health & Triage Assistant
 (
-  'finscale',
-  'FinScale Analytics',
-  'FINTECH & BI',
-  'Automated Financial Modeling & Real-Time Executive Dashboards',
-  '/assets/60ed30.jpg',
-  'Unified reporting pipeline connecting multi-entity ERP and payment gateways into live board-ready insights.',
-  'High-Growth FinTech Platform & Payments',
-  '4 Weeks Deployment',
-  'FinScale operates across multiple currencies and legal entities, processing millions in monthly transaction volume. Leadership lacked real-time visibility into unit economics, net revenue churn, and merchant cash flows across disparate payment processors.',
-  'Month-end financial reconciliation required finance managers to manually extract CSVs from Stripe, Adyen, and regional banking portals, taking 5 full business days each cycle with high risk of manual formula errors and late board reports.',
-  'Kozker built an enterprise automated ETL data pipeline connecting multi-entity ERPs and payment gateways into a Snowflake data warehouse, powering live executive Power BI dashboards with real-time currency conversions, cohort retention models, and automated anomaly alerts.',
-  '[{"value": "75%", "label": "Faster reporting"}, {"value": "3.2x", "label": "ROI in 90 Days"}, {"value": "5d → 20m", "label": "Cycle Reduction"}]'::jsonb,
-  '{"text": "The automated executive dashboards reduced our month-end reconciliation and reporting from 5 days to 20 minutes.", "author": "— Head of Finance, FinScale Analytics"}'::jsonb,
+  'CS-AI-001',
+  'multilingual-ai-equine-health-assistant',
+  'Leading Animal Welfare & Equine Healthcare NGO in India',
+  'AI ASSISTANTS & KNOWLEDGE SYSTEMS',
+  '24/7 Multilingual AI Voice & Chat Assistant for Community Equine Welfare',
+  'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=1200&q=80',
+  'An automated 24/7 multilingual conversational assistant processing text and voice notes over WhatsApp to triage animal health issues and route urgent cases to clinics.',
+  'Animal Welfare & Non-Profit Healthcare',
+  '6 Weeks',
+  'A major national animal welfare NGO needed to make vital equine healthcare advisory accessible to rural and semi-urban horse, mule, and donkey owners across multiple Indian states, overcoming illiteracy and regional language barriers.',
+  'Rural equine owners frequently face limited access to qualified veterinarians. When health emergencies occur, language barriers and lack of typing proficiency prevent timely guidance. The client’s helpline staff was overwhelmed handling repetitive inquiries manually, lacking a unified system to triage clinical urgency, transcribe voice notes, and coordinate clinic locations.',
+  'Kozker designed and deployed an event-driven automation engine connecting Meta’s Cloud API to an AI agent orchestrator. The solution intelligently routes typed text and voice messages: incoming audio is downloaded and transcribed into native text using multimodal speech models. An orchestrator powered by advanced LLMs accesses a vetted veterinary knowledge base alongside dynamic location lookups to provide preliminary triage, guidance, and clinic contact cards, logging every case into Supabase and reporting spreadsheets.',
   '[
-    {"title": "Automated Reconciliation ETL", "desc": "Unified payment gateway and banking ingestion pipeline with discrepancy checks."},
-    {"title": "Board-Ready Executive Dashboards", "desc": "Role-tailored KPI views for CEO, CFO, and VP Finance updated every 15 minutes."},
-    {"title": "Unit Economics & Churn Engine", "desc": "Granular customer cohort profitability analysis and retention tracking models."},
-    {"title": "Automated Audit Alert System", "desc": "Instant Slack and email alerts for payment settlement anomalies and variances."}
+    {"value": "< 3s", "label": "Instant Response Time"},
+    {"value": "5", "label": "Indian Languages Supported"},
+    {"value": "99.9%", "label": "Cloud Uptime"},
+    {"value": "100%", "label": "Automated Triage & Routing"}
   ]'::jsonb,
-  ARRAY['Microsoft Power BI', 'Snowflake', 'Python / dbt', 'Stripe API', 'PostgreSQL'],
-  'data-bi',
-  'Start a Conversation',
-  '/contact',
-  'Inquiry: Automated Financial Modeling & BI Dashboards',
-  'Hi Kozker, I''m interested in the financial modeling and real-time executive dashboard pipeline you developed for FinScale Analytics. We need to streamline multi-source data consolidation and reporting.',
+  '{"text": "Deploying an AI assistant that seamlessly understands regional voice notes has fundamentally bridged the healthcare access gap for thousands of animal caretakers across rural districts.", "author": "— Head of Digital Outreach & Veterinary Operations"}'::jsonb,
+  '[
+    {"title": "Multimodal Voice & Text Processing", "desc": "Automatic download, speech-to-text transcription, and regional voice-reply generation for non-literate community members."},
+    {"title": "Clinical Knowledge Base & Triage Engine", "desc": "Guardrailed conversational reasoning that provides tentative first-aid assessment while strictly forbidding dangerous diagnoses or dosage prescriptions."},
+    {"title": "Geo-Location & Clinic Dispatch", "desc": "Automated extraction and routing of nearest certified veterinary facilities and emergency contact details."},
+    {"title": "Structured Case Logging", "desc": "Automated extraction of structured animal health cases, timestamps, and symptoms into a relational database."}
+  ]'::jsonb,
+  ARRAY['n8n Workflow Engine', 'Meta WhatsApp Business API', 'Google Gemini Flash', 'Sarvam AI (STT & TTS)', 'Supabase', 'PostgreSQL', 'Google Sheets API', 'REST APIs'],
+  'ai-assistants',
+  'Build Your Conversational AI Assistant',
+  '/contact?service=ai-assistants',
+  'Inquiry: Multilingual AI Voice & Chat Automation',
+  'Hi Kozker team, I would like to explore building a voice- and chat-enabled conversational assistant for our community/service operations.',
   1,
   true
 ),
--- 2. Global Logistics Network
+
+-- Case Study 2: Enterprise Recruitment Operating System & AI Sourcing Platform
 (
-  'globalbi',
-  'Global Logistics Network',
-  'LOGISTICS BI',
-  'Cross-Border Logistics Ops Sync & BI Metrics',
-  '/assets/3132a8.jpg',
-  'Automated real-time inventory and shipment reconciliations cutting manual tracking time across regional carriers by 60%.',
-  'Cross-Border Freight & Supply Chain Enterprise',
-  '5 Weeks Deployment',
-  'Coordinating intermodal cargo across 14 regional shipping carriers and air freight partners resulted in data silos, blind spots during hub handoffs, and delayed exception notifications that eroded customer trust and incurred detention fees.',
-  'Operations managers spent over 25 hours weekly compiling fragmented carrier manifests into spreadsheets, leading to delayed customs clearance filings, inaccurate ETAs, and expensive late delivery penalty claims.',
-  'Kozker unified freight tracking feeds into a centralized operational data lake with automated EDI parsing, live carrier SLA scorecards, and predictive exception routing that flags stalled cargo before customs deadlines occur.',
-  '[{"value": "60%", "label": "Time saved"}, {"value": "99.8%", "label": "Sync accuracy"}, {"value": "90%", "label": "Automated Alerts"}]'::jsonb,
-  '{"text": "Kozker unified our freight tracking and automated 90% of exception alerts. A total game changer for our operations team.", "author": "— VP of Supply Operations, Global Logistics Network"}'::jsonb,
+  'CS-AUTO-002',
+  'enterprise-recruitment-operating-system-ai-matching',
+  'Pan-India Recruitment & Human Resources Consulting Firm',
+  'WORKFLOW AUTOMATION',
+  'End-to-End Recruitment Operating System with Human-in-the-Loop AI Matching',
+  'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80',
+  'A complete HR operating platform uniting requirement intake, automated deduplication, human-approved AI candidate scoring, and multi-tier role dashboards.',
+  'Human Resources & Staffing',
+  '8–10 Weeks',
+  'An established recruitment agency managing enterprise hiring across multiple verticals required a single operating framework to streamline sourcing workflows, enforce stringent client SLAs, and replace fragmented tracking mechanisms.',
+  'Recruitment operations were plagued by manual MIS tracking, slow profile screening cycles, redundant sourcing of existing candidates, and lack of accountability across handovers. The agency needed strict SLA clocks, role-based visibility, and AI-assisted candidate evaluation that eliminated algorithmic bias without stripping human recruiters of final authority.',
+  'Kozker engineered a unified recruitment platform integrating real-time priority dashboards, candidate deduplication engines, and an AI scoring pipeline. The system strips demographic details to guarantee neutral evaluation, scores candidates based on recruiter-approved skill weights, drafts tailored screening questions, and manages structured interview handoffs. Configurable role hierarchies (Admin, Manager, Recruiter, Interviewer, Client) ensure complete data governance and end-to-end auditability.',
   '[
-    {"title": "Multi-Carrier EDI Telematics Sync", "desc": "Standardized ingestion across air, sea, and road freight carrier manifests."},
-    {"title": "Real-Time Freight Ops Dashboard", "desc": "Interactive global heat-maps displaying delayed cargo and port dwell times."},
-    {"title": "Predictive Exception Routing", "desc": "Automated proactive alerts for customs hold-ups and weather-induced route stalls."},
-    {"title": "Carrier SLA Scorecard Engine", "desc": "Automated vendor performance benchmarks used for quarterly contract negotiations."}
+    {"value": "65%", "label": "Profile TAT Reduction"},
+    {"value": "100%", "label": "SLA Transparency"},
+    {"value": "40%", "label": "Database Reuse Increase"},
+    {"value": "0", "label": "Unvetted AI Decisions"}
   ]'::jsonb,
-  ARRAY['Python Pipelines', 'Power BI', 'SQL Server', 'EDI Integrations', 'AWS S3'],
-  'data-bi',
-  'Start a Conversation',
-  '/contact',
-  'Inquiry: Cross-Border Logistics BI & Data Sync',
-  'Hi Kozker, we saw your Global Logistics Network case study on cross-border ops sync and BI metrics. We are looking to unify our carrier tracking and automate operational exception handling.',
+  '{"text": "The platform completely replaced our disconnected spreadsheets with a unified operational engine, giving our leadership real-time visibility into hiring pipelines and SLA performance.", "author": "— Chief Operating Officer, Human Resource Consulting Services"}'::jsonb,
+  '[
+    {"title": "Live Sourcing & SLA Command Center", "desc": "Real-time visibility into requisition ageing, time-in-stage metrics, and automated escalation flags for impending SLA breaches."},
+    {"title": "Human-in-the-Loop AI Matching Engine", "desc": "Objective candidate scoring against recruiter-weighted criteria, citing exact evidence from resumes while scrubbing demographic data."},
+    {"title": "Role-Based Workspaces & Zero-Trust Access", "desc": "Tailored dashboards and granular permission controls for Administrators, Managers, Recruiters, Interviewers, and External Clients."},
+    {"title": "Collaborative Request-Driven Workflows", "desc": "Formally acknowledged requirement assignments, candidate handoffs, and client job-mandate approvals with continuous audit trails."}
+  ]'::jsonb,
+  ARRAY['PostgreSQL', 'Next.js', 'Node.js', 'REST APIs', 'OpenAI API', 'Calendar Sync (Google Workspace / MS Teams)', 'Webhooks', 'Redis'],
+  'automation',
+  'Modernize Your Recruitment Operations',
+  '/contact?service=workflow-automation',
+  'Inquiry: Enterprise Recruitment & Sourcing Automation',
+  'Hi Kozker team, we are looking to streamline our recruitment workflows and implement structured, AI-assisted screening and SLA management.',
   2,
   true
 ),
--- 3. TechGadgets Pro
+
+-- Case Study 3: AI Recruiter Copilot for Open-Source ERP Systems
 (
-  'techgadgets',
-  'TechGadgets Pro',
-  'E-COMMERCE & AI',
-  'Boosts Conversion Rate by 45% with our Automation and Chatbot Integration',
-  '/assets/33108f.jpg',
-  'End-to-end multi-channel WhatsApp and web copilot delivering 24/7 lead qualification and instant order tracking.',
-  'Consumer Electronics & D2C Scale-Up',
-  '3 Weeks Deployment',
-  'TechGadgets Pro scaled rapidly across Europe and North America, but their customer support team was inundated with over 2,400 repetitive pre-purchase queries, stock checks, and order tracking tickets weekly, leading to abandoned carts and slow response times.',
-  'High cart abandonment during peak evening hours when human agents were offline. Repetitive WISMO (''Where is my order?'') inquiries drained 65% of support bandwidth, while high-value shoppers waited up to 4 hours for simple product compatibility answers.',
-  'Kozker architected a unified dual-channel conversational intelligence system integrating WhatsApp Cloud API and an on-site AI shopping copilot directly into Shopify and their 3PL warehouse database. The assistant qualifies buyer intent, suggests complementary accessories, and handles end-to-end tracking lookups in under 3 seconds.',
-  '[{"value": "45%", "label": "Conversion rate"}, {"value": "40%", "label": "Orders Increase"}, {"value": "< 3s", "label": "Response Latency"}]'::jsonb,
-  '{"text": "The AI chatbot and WhatsApp automation transformed our customer experience. Sales have never been better.", "author": "— Founder & Managing Director, TechGadgets Pro"}'::jsonb,
+  'CS-AI-003',
+  'erp-integrated-ai-recruiter-copilot',
+  'Specialized Technology Staffing & Executive Search Agency',
+  'AI ASSISTANTS & KNOWLEDGE SYSTEMS',
+  'Native ERP-Integrated AI Copilot for Automated Talent Sourcing & Screening',
+  'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80',
+  'A conversational AI assistant embedded directly within an open-source ERP framework, automating job description conversion, CV parsing, and candidate assessments.',
+  'Talent Acquisition & IT Staffing',
+  '4 Weeks',
+  'An executive search firm sought to eliminate repetitive, manual administration across their talent acquisition pipeline by embedding conversational AI workflows straight into their core ERP application.',
+  'Recruiters lost considerable time manually breaking down lengthy job descriptions into structured Job Role Skill Summaries (JRSS), manually formatting job portal boolean search strings, formulating technical screening questions, and drafting evaluation notes from interview transcripts. Button-heavy UI navigation created friction and slowed cycle times.',
+  'Kozker designed and deployed the Recruiter Copilot, a two-layer automation architecture consisting of an automated background generation engine paired with an in-form conversational chat interface inside the Frappe framework. Backed by n8n workflow orchestration and advanced LLMs, the system automatically parses uploaded job descriptions into structured skill matrices, synthesizes portal search booleans, auto-populates candidate records from incoming CVs, and permits recruiters to alter parameters using simple natural language commands.',
   '[
-    {"title": "Multi-Channel AI Copilot", "desc": "Dual WhatsApp and web-embedded conversational assistant with brand voice tuning."},
-    {"title": "Real-Time Shopify & 3PL Sync", "desc": "Sub-second order status and inventory webhook reconciliation across warehouses."},
-    {"title": "Contextual Recommender Engine", "desc": "Automated basket building and complementary accessory cross-sell logic."},
-    {"title": "Instant Human Escalation", "desc": "Zero-latency desk routing with full customer journey context for VIP inquiries."}
+    {"value": "80%", "label": "Setup Time Saved"},
+    {"value": "20–30s", "label": "CV Matrix Analysis"},
+    {"value": "45m+", "label": "Saved per Vacancy Cycle"},
+    {"value": "~₹800", "label": "Monthly Token Cost"}
   ]'::jsonb,
-  ARRAY['OpenAI GPT-4', 'WhatsApp Cloud API', 'Shopify GraphQL', 'Make.com', 'PostgreSQL'],
+  '{"text": "Recruiters no longer waste hours tweaking portal search strings and drafting assessment summaries. The copilot handles the heavy lifting directly within our core business software.", "author": "— Managing Partner & Head of Talent Acquisition"}'::jsonb,
+  '[
+    {"title": "Automated JRSS & Search String Generation", "desc": "Instant extraction of mandatory and optional skills, weightages, and optimized job board search strings directly from uploaded job descriptions."},
+    {"title": "Conversational ERP Copilot", "desc": "An embedded chat widget allowing recruiters to adjust skill weightings, add criteria, or regenerate questions using natural English instructions."},
+    {"title": "Instant CV Matrix Evaluation", "desc": "Instant parsing of candidate profiles against job requirements, assessing pros, cons, and interview suitability."},
+    {"title": "Transcript-Based Candidate Evaluation", "desc": "Automated synthesis of screening call transcripts into structured evaluation reports with clear recommendations."}
+  ]'::jsonb,
+  ARRAY['Frappe Framework (MariaDB, Python, JS)', 'n8n Workflow Automation', 'OpenAI API', 'PyPDF2 / Python-docx', 'REST APIs', 'Webhooks'],
   'ai-assistants',
-  'Start a Conversation',
-  '/contact',
-  'Inquiry: E-Commerce AI Chatbot & WhatsApp Automation',
-  'Hi Kozker, I was reviewing your TechGadgets Pro case study (+45% conversion rate) and would like to explore an AI shopping copilot and automated multi-channel messaging system for our business.',
+  'Deploy an In-App AI Copilot',
+  '/contact?service=ai-assistants',
+  'Inquiry: Custom ERP & CRM AI Copilot Integration',
+  'Hi Kozker team, we want to integrate a conversational AI copilot into our existing internal software to automate repetitive workflows.',
   3,
   true
 ),
--- 4. HealthCore Systems
+
+-- Case Study 4: Automated Recruitment BI & Executive Analytics Platform
 (
-  'healthops',
-  'HealthCore Systems',
-  'HEALTHCARE & AI',
-  'AI-Powered Patient Triage & Secure EHR Workflow Routing',
-  '/assets/fd345e.jpg',
-  'HIPAA-compliant conversational AI triage assistant handling intake, symptoms assessment, and calendar booking.',
-  'Regional Healthcare Network & Outpatient Specialty Clinics',
-  '4 Weeks Deployment',
-  'HealthCore''s patient access center handled over 18,000 inbound inquiries monthly across 8 regional clinics, facing long call queues, patient frustration, and excessive clinician admin burden that pulled nurses away from care.',
-  'Call hold times averaged 14 minutes during morning peak hours. Clinical staff were bogged down answering basic pre-appointment preparation questions and routing routine prescription refill requests instead of focusing on direct clinical care.',
-  'Kozker deployed a HIPAA-compliant conversational intake assistant with clinical decision support workflows, symptom pre-assessment, automated insurance eligibility verification prompts, and direct calendar synchronization for specialist visits.',
-  '[{"value": "85%", "label": "Response reduction"}, {"value": "100%", "label": "HIPAA Compliance"}, {"value": "14m → 45s", "label": "Patient Wait Time"}]'::jsonb,
-  '{"text": "Kozker created an intelligent triage pipeline that reduced clinical admin load without missing a single critical case.", "author": "— Chief Medical Officer, HealthCore Systems"}'::jsonb,
+  'CS-BI-004',
+  'automated-recruitment-bi-client-reporting',
+  'Mid-Market IT Staffing & Talent Solutions Agency',
+  'DATA ANALYTICS & BI',
+  'Scalable Recruitment Business Intelligence & Automated Client Analytics',
+  'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80',
+  'A centralized business intelligence platform replacing manual spreadsheet reporting with automated pipeline dashboards, aging alerts, and branded client reports.',
+  'IT Recruitment & Professional Services',
+  '4 Weeks',
+  'An IT recruitment firm required an automated reporting and business intelligence infrastructure to provide real-time operational metrics across candidate pipelines and eliminate repetitive spreadsheet generation for client accounts.',
+  'The agency relied heavily on manual data exports from their operational system into complex spreadsheets. This manual workflow led to data inconsistencies, lost analyst hours, delayed executive decision-making, and an inability to track critical operational bottlenecks like CV aging, interview feedback delays, and recruitment funnel leakages.',
+  'Kozker designed and implemented a full-scale recruitment reporting solution. Raw system exports were ingested into a centralized staging relational database (MariaDB). Data pipelines and transformation logic standardized status milestones, aging buckets (0–7, 8–14, >14 days), and conversion ratios. Interactive role-based dashboards were deployed on Power BI Service, featuring automated scheduled refreshes and dynamic client-level filtering for instant white-labeled report distribution.',
   '[
-    {"title": "HIPAA-Secured Triage Interface", "desc": "Encrypted conversational access compliant with healthcare privacy regulations."},
-    {"title": "EHR & Scheduling Integration", "desc": "Bi-directional booking sync with clinic calendars, specialty rules, and doctor rosters."},
-    {"title": "Automated Eligibility Intake", "desc": "Patient insurance verification and digital pre-visit intake questionnaire builder."},
-    {"title": "Clinical Escalation Engine", "desc": "Immediate routing to on-call nursing staff for flagged high-acuity symptom keywords."}
+    {"value": "85%", "label": "Reporting Cycle Reduction"},
+    {"value": "80%", "label": "Internal Reporting Cost Cut"},
+    {"value": "200%", "label": "Client Upsell Opportunities"},
+    {"value": "~0%", "label": "Data Discrepancy"}
   ]'::jsonb,
-  ARRAY['Anthropic Claude / OpenAI', 'HIPAA-Secured Cloud', 'HL7 / FHIR APIs', 'Next.js', 'Twilio'],
-  'ai-assistants',
-  'Start a Conversation',
-  '/contact',
-  'Inquiry: Healthcare AI Patient Triage & EHR Routing',
-  'Hi Kozker, I''d like to learn more about the HIPAA-compliant patient triage and EHR scheduling assistant you built for HealthCore Systems. We want to reduce administrative burden on our staff.',
+  '{"text": "Transforming our reporting from error-prone spreadsheets to an automated BI suite not only gave us instant visibility over our pipelines, but turned analytics into a premium revenue-generating service for our clients.", "author": "— Director of Recruitment Operations & Client Delivery"}'::jsonb,
+  '[
+    {"title": "Centralized Data Ingestion & Staging Engine", "desc": "Elimination of scattered spreadsheets through an automated database staging pipeline."},
+    {"title": "Full Funnel & Velocity Analytics", "desc": "Interactive funnel visualization tracking conversion through Sourcing, Screening, Interviews, Selection, and Onboarding."},
+    {"title": "Operational Bottleneck & Aging Buckets", "desc": "Automated alert tracking highlighting overdue resumes, pending client feedback, and requirement aging."},
+    {"title": "Self-Service Branded Client Reporting", "desc": "One-click client filtering enabling recruiters to share professional, white-labeled performance dashboards instantly."}
+  ]'::jsonb,
+  ARRAY['Power BI (Desktop & Service)', 'MariaDB', 'Power Query / M Engine', 'DAX', 'ERP System Extract Pipelines', 'SQL'],
+  'data-bi',
+  'Upgrade Your Reporting to Automated BI',
+  '/contact?service=data-analytics',
+  'Inquiry: Automated Business Intelligence & Reporting Solutions',
+  'Hi Kozker team, we want to replace our manual spreadsheet reports with automated dashboards and real-time business intelligence pipelines.',
   4,
   true
 ),
--- 5. Apex Supply Chain
+
+-- Case Study 5: End-to-End Accounting Practice Management & Workflow Automation
 (
-  'apexautomation',
-  'Apex Supply Chain',
+  'CS-AUTO-005',
+  'chartered-accountancy-practice-management-automation',
+  'Multi-Partner Chartered Accountancy & Tax Advisory Practice',
   'WORKFLOW AUTOMATION',
-  'Automated Multi-Carrier Fulfillment & Exception Pipeline',
-  '/assets/4a80c6.jpg',
-  'Multi-system shipping automation integrating warehouse scanning, customs clearances, and automated carrier alerts.',
-  'Enterprise B2B Supply Chain & Distribution',
-  '3 Weeks Deployment',
-  'Apex fulfilled over 45,000 commercial shipments monthly, relying on manual data re-entry between warehouse management systems (WMS), enterprise ERPs, and external courier booking portals.',
-  'Manual cross-system entry resulted in miskeyed shipping address errors, delayed label generation during peak dispatch hours, and an estimated 14 hours of lost team productivity per week per warehouse facility.',
-  'Kozker built an automated multi-system fulfillment engine that ingests bulk orders, verifies destination shipping zones, generates optimized shipping labels in batch, and notifies buyers with real-time milestone updates.',
-  '[{"value": "90%", "label": "Fewer manual errors"}, {"value": "14 hrs", "label": "Saved per team/wk"}, {"value": "4x", "label": "Peak Dispatch Speed"}]'::jsonb,
-  '{"text": "We eliminated 14 hours of manual cross-checking each week. Orders route straight to fulfillment without a hitch.", "author": "— Director of Logistics, Apex Supply Chain"}'::jsonb,
+  'End-to-End Practice Management & Automated Document Verification System',
+  'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80',
+  'A unified practice management platform automating client intake, checklist-based document validation, multi-tier staff reviews, and payment-gated delivery.',
+  'Accounting, Tax Compliance & Professional Services',
+  '6–8 Weeks',
+  'A growing accounting and corporate compliance firm needed to replace fragmented manual communications (calls, email, WhatsApp) with a structured workflow system that tracks work orders, compliance documentation, and billing stages.',
+  'Practice staff spent significant time chasing clients for mandatory compliance records (PAN, identity cards, trade licenses), verifying documents against unstandardized checklists, and manually tracking task statuses. Delays in peer review and unauthorized delivery of final reports prior to invoice clearance led to billing bottlenecks and audit friction.',
+  'Kozker designed a multi-stage workflow automation system covering the complete service lifecycle. The platform automates mobile-number-based lead lookup, dynamic service checklist generation, intelligent document upload tracking with automated deficiency alerts, time-tracked staff processing, structured reviewer sign-offs, and payment-gated deliverable access.',
   '[
-    {"title": "WMS-to-Carrier Automation", "desc": "Direct multi-carrier API dispatcher generating labels and customs paperwork in batch."},
-    {"title": "Address Verification Engine", "desc": "Automated address cleansing preventing returned freight and costly re-delivery fees."},
-    {"title": "Automated Milestone Bot", "desc": "Event-triggered dispatch notifications sent via SMS and email with live tracking."},
-    {"title": "Exception Handling Pipeline", "desc": "Auto-routes failed deliveries into a prioritized triage queue for rapid resolution."}
+    {"value": "70%", "label": "Document Verification TAT Cut"},
+    {"value": "100%", "label": "Lifecycle Traceability"},
+    {"value": "100%", "label": "Revenue Protection via Gate"},
+    {"value": "0", "label": "Missed Compliance Deadlines"}
   ]'::jsonb,
-  ARRAY['n8n Automation Engine', 'Zapier / Make', 'PostgreSQL', 'REST APIs', 'FedEx/UPS APIs'],
+  '{"text": "Automating our document collection and tying report releases directly to verified payments completely eliminated operational leakage and transformed how our firm manages compliance delivery.", "author": "— Managing Partner, Chartered Accountancy & Advisory Firm"}'::jsonb,
+  '[
+    {"title": "Automated Client Intake & Lead Matching", "desc": "Instant recognition of existing accounts versus new inquiries with automated task dispatching and follow-up schedules."},
+    {"title": "Checklist-Driven Document Verification Engine", "desc": "Automated tracking of submitted compliance files against regulatory document lists with automated missing-document reminders."},
+    {"title": "Time-Tracked Processing & Review Gates", "desc": "Automated work timers and structured approval gates that return rejected tasks for revision before reaching financial sign-off."},
+    {"title": "Payment-Gated Deliverable Distribution", "desc": "Seamless handoff to finance with system-locked download links that automatically unlock only upon payment verification."}
+  ]'::jsonb,
+  ARRAY['PostgreSQL', 'Next.js', 'Node.js REST API', 'Cloud Storage Buckets', 'Notification Engine (SMS, WhatsApp, Email)', 'Automated Invoicing'],
   'automation',
-  'Start a Conversation',
-  '/contact',
-  'Inquiry: Multi-Carrier Fulfillment Automation',
-  'Hi Kozker, we want to automate our order fulfillment and multi-carrier shipping workflows similar to what you built for Apex Supply Chain (-90% manual errors).',
+  'Streamline Your Professional Practice Workflows',
+  '/contact?service=workflow-automation',
+  'Inquiry: Professional Services Practice Management Automation',
+  'Hi Kozker team, we want to implement an automated workflow and document verification platform for our accounting/consulting firm.',
   5,
   true
 ),
--- 6. Nexus Retail Group
+
+-- Case Study 6: AI Hospital Communications, Smart Telecalling & Appointment Platform
 (
-  'autoops',
-  'Nexus Retail Group',
-  'PROCESS INTEGRATION',
-  'End-to-End WhatsApp Order & Inventory Sync Automation',
-  '/assets/671883.jpg',
-  'Real-time sync bridging conversational commerce orders directly with inventory databases and payment settlement.',
-  'Omnichannel Retail & B2C Brand Portfolio',
-  '3 Weeks Deployment',
-  'Nexus manages 3 rapid-growth retail apparel brands selling across online storefronts, pop-up locations, and conversational WhatsApp sales channels, resulting in frequent inventory mismatches and overselling.',
-  'Inventory levels took up to 6 hours to sync between warehouse ERP and sales channels, causing painful backorders, lost sales, manual refunds, and negative customer social reviews.',
-  'Kozker implemented an event-driven inventory synchronization pipeline with sub-second webhook triggers, two-way WhatsApp order placement, and automatic payment link generation that updates stock across all channels instantly.',
-  '[{"value": "4.8x", "label": "Speed to dispatch"}, {"value": "99.9%", "label": "Uptime reliability"}, {"value": "0", "label": "Overselling Incidents"}]'::jsonb,
-  '{"text": "The automated workflows sync our order data instantly between WhatsApp, Shopify, and our regional warehouse.", "author": "— VP of Technology, Nexus Retail Group"}'::jsonb,
+  'CS-AI-006',
+  'autonomous-hospital-voice-whatsapp-scheduling-system',
+  'Multi-Specialty Hospital & Healthcare Network',
+  'AI ASSISTANTS & KNOWLEDGE SYSTEMS',
+  'Autonomous Voice & WhatsApp AI System for Hospital Operations and Patient Scheduling',
+  'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1200&q=80',
+  'A doctor-specific autonomous voice calling and WhatsApp platform handling patient scheduling, emergency doctor unavailability routing, and automated lab report dispatch.',
+  'Healthcare & Hospital Management',
+  '12 Weeks',
+  'A multi-specialty healthcare provider with high patient footfall required an intelligent voice and messaging management layer to automate inbound patient queries, coordinate doctor appointments, and resolve schedule conflicts without burdening reception desks.',
+  'Hospital front-desk operations experienced heavy inbound telephone volume during peak morning and evening hours. When attending physicians faced unexpected surgical emergencies or leaves, staff struggled to contact affected patients in time, creating long waiting hall queues, dissatisfaction, and lost clinical revenue. Additionally, manual physical delivery of scan reports led to administrative overhead.',
+  'Kozker structured an autonomous, adaptive healthcare communication system. Each clinical department and physician is represented by a specialized AI calling agent integrated with hospital scheduling systems. The platform autonomously handles inbound voice inquiries, manages bookings via WhatsApp, detects doctor schedule changes to proactively reschedule affected patients to available specialists, integrates with hospital billing, and automatically dispatches verified diagnostic scan links.',
   '[
-    {"title": "Omnichannel Inventory Engine", "desc": "Sub-second webhook architecture keeping stock counts synced across all stores."},
-    {"title": "Conversational Checkout Flow", "desc": "Automated cart building, tax calculation, and Stripe payment links inside WhatsApp."},
-    {"title": "Discrepancy Safety Guardrails", "desc": "Automated safety stock reserve buffering preventing simultaneous checkout clashes."},
-    {"title": "Unified Operations Audit Log", "desc": "Real-time ledger tracking every order and stock mutation across all channels."}
+    {"value": "60%", "label": "Switchboard Congestion Drop"},
+    {"value": "90%+", "label": "Auto-Rescheduled Emergencies"},
+    {"value": "75%", "label": "Faster Lab Report Delivery"},
+    {"value": "100%", "label": "Operational Visibility"}
   ]'::jsonb,
-  ARRAY['Make.com', 'Shopify API', 'WhatsApp Business API', 'Stripe Checkout', 'Airtable'],
-  'automation',
-  'Start a Conversation',
-  '/contact',
-  'Inquiry: WhatsApp Order & Omnichannel Inventory Sync',
-  'Hi Kozker, I''m reaching out after reading your Nexus Retail Group case study. We need an automated real-time inventory and conversational order sync system.',
+  '{"text": "Automating our inbound triage and emergency schedule adjustments has smoothed our peak-hour clinic operations and drastically improved patient satisfaction across our outpatient departments.", "author": "— Chief Medical Officer & Head of Hospital Administration"}'::jsonb,
+  '[
+    {"title": "Doctor-Specific Autonomous Telecalling Agents", "desc": "Voice AI agents handling high-volume inbound inquiries, screening patient requests, and routing complex calls to human teams during peak surges."},
+    {"title": "Intelligent Emergency Rescheduling Engine", "desc": "Autonomous detection of physician unavailability with instant departmental alerting and proactive patient slot reassignments."},
+    {"title": "Conversational WhatsApp Booking & Diagnostic Report Delivery", "desc": "Instant self-service appointment scheduling paired with automated, secure link delivery for radiology and lab results."},
+    {"title": "Healthcare Analytics & Attendance Optimization", "desc": "Real-time dashboards monitoring call resolution rates, AI vs. human agent ratios, patient attendance rates, and booking turnaround times."}
+  ]'::jsonb,
+  ARRAY['Conversational AI & LLM Engine', 'Telephony API / SIP Trunking', 'WhatsApp Business Cloud API', 'HMIS Integrations', 'Secure Cloud Storage', 'PostgreSQL', 'Operational Analytics Engine'],
+  'ai-assistants',
+  'Modernize Your Healthcare Patient Experience',
+  '/contact?service=ai-assistants',
+  'Inquiry: AI Telecalling & Patient Scheduling Automation',
+  'Hi Kozker team, we are interested in deploying an AI telecalling and WhatsApp appointment management platform for our hospital/clinics network.',
   6,
   true
 )
 ON CONFLICT (id) DO UPDATE SET
+  slug = EXCLUDED.slug,
   client = EXCLUDED.client,
   category = EXCLUDED.category,
   title = EXCLUDED.title,

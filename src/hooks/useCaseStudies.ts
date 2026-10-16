@@ -1,11 +1,13 @@
 import { useEffect, useState, useCallback, useRef } from "react"
 import { isSupabaseConfigured, supabase, getOptimizedMediaUrl } from "@/lib/supabase"
 import { caseStudiesList } from "@/data/siteContent"
+import { generateSlug } from "@/lib/slug"
 import type { CaseStudy } from "@/types/site"
 
 // Database row interface matching Supabase table
 export interface DbCaseStudyRow {
   id: string
+  slug?: string
   client: string
   category: string
   title: string
@@ -27,6 +29,7 @@ export interface DbCaseStudyRow {
   prefilled_message?: string
   sort_order?: number
   is_published?: boolean
+  published?: boolean
   created_at?: string
   updated_at?: string
 }
@@ -34,6 +37,7 @@ export interface DbCaseStudyRow {
 // Optimization 4: Selective projection fields to minimize payload & Supabase egress
 const CASE_STUDIES_SELECT_FIELDS = [
   "id",
+  "slug",
   "client",
   "category",
   "title",
@@ -59,8 +63,10 @@ const CASE_STUDIES_SELECT_FIELDS = [
 ].join(", ")
 
 export function mapDbRowToCaseStudy(row: DbCaseStudyRow): CaseStudy {
+  const generatedSlug = generateSlug(row.title || row.client || row.id)
   return {
     id: row.id,
+    slug: row.slug ? generateSlug(row.slug) : generatedSlug,
     client: row.client,
     category: row.category,
     title: row.title,
@@ -86,8 +92,13 @@ export function mapDbRowToCaseStudy(row: DbCaseStudyRow): CaseStudy {
 }
 
 export function mapCaseStudyToDbRow(study: CaseStudy): Partial<DbCaseStudyRow> {
+  const cleanSlug = study.slug
+    ? generateSlug(study.slug)
+    : generateSlug(study.title || study.client || study.id)
+
   return {
     id: study.id,
+    slug: cleanSlug,
     client: study.client,
     category: study.category,
     title: study.title,
@@ -432,12 +443,20 @@ export function useAdminCaseStudies() {
     }
   }
 
-  const seedCurrentCards = async (): Promise<{ success: boolean; count: number; error?: string }> => {
+  const seedCurrentCards = async (replaceLegacy = true): Promise<{ success: boolean; count: number; error?: string }> => {
     if (!isSupabaseConfigured()) {
       return { success: false, count: 0, error: "Supabase is not configured yet." }
     }
 
     try {
+      if (replaceLegacy) {
+        // Delete old demo/legacy records
+        await supabase
+          .from("case_studies")
+          .delete()
+          .in("id", ["finscale", "globalbi", "techgadgets", "healthops", "apexautomation", "autoops", "case-mv9dxvd1"])
+      }
+
       const rowsToInsert = caseStudiesList.map((item, index) => {
         const payload = mapCaseStudyToDbRow({ ...item, sortOrder: index + 1, isPublished: true })
         return payload
@@ -469,6 +488,96 @@ export function useAdminCaseStudies() {
     togglePublish,
     seedCurrentCards,
   }
+}
+
+/**
+ * Hook for fetching a single case study by slug (or fallback to id).
+ * 1. Checks memory & SWR cached list for 0ms immediate render
+ * 2. Checks static default list
+ * 3. If missing from cache and Supabase is configured, fetches on-demand
+ */
+export function useCaseStudyBySlug(slugOrId: string | undefined) {
+  const { caseStudies, loading: listLoading } = useCaseStudies()
+  const [study, setStudy] = useState<CaseStudy | null>(() => {
+    if (!slugOrId) return null
+    return (
+      caseStudies.find((s) => s.slug === slugOrId || s.id === slugOrId) ||
+      caseStudiesList.find((s) => s.slug === slugOrId || s.id === slugOrId) ||
+      null
+    )
+  })
+  const [loading, setLoading] = useState<boolean>(!study && listLoading)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!slugOrId) {
+      setStudy(null)
+      setLoading(false)
+      return
+    }
+
+    // 1. Check loaded caseStudies list
+    const matched = caseStudies.find((s) => s.slug === slugOrId || s.id === slugOrId)
+    if (matched) {
+      setStudy(matched)
+      setLoading(false)
+      return
+    }
+
+    // 2. Check fallback list
+    const fallbackMatch = caseStudiesList.find((s) => s.slug === slugOrId || s.id === slugOrId)
+    if (fallbackMatch && !isSupabaseConfigured()) {
+      setStudy(fallbackMatch)
+      setLoading(false)
+      return
+    }
+
+    // 3. Direct Supabase query if not found in cache and Supabase is configured
+    if (isSupabaseConfigured()) {
+      let cancelled = false
+      setLoading(true)
+
+      const queryCaseStudy = async () => {
+        try {
+          const { data: row, error: fetchErr } = await supabase
+            .from("case_studies")
+            .select(CASE_STUDIES_SELECT_FIELDS)
+            .or(`slug.eq.${slugOrId},id.eq.${slugOrId}`)
+            .eq("is_published", true)
+            .maybeSingle()
+
+          if (cancelled) return
+          if (fetchErr) {
+            setError(fetchErr.message)
+            setStudy(fallbackMatch || null)
+          } else if (row) {
+            setStudy(mapDbRowToCaseStudy(row as unknown as DbCaseStudyRow))
+          } else {
+            setStudy(fallbackMatch || null)
+          }
+        } catch (err: unknown) {
+          if (cancelled) return
+          setError(err instanceof Error ? err.message : String(err))
+          setStudy(fallbackMatch || null)
+        } finally {
+          if (!cancelled) {
+            setLoading(false)
+          }
+        }
+      }
+
+      queryCaseStudy()
+
+      return () => {
+        cancelled = true
+      }
+    } else {
+      setStudy(fallbackMatch || null)
+      setLoading(false)
+    }
+  }, [slugOrId, caseStudies])
+
+  return { study, loading, error }
 }
 
 

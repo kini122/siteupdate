@@ -6,6 +6,7 @@ import {
   Database,
   ExternalLink,
   Eye,
+  FileText,
   Key,
   LogOut,
   Plus,
@@ -15,12 +16,14 @@ import {
   Upload,
   AlertCircle,
   Clock,
+  Globe,
+  Sparkles,
 } from "lucide-react"
 
 import { isSupabaseConfigured, supabase, uploadCaseStudyImage } from "@/lib/supabase"
 import { useAdminCaseStudies } from "@/hooks/useCaseStudies"
-import { CaseStudyCard } from "@/components/site/CaseStudyCard"
-import { CaseStudyDialog } from "@/components/site/CaseStudyDialog"
+import { generateSlug, validateSlug } from "@/lib/slug"
+import { CaseStudyPagePreview } from "@/components/admin/CaseStudyPagePreview"
 import { SeoHead } from "@/components/seo/SeoHead"
 import type { CaseStudy, CaseStudyCapability } from "@/types/site"
 
@@ -42,13 +45,14 @@ export function AdminPage() {
   } = useAdminCaseStudies()
 
   const [activeTab, setActiveTab] = useState<"list" | "edit">("list")
+  const [previewMode, setPreviewMode] = useState<"split" | "full">("split")
+  const [mobileTab, setMobileTab] = useState<"form" | "preview">("form")
   const [searchQuery, setSearchQuery] = useState("")
   const [filterBranch, setFilterBranch] = useState<string>("all")
   const [editingStudy, setEditingStudy] = useState<CaseStudy | null>(null)
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [saveStatus, setSaveStatus] = useState<string | null>(null)
-  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false)
   const imageUploadInputId = useId()
 
   // Check auth state
@@ -125,11 +129,13 @@ export function AdminPage() {
   // Create new blank case study template
   const handleCreateNew = () => {
     const newId = `case-${Date.now().toString(36)}`
+    const defaultTitle = "New Transformational Case Study Headline"
     setEditingStudy({
       id: newId,
+      slug: generateSlug(defaultTitle),
       client: "New Client",
       category: "DATA & AUTOMATION",
-      title: "New Transformational Case Study Headline",
+      title: defaultTitle,
       image: "/assets/60ed30.jpg",
       description: "Brief summary describing how Kozker engineered custom systems and automated operations.",
       industry: "Enterprise Operations",
@@ -160,17 +166,20 @@ export function AdminPage() {
       isPublished: true,
     })
     setActiveTab("edit")
+    setMobileTab("form")
     setSaveStatus(null)
   }
 
   const handleEdit = (study: CaseStudy) => {
     setEditingStudy({
       ...study,
+      slug: study.slug || generateSlug(study.title || study.client || study.id),
       stats: study.stats ? [...study.stats] : [],
       deliverables: study.deliverables ? [...study.deliverables] : [],
       techStack: study.techStack ? [...study.techStack] : [],
     })
     setActiveTab("edit")
+    setMobileTab("form")
     setSaveStatus(null)
   }
 
@@ -195,10 +204,39 @@ export function AdminPage() {
     setIsSaving(true)
     setSaveStatus(null)
 
-    const result = await saveCaseStudy(editingStudy)
+    // Clean and validate slug for technical SEO
+    const cleanSlug = generateSlug(editingStudy.slug || editingStudy.title || editingStudy.id)
+    const slugValidation = validateSlug(cleanSlug)
+    if (!slugValidation.isValid) {
+      alert(`Invalid URL slug: ${slugValidation.error}`)
+      setIsSaving(false)
+      return
+    }
+
+    // Verify database-level uniqueness across other case studies
+    const slugConflict = caseStudies.find(
+      (s) =>
+        s.id !== editingStudy.id &&
+        (s.slug === cleanSlug || generateSlug(s.slug || s.title || s.id) === cleanSlug)
+    )
+    if (slugConflict) {
+      alert(
+        `Slug Collision: "${cleanSlug}" is already used by "${slugConflict.client}" (${slugConflict.title}). Each case study requires a unique slug for proper SEO indexing.`
+      )
+      setIsSaving(false)
+      return
+    }
+
+    const payloadToSave: CaseStudy = {
+      ...editingStudy,
+      slug: cleanSlug,
+    }
+
+    const result = await saveCaseStudy(payloadToSave)
     setIsSaving(false)
 
     if (result.success) {
+      setEditingStudy(payloadToSave)
       setSaveStatus("Saved successfully to Supabase!")
       setTimeout(() => setSaveStatus(null), 3000)
     } else {
@@ -376,7 +414,7 @@ export function AdminPage() {
               <div>
                 <h1 className="admin-page-title">Case Studies &amp; Outcomes</h1>
                 <p className="admin-page-subtitle">
-                  Configure case study cards, banner imagery in Supabase storage, outcome metrics, and detailed modal views.
+                  Configure case study cards, banner imagery in Supabase storage, outcome metrics, and dedicated slug story pages.
                 </p>
               </div>
 
@@ -480,9 +518,27 @@ export function AdminPage() {
                           </span>
                         )}
                       </div>
+
+                      {/* SEO Slug Badge & Live Link */}
+                      <div className="admin-row-slug-preview">
+                        <Globe className="h-3 w-3 text-[#FF6E30]" />
+                        <span className="admin-row-slug-path">
+                          /case-studies/{study.slug || study.id}
+                        </span>
+                      </div>
                     </div>
 
                     <div className="admin-row-actions">
+                      <Link
+                        to="/case-studies/$slug"
+                        params={{ slug: study.slug || study.id }}
+                        target="_blank"
+                        className="admin-live-link-btn"
+                        title="View dedicated case study page"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                        <span>Live Page</span>
+                      </Link>
                       <button
                         type="button"
                         onClick={() => handleEdit(study)}
@@ -533,15 +589,37 @@ export function AdminPage() {
                     className="admin-back-btn"
                   >
                     <ArrowLeft className="h-4 w-4" />
-                    <span>Back to List</span>
+                    <span>Back</span>
                   </button>
-                  <h2 className="admin-edit-page-title">
+                  <h2 className="admin-edit-page-title" title={editingStudy.id ? editingStudy.client : "New Case Study"}>
                     {editingStudy.id ? `Editing: ${editingStudy.client}` : "New Case Study"}
                   </h2>
                 </div>
 
                 <div className="admin-topbar-right">
                   {saveStatus && <span className="admin-save-toast">{saveStatus}</span>}
+
+                  <button
+                    type="button"
+                    onClick={() => setPreviewMode((prev) => (prev === "split" ? "full" : "split"))}
+                    className="admin-preview-btn admin-desktop-toggle-btn"
+                    title={previewMode === "split" ? "View full page preview" : "Return to split editor"}
+                  >
+                    <Eye className="h-4 w-4 text-[#FF6E30]" />
+                    <span>{previewMode === "split" ? "Full Preview" : "Split View"}</span>
+                  </button>
+
+                  <Link
+                    to="/case-studies/$slug"
+                    params={{ slug: editingStudy.slug || editingStudy.id }}
+                    target="_blank"
+                    className="admin-preview-btn admin-live-topbar-btn"
+                    title="Open live page in new browser tab"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    <span>Live Page</span>
+                  </Link>
+
                   <button
                     type="button"
                     onClick={handleSave}
@@ -549,26 +627,55 @@ export function AdminPage() {
                     className="admin-save-btn"
                   >
                     <Save className="h-4 w-4" />
-                    <span>{isSaving ? "Saving..." : "Save to Database"}</span>
+                    <span>{isSaving ? "Saving..." : "Save"}</span>
                   </button>
                 </div>
               </div>
 
-              {/* Two Column Layout: Editor Form (Left) & Real-time Live Card Preview (Right) */}
-              <div className="admin-editor-layout">
+              {/* Mobile & Tablet Segmented View Switcher */}
+              <div className="admin-mobile-tab-bar" role="tablist" aria-label="Editor View Modes">
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={mobileTab === "form"}
+                  onClick={() => setMobileTab("form")}
+                  className={`admin-mobile-tab-btn ${mobileTab === "form" ? "active" : ""}`}
+                >
+                  <FileText className="h-4 w-4" />
+                  <span>Editor Form</span>
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={mobileTab === "preview"}
+                  onClick={() => setMobileTab("preview")}
+                  className={`admin-mobile-tab-btn ${mobileTab === "preview" ? "active" : ""}`}
+                >
+                  <Eye className="h-4 w-4" />
+                  <span>Slug Page Preview</span>
+                </button>
+              </div>
+
+              {/* Layout: Editor Form (Left) & Real-time Live Slug Page Preview (Right) */}
+              <div
+                className={`admin-editor-layout ${
+                  previewMode === "full" ? "full-preview" : ""
+                } mobile-tab-${mobileTab}`}
+              >
                 {/* Left Column: Form Fields */}
                 <div className="admin-form-col">
                   {/* Card Section 1: Basic Identifiers */}
                   <div className="admin-section-card">
-                    <h3 className="admin-section-heading">1. Basic Information &amp; Meta</h3>
+                    <h3 className="admin-section-heading">1. Basic Information &amp; SEO Permalink</h3>
                     <div className="admin-grid-two">
                       <div className="admin-form-group">
-                        <label>Unique ID / Slug</label>
+                        <label>Database System ID</label>
                         <input
                           type="text"
                           value={editingStudy.id}
                           onChange={(e) => setEditingStudy({ ...editingStudy, id: e.target.value })}
                           className="admin-input"
+                          placeholder="e.g. finscale"
                         />
                       </div>
                       <div className="admin-form-group">
@@ -578,7 +685,100 @@ export function AdminPage() {
                           value={editingStudy.client}
                           onChange={(e) => setEditingStudy({ ...editingStudy, client: e.target.value })}
                           className="admin-input"
+                          placeholder="e.g. FinScale Analytics"
                         />
+                      </div>
+                    </div>
+
+                    <div className="admin-form-group">
+                      <label>Headline Title (Main H1 &amp; SEO Title)</label>
+                      <input
+                        type="text"
+                        value={editingStudy.title}
+                        onChange={(e) => {
+                          const newTitle = e.target.value
+                          // If slug hasn't been manually diverged or is empty, auto-sync
+                          const currentGenerated = generateSlug(editingStudy.title)
+                          const isSynced = !editingStudy.slug || editingStudy.slug === currentGenerated
+                          setEditingStudy({
+                            ...editingStudy,
+                            title: newTitle,
+                            slug: isSynced ? generateSlug(newTitle) : editingStudy.slug,
+                          })
+                        }}
+                        className="admin-input"
+                        placeholder="e.g. Automated Financial Modeling & Real-Time Executive Dashboards"
+                      />
+                    </div>
+
+                    {/* SEO Slug Management Card */}
+                    <div className="admin-seo-slug-box">
+                      <div className="admin-seo-slug-header">
+                        <div>
+                          <label className="admin-seo-slug-label">
+                            <Globe className="h-4 w-4 text-[#FF6E30]" />
+                            <span>SEO URL Slug (Permalink)</span>
+                          </label>
+                          <p className="admin-seo-slug-hint">
+                            Defines the permanent URL for search engine indexing. Forces lowercase, numbers, and single hyphens.
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newSlug = generateSlug(editingStudy.title || editingStudy.client)
+                            setEditingStudy({ ...editingStudy, slug: newSlug })
+                          }}
+                          className="admin-auto-slug-btn"
+                          title="Generate clean slug from headline title"
+                        >
+                          <Sparkles className="h-3.5 w-3.5" />
+                          <span>Generate from Title</span>
+                        </button>
+                      </div>
+
+                      <div className="admin-seo-slug-input-row">
+                        <span className="admin-seo-slug-prefix">https://kozker.com/case-studies/</span>
+                        <input
+                          type="text"
+                          value={editingStudy.slug || ""}
+                          onChange={(e) => {
+                            const raw = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "")
+                            setEditingStudy({ ...editingStudy, slug: raw })
+                          }}
+                          placeholder="client-project-redesign"
+                          className="admin-input admin-slug-field"
+                        />
+                      </div>
+
+                      {/* Real-time slug conflict & validation indicator */}
+                      {(() => {
+                        const activeSlug = editingStudy.slug || generateSlug(editingStudy.title)
+                        const conflict = caseStudies.find(
+                          (s) => s.id !== editingStudy.id && (s.slug === activeSlug || generateSlug(s.slug || s.title || s.id) === activeSlug)
+                        )
+                        if (conflict) {
+                          return (
+                            <div className="admin-slug-warning-alert">
+                              <AlertCircle className="h-4 w-4 text-red-500 shrink-0" />
+                              <span>
+                                <strong>Slug Conflict:</strong> &ldquo;{activeSlug}&rdquo; is already in use by {conflict.client}. Please provide a unique slug to protect technical SEO.
+                              </span>
+                            </div>
+                          )
+                        }
+                        return (
+                          <div className="admin-slug-preview-info">
+                            <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                            <span>
+                              Live canonical URL: <code>https://kozker.com/case-studies/{activeSlug}</code>
+                            </span>
+                          </div>
+                        )
+                      })()}
+
+                      <div className="admin-slug-immutability-tip">
+                        <strong>SEO Preservation Rule:</strong> Once indexed by search engines, avoid altering this slug. Changing published slugs requires 301 redirects to pass link equity.
                       </div>
                     </div>
 
@@ -609,16 +809,6 @@ export function AdminPage() {
                           <option value="automation">Workflow Automation</option>
                         </select>
                       </div>
-                    </div>
-
-                    <div className="admin-form-group">
-                      <label>Headline Title</label>
-                      <input
-                        type="text"
-                        value={editingStudy.title}
-                        onChange={(e) => setEditingStudy({ ...editingStudy, title: e.target.value })}
-                        className="admin-input"
-                      />
                     </div>
 
                     <div className="admin-grid-two">
@@ -981,38 +1171,15 @@ export function AdminPage() {
                   </div>
                 </div>
 
-                {/* Right Column: Live Card & Modal Preview (Sticky) */}
+                {/* Right Column: Live Slug Page Preview (Sticky) */}
                 <div className="admin-preview-col">
-                  <div className="admin-preview-sticky-box">
-                    <div className="admin-preview-header">
-                      <div className="flex items-center gap-2">
-                        <Eye className="h-4 w-4 text-[#FF6E30]" />
-                        <h4 className="font-semibold text-sm text-[#0C0B09]">Live Website Card Preview</h4>
-                      </div>
-                      <span className="text-xs text-[#8D8980]">Updates in real-time</span>
-                    </div>
-
-                    <div className="admin-card-render-wrapper">
-                      <CaseStudyCard study={editingStudy} />
-                    </div>
-
-                    <div className="admin-preview-modal-trigger-box">
-                      <button
-                        type="button"
-                        onClick={() => setIsPreviewModalOpen(true)}
-                        className="admin-open-modal-preview-btn"
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                        <span>View Full Modal Preview</span>
-                      </button>
-                    </div>
-
-                    <CaseStudyDialog
-                      study={editingStudy}
-                      open={isPreviewModalOpen}
-                      onOpenChange={setIsPreviewModalOpen}
-                    />
-                  </div>
+                  <CaseStudyPagePreview
+                    study={editingStudy}
+                    viewMode={previewMode}
+                    onToggleViewMode={() =>
+                      setPreviewMode((prev) => (prev === "split" ? "full" : "split"))
+                    }
+                  />
                 </div>
               </div>
             </div>

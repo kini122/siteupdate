@@ -15,37 +15,50 @@ import { SignatureBand } from "@/components/site/SignatureBand"
 import { SiteFooter } from "@/components/site/SiteFooter"
 import { SolutionTabs } from "@/components/site/SolutionTabs"
 import { SeoHead } from "@/components/seo/SeoHead"
-import { faqItems, products, solutionPanels } from "@/data/siteContent"
+import { faqItems, products, solutionPanels, caseStudiesList } from "@/data/siteContent"
 import { useCaseStudies } from "@/hooks/useCaseStudies"
 import { TEMPORARY_SECTION_VISIBILITY } from "@/config/visibility"
-
-const clientTestimonials = [
-  {
-    quote: "The WhatsApp automation has revolutionized our customer communication. Highly recommended!",
-    author: "Head of Customer Experience",
-    role: "Direct-to-Consumer E-Commerce Brand",
-  },
-  {
-    quote: "The AI chatbot and reporting workflow transformed our customer experience. Sales have never been better.",
-    author: "Founder & Managing Director",
-    role: "Consumer Hardware & D2C Scale-Up",
-  },
-  {
-    quote: "Kozker unified our logistics data and automated exception tracking, cutting manual hours by 60%.",
-    author: "VP of Supply Chain & Operations",
-    role: "Global Freight & Logistics Provider",
-  },
-  {
-    quote: "Intuitive AI assistants integrated right into our workflow. Answers that used to take hours now take seconds.",
-    author: "Head of Operations & Systems",
-    role: "B2B Enterprise SaaS Platform",
-  },
-]
 
 export function HomePage() {
   const { caseStudies } = useCaseStudies()
   const [productPreviewOpen, setProductPreviewOpen] = useState(false)
   const [caseStudyService, setCaseStudyService] = useState<string>("data-bi")
+
+  // Dynamically derive client testimonials directly from live case studies
+  const caseStudyTestimonials = useMemo(() => {
+    const list = caseStudies && caseStudies.length > 0 ? caseStudies : caseStudiesList
+    const filtered = list.filter((s) => s.quote && s.quote.text)
+
+    if (filtered.length === 0) {
+      return [
+        {
+          quote: "The AI chatbot and reporting workflow transformed our customer experience. Sales have never been better.",
+          author: "Founder & Managing Director",
+          role: "Consumer Hardware & D2C Scale-Up",
+          slug: "boosts-conversion-rate-by-45-percent-automation-chatbot",
+        },
+      ]
+    }
+
+    return filtered.map((s) => {
+      const rawAuthor = s.quote?.author ? s.quote.author.replace(/^[—–-]\s*/, "").trim() : s.client
+      const commaIdx = rawAuthor.indexOf(",")
+      let authorName = rawAuthor
+      let authorOrg = s.client
+      if (commaIdx !== -1) {
+        authorName = rawAuthor.slice(0, commaIdx).trim()
+        authorOrg = rawAuthor.slice(commaIdx + 1).trim()
+      }
+      const roleStr = s.industry ? `${authorOrg} • ${s.industry}` : authorOrg
+
+      return {
+        quote: s.quote!.text,
+        author: authorName,
+        role: roleStr,
+        slug: s.slug || s.id,
+      }
+    })
+  }, [caseStudies])
 
   const featuredStudies = useMemo(() => {
     if (caseStudyService === "all") return caseStudies.slice(0, 2)
@@ -56,14 +69,14 @@ export function HomePage() {
 
   const featuredProduct = products[0]
 
-  // Testimonial auto-rotation without pagination dots
+  // Increased rotation speed for testimonials (2.8s snappy cycle)
   useEffect(() => {
-    if (testimonialPaused) return
+    if (testimonialPaused || caseStudyTestimonials.length === 0) return
     const timer = setInterval(() => {
-      setTestimonialIndex((prev) => (prev + 1) % clientTestimonials.length)
-    }, 4500)
+      setTestimonialIndex((prev) => (prev + 1) % caseStudyTestimonials.length)
+    }, 2800)
     return () => clearInterval(timer)
-  }, [testimonialPaused])
+  }, [testimonialPaused, caseStudyTestimonials.length])
 
   return (
     <div className="home-page-root">
@@ -165,18 +178,25 @@ export function HomePage() {
               <img src="/assets/cb0953.svg" alt="Quote" aria-hidden="true" />
               <div className="testimonial-rotator-area">
                 <AnimatePresence mode="wait" initial={false}>
-                  <motion.div
-                    key={testimonialIndex}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.35, ease: [0.22, 0.61, 0.36, 1] }}
-                    className="testimonial-quote-inner"
-                  >
-                    <p>{clientTestimonials[testimonialIndex].quote}</p>
-                    <strong>{clientTestimonials[testimonialIndex].author}</strong>
-                    <span>{clientTestimonials[testimonialIndex].role}</span>
-                  </motion.div>
+                  {(() => {
+                    const currentTestimonial =
+                      caseStudyTestimonials[testimonialIndex % (caseStudyTestimonials.length || 1)] ||
+                      caseStudyTestimonials[0]
+                    return (
+                      <motion.div
+                        key={testimonialIndex}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.28, ease: [0.22, 0.61, 0.36, 1] }}
+                        className="testimonial-quote-inner"
+                      >
+                        <p>{currentTestimonial.quote}</p>
+                        <strong>{currentTestimonial.author}</strong>
+                        <span>{currentTestimonial.role}</span>
+                      </motion.div>
+                    )
+                  })()}
                 </AnimatePresence>
               </div>
             </article>

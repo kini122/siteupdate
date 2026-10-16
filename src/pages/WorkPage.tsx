@@ -34,17 +34,22 @@ export function WorkPage() {
     return products
   }, [filter])
 
+  const currentPath =
+    typeof window !== "undefined" && window.location.pathname.startsWith("/case-studies")
+      ? "/case-studies"
+      : "/work"
+
   return (
     <div className="work-page-root">
       <SeoHead
         title="Work & Case Studies — Proven ROI & Automation | Kozker"
         description="Explore documented client case studies showing how Kozker built custom BI dashboards, AI copilots, and workflow automations that delivered up to 75% faster reporting and 3.2x ROI."
-        canonicalPath="/work"
+        canonicalPath={currentPath}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "CollectionPage",
           name: "Kozker Case Studies & Client Outcomes",
-          url: "https://kozker.com/work",
+          url: `https://kozker.com${currentPath}`,
           description: "Documented engineering case studies showing measurable ROI across FinTech, E-Commerce, Logistics, Healthcare, and Operations.",
         }}
       />

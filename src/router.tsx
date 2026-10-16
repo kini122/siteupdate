@@ -9,6 +9,7 @@ import { PartnershipPage } from "@/pages/PartnershipPage"
 import { ProductsPage } from "@/pages/ProductsPage"
 import { ServicesPage } from "@/pages/ServicesPage"
 import { WorkPage } from "@/pages/WorkPage"
+import { CaseStudyDetailPage } from "@/pages/CaseStudyDetailPage"
 import { AdminPage } from "@/pages/admin/AdminPage"
 
 const rootRoute = createRootRoute({ component: SiteLayout })
@@ -24,10 +25,22 @@ const servicesRoute = createRoute({
 })
 const productsRoute = createRoute({ getParentRoute: () => rootRoute, path: "/products", component: ProductsPage })
 const workRoute = createRoute({ getParentRoute: () => rootRoute, path: "/work", component: WorkPage })
+const caseStudiesHubRoute = createRoute({ getParentRoute: () => rootRoute, path: "/case-studies", component: WorkPage })
+const caseStudyDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/case-studies/$slug",
+  component: CaseStudyDetailPage,
+})
+const workCaseStudyDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/work/$slug",
+  component: CaseStudyDetailPage,
+})
 const aboutRoute = createRoute({ getParentRoute: () => rootRoute, path: "/about", component: AboutPage })
 const partnersRoute = createRoute({ getParentRoute: () => rootRoute, path: "/partners", component: PartnershipPage })
 const adminRoute = createRoute({ getParentRoute: () => rootRoute, path: "/admin", component: AdminPage })
 interface ContactSearch {
+  service?: string
   subject?: string
   message?: string
 }
@@ -36,6 +49,7 @@ const contactRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/contact",
   validateSearch: (search: Record<string, unknown>): ContactSearch => ({
+    service: search.service ? String(search.service) : undefined,
     subject: search.subject ? String(search.subject) : undefined,
     message: search.message ? String(search.message) : undefined,
   }),
@@ -47,6 +61,9 @@ const routeTree = rootRoute.addChildren([
   servicesRoute,
   productsRoute,
   workRoute,
+  caseStudiesHubRoute,
+  caseStudyDetailRoute,
+  workCaseStudyDetailRoute,
   aboutRoute,
   partnersRoute,
   contactRoute,

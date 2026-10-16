@@ -27,6 +27,7 @@ export interface CaseStudyCapability {
 
 export interface CaseStudy {
   id: string
+  slug?: string
   client: string
   category: string
   title: string
