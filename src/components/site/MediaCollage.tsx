@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, useCallback } from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 
 export interface ProjectPreviewItem {
@@ -72,7 +71,6 @@ export const defaultProjectItems: ProjectPreviewItem[] = [
 ]
 
 const AUTO_SLIDE_DURATION = 4800 // 4.8 seconds per slide
-const PROGRESS_STEP_INTERVAL = 30 // update progress every 30ms
 
 export function MediaCollage({
   mainImage,
@@ -106,7 +104,6 @@ export function MediaCollage({
       : defaultProjectItems)
 
   const [activeIndex, setActiveIndex] = useState(0)
-  const [progress, setProgress] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const trackRef = useRef<HTMLDivElement>(null)
   const tabRefs = useRef<(HTMLElement | null)[]>([])
@@ -115,64 +112,39 @@ export function MediaCollage({
     (index: number) => {
       const nextIndex = (index + projectList.length) % projectList.length
       setActiveIndex(nextIndex)
-      setProgress(0)
     },
     [projectList.length]
   )
 
-  // Auto-scroll track when active tab changes on mobile/overflowing screens
-  // Wrapped in requestAnimationFrame to eliminate forced reflow on mount
+  // Auto-scroll track when active tab changes on mobile/overflowing screens (zero forced reflow)
   useEffect(() => {
-    if (activeIndex === 0 && !trackRef.current?.scrollLeft) return
+    if (activeIndex === 0) return
 
-    const rafId = requestAnimationFrame(() => {
-      const activeEl = tabRefs.current[activeIndex]
-      const trackEl = trackRef.current
-      if (activeEl && trackEl) {
-        const isOverflowing = trackEl.scrollWidth > trackEl.clientWidth + 10
-        if (isOverflowing) {
-          // Calculate offset to center active element with neighboring collapsed tabs visible
-          const trackRect = trackEl.getBoundingClientRect()
-          const elRect = activeEl.getBoundingClientRect()
-          const scrollLeftOffset =
-            trackEl.scrollLeft +
-            (elRect.left - trackRect.left) -
-            (trackEl.clientWidth / 2 - elRect.width / 2)
-
-          trackEl.scrollTo({
-            left: Math.max(0, scrollLeftOffset),
-            behavior: "smooth",
-          })
-        } else if (trackEl.scrollLeft > 0) {
-          trackEl.scrollTo({
-            left: 0,
-            behavior: "smooth",
-          })
-        }
+    const activeEl = tabRefs.current[activeIndex]
+    const trackEl = trackRef.current
+    if (activeEl && trackEl) {
+      const isOverflowing = trackEl.scrollWidth > trackEl.clientWidth + 10
+      if (isOverflowing) {
+        const scrollLeftOffset =
+          activeEl.offsetLeft - (trackEl.clientWidth / 2 - activeEl.clientWidth / 2)
+        trackEl.scrollTo({
+          left: Math.max(0, scrollLeftOffset),
+          behavior: "smooth",
+        })
       }
-    })
-
-    return () => cancelAnimationFrame(rafId)
+    }
   }, [activeIndex])
 
-  // Auto-play timer with progress bar
+  // Slide advance timer (fires once every 4.8s; visual progress handled on GPU via CSS)
   useEffect(() => {
     if (isPaused || projectList.length <= 1) return
 
-    const progressIncrement = (PROGRESS_STEP_INTERVAL / AUTO_SLIDE_DURATION) * 100
-
     const timer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          setActiveIndex((currentIdx) => (currentIdx + 1) % projectList.length)
-          return 0
-        }
-        return prev + progressIncrement
-      })
-    }, PROGRESS_STEP_INTERVAL)
+      setActiveIndex((currentIdx) => (currentIdx + 1) % projectList.length)
+    }, AUTO_SLIDE_DURATION)
 
     return () => clearInterval(timer)
-  }, [isPaused, projectList.length, activeIndex])
+  }, [isPaused, projectList.length])
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "ArrowLeft") {
@@ -232,10 +204,8 @@ export function MediaCollage({
                     <span className="tab-rail-label">{itemLabel}</span>
                     <div className="tab-rail-track" aria-hidden="true">
                       <div
-                        className="tab-rail-progress"
-                        style={{
-                          transform: `scaleY(${Math.min(1, Math.max(0, progress / 100))})`,
-                        }}
+                        key={`progress-rail-${activeIndex}`}
+                        className={`tab-rail-progress ${isPaused ? "is-paused" : ""}`}
                       />
                     </div>
                   </div>
@@ -308,38 +278,16 @@ export function MediaCollage({
         })}
       </div>
 
-      {/* Pagination Controls & Indicator Dots matching reference */}
-      <div className="project-gallery-controls">
-        <button
-          type="button"
-          aria-label="Previous project tab"
-          onClick={() => selectProject(activeIndex - 1)}
-          className="gallery-nav-btn"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-
-        <div className="project-gallery-dots" role="group" aria-label="Project slide navigation">
-          {projectList.map((item, idx) => (
-            <button
+      {/* Pagination Slide Indicator matching reference (Display-only, non-interactive) */}
+      <div className="project-gallery-controls" aria-hidden="true">
+        <div className="project-gallery-dots">
+          {projectList.map((_, idx) => (
+            <span
               key={`dot-${idx}`}
-              type="button"
               className={`gallery-dot ${idx === activeIndex ? "is-active" : ""}`}
-              aria-label={`Slide ${idx + 1}: ${item.title}`}
-              aria-pressed={idx === activeIndex}
-              onClick={() => selectProject(idx)}
             />
           ))}
         </div>
-
-        <button
-          type="button"
-          aria-label="Next project tab"
-          onClick={() => selectProject(activeIndex + 1)}
-          className="gallery-nav-btn"
-        >
-          <ChevronRight className="h-5 w-5" />
-        </button>
       </div>
     </div>
   )

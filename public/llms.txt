@@ -17,12 +17,12 @@ Kozker Tech designs and engineers production BI dashboards, multilingual AI voic
 
 ## Case Studies & Verified Outcomes
 
-- [24/7 Multilingual AI Equine Healthcare Assistant](https://kozker.com/case-studies/multilingual-ai-equine-health-assistant): Handles emergency triage across 5 languages with <3s response time.
-- [Automated Financial Modeling for FinScale Analytics](https://kozker.com/case-studies/automated-financial-modeling-real-time-executive-dashboards): 75% faster executive reporting and 5-day to 20-minute cycle reduction.
-- [Cross-Border Logistics Ops Sync & BI Metrics](https://kozker.com/case-studies/cross-border-logistics-ops-sync-bi-metrics): 99.8% tracking synchronization and 12-hour customs turnaround reduction.
-- [AI-Powered Patient Triage & EHR Routing](https://kozker.com/case-studies/ai-powered-patient-triage-ehr-routing): Automated clinical triage and appointment routing with 99.4% accuracy.
-- [WhatsApp Order & Inventory Sync Automation](https://kozker.com/case-studies/end-to-end-whatsapp-order-inventory-sync-automation): End-to-end multi-store inventory sync with 99.8% order accuracy.
-- [Multi-Carrier Fulfillment & Exception Pipeline](https://kozker.com/case-studies/automated-multi-carrier-fulfillment-exception-pipeline): Automated shipment triage and exception alerts for enterprise freight.
+- [Building an AI-Powered WhatsApp Voice & Health Helpline for Brooke India](https://kozker.com/case-studies/brooke-india-whatsapp-equine-helpline): 24/7 WhatsApp helpline transcribing regional voice notes and connecting owners to local equine veterinarians.
+- [Replacing Spreadsheets with a Custom Recruitment Platform & AI Matcher](https://kozker.com/case-studies/custom-recruitment-platform-ai-matching): Unified recruitment workspace eliminating duplicate candidate entries with evidence-based resume quote scoring.
+- [Adding an In-App AI Chat Copilot to a Frappe ERP Recruitment System](https://kozker.com/case-studies/frappe-erp-ai-recruiter-copilot): In-app ERP sidebar for IT staffing agencies automating JD conversion and screening evaluations via plain English.
+- [Centralizing Recruitment Data & Building Automated Power BI Dashboards](https://kozker.com/case-studies/recruitment-power-bi-dashboards): Centralized MariaDB staging pipeline and automated Power BI reporting eliminating manual weekly Excel MIS.
+- [Streamlining Client Intake, Document Collection & Approval Workflows for a CA Firm](https://kozker.com/case-studies/chartered-accountancy-workflow-automation): 8-stage automated workflow managing client intake, missing document alerts, partner reviews, and payment-gated delivery.
+- [Designing an AI Telecalling & Appointment Rescheduling System for Hospitals](https://kozker.com/case-studies/hospital-ai-telecalling-appointment-system): Integrated voice AI and WhatsApp system managing doctor consultation slots and automated emergency rescheduling.
 
 ## Company & Contact
 

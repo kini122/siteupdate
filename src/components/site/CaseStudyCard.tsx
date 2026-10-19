@@ -52,10 +52,22 @@ export function CaseStudyCard({ study }: CaseStudyCardProps) {
         aria-label={`Read ${study.client} case study`}
       >
         <img
-          src={study.image}
+          src={
+            study.image.includes("images.unsplash.com")
+              ? study.image.replace(/w=\d+/, "w=640")
+              : study.image
+          }
+          srcSet={
+            study.image.includes("images.unsplash.com")
+              ? `${study.image.replace(/w=\d+/, "w=380")} 380w, ${study.image.replace(/w=\d+/, "w=640")} 640w, ${study.image.replace(/w=\d+/, "w=1000")} 1000w`
+              : undefined
+          }
+          sizes="(max-width: 640px) 92vw, (max-width: 1024px) 48vw, 540px"
           alt={`${study.client} case study`}
           className="case-card-img"
           loading="lazy"
+          width={540}
+          height={320}
         />
       </Link>
 

@@ -105,8 +105,8 @@ export function SiteHeader() {
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="start"
-              sideOffset={14}
-              className="services-menu-popover !bg-[#1F1C1B] !border !border-white/12 !text-white !p-[10px] !rounded-[18px] !shadow-[0_20px_50px_rgba(0,0,0,0.55)] !w-auto !min-w-[440px] !z-[120]"
+              sideOffset={12}
+              className="services-menu-popover !bg-[#322D2A] !border !border-white/10 !text-white !p-0 !rounded-[12px] !shadow-[0_16px_40px_rgba(0,0,0,0.45)] !w-[350px] !min-w-[350px] !z-[120]"
             >
               <div className="services-menu-list">
                 {serviceSubLinks.map((link) => (

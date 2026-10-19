@@ -13,11 +13,12 @@ export function SignatureBand() {
       setShouldLoadIframe(true)
     }
 
-    const checkMobile = () => {
-      setIsMobile(typeof window !== "undefined" && window.innerWidth <= 768)
+    const mql = typeof window !== "undefined" ? window.matchMedia("(max-width: 768px)") : null
+    if (mql) {
+      setIsMobile(mql.matches)
+      const onChange = (e: MediaQueryListEvent) => setIsMobile(e.matches)
+      mql.addEventListener("change", onChange)
     }
-    checkMobile()
-    window.addEventListener("resize", checkMobile)
 
     // Defer loading heavy 3rd-party Cal.com scripts until user scrolls within proximity
     const el = containerRef.current
@@ -34,14 +35,13 @@ export function SignatureBand() {
       observer.observe(el)
       return () => {
         observer.disconnect()
-        window.removeEventListener("resize", checkMobile)
+        if (mql) mql.removeEventListener("change", () => {})
       }
     } else {
       // Fallback: load after initial idle period
       const timer = setTimeout(() => setShouldLoadIframe(true), 3500)
       return () => {
         clearTimeout(timer)
-        window.removeEventListener("resize", checkMobile)
       }
     }
   }, [])
@@ -82,7 +82,7 @@ export function SignatureBand() {
               : NaN
 
         if (!isNaN(numHeight) && numHeight > 300) {
-          const mobile = typeof window !== "undefined" && window.innerWidth <= 768
+          const mobile = typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches
           // On mobile, add comfortable bottom breathing room (40px) so slot buttons & confirm CTA never clip
           const buffer = mobile ? 40 : 0
           const minAllowed = mobile ? 750 : 580

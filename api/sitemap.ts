@@ -10,12 +10,12 @@ interface CaseStudyRow {
 
 // Default fallback case studies in case Supabase credentials aren't configured yet
 const FALLBACK_SLUGS = [
-  { slug: "automated-financial-modeling-real-time-executive-dashboards", updated_at: "2026-10-16" },
-  { slug: "cross-border-logistics-ops-sync-bi-metrics", updated_at: "2026-10-16" },
-  { slug: "boosts-conversion-rate-by-45-percent-automation-chatbot", updated_at: "2026-10-16" },
-  { slug: "ai-powered-patient-triage-ehr-routing", updated_at: "2026-10-16" },
-  { slug: "automated-multi-carrier-fulfillment-exception-pipeline", updated_at: "2026-10-16" },
-  { slug: "end-to-end-whatsapp-order-inventory-sync-automation", updated_at: "2026-10-16" },
+  { slug: "brooke-india-whatsapp-equine-helpline", updated_at: "2026-10-19" },
+  { slug: "custom-recruitment-platform-ai-matching", updated_at: "2026-10-19" },
+  { slug: "frappe-erp-ai-recruiter-copilot", updated_at: "2026-10-19" },
+  { slug: "recruitment-power-bi-dashboards", updated_at: "2026-10-19" },
+  { slug: "chartered-accountancy-workflow-automation", updated_at: "2026-10-19" },
+  { slug: "hospital-ai-telecalling-appointment-system", updated_at: "2026-10-19" },
 ]
 
 export default async function handler(_req: any, res: any) {

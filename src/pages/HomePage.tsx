@@ -1,17 +1,26 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState, lazy, Suspense } from "react"
 import { Link } from "@tanstack/react-router"
 import { AnimatePresence, motion } from "motion/react"
 import { Play } from "lucide-react"
 
+const ProductPreviewDialog = lazy(() =>
+  import("@/components/site/ProductPreviewDialog").then((m) => ({ default: m.ProductPreviewDialog }))
+)
+const SignatureBand = lazy(() =>
+  import("@/components/site/SignatureBand").then((m) => ({ default: m.SignatureBand }))
+)
+const ProcessStack = lazy(() =>
+  import("@/components/site/ProcessStack").then((m) => ({ default: m.ProcessStack }))
+)
+const FaqSection = lazy(() =>
+  import("@/components/site/FaqSection").then((m) => ({ default: m.FaqSection }))
+)
+
 import { CaseStudyCard } from "@/components/site/CaseStudyCard"
 import { ServiceDropdown } from "@/components/site/ServiceDropdown"
-import { FaqSection } from "@/components/site/FaqSection"
 import { LogoStrip } from "@/components/site/LogoStrip"
 import { MediaCollage } from "@/components/site/MediaCollage"
-import { ProcessStack } from "@/components/site/ProcessStack"
-import { ProductPreviewDialog } from "@/components/site/ProductPreviewDialog"
 import { SectionReveal } from "@/components/site/SectionReveal"
-import { SignatureBand } from "@/components/site/SignatureBand"
 import { SiteFooter } from "@/components/site/SiteFooter"
 import { SolutionTabs } from "@/components/site/SolutionTabs"
 import { SeoHead } from "@/components/seo/SeoHead"
@@ -22,59 +31,75 @@ import { TEMPORARY_SECTION_VISIBILITY } from "@/config/visibility"
 export function HomePage() {
   const { caseStudies } = useCaseStudies()
   const [productPreviewOpen, setProductPreviewOpen] = useState(false)
-  const [caseStudyService, setCaseStudyService] = useState<string>("data-bi")
+  const [caseStudyService, setCaseStudyService] = useState<string>("all")
 
   // Dynamically derive client testimonials directly from live case studies
   const caseStudyTestimonials = useMemo(() => {
     const list = caseStudies && caseStudies.length > 0 ? caseStudies : caseStudiesList
-    const filtered = list.filter((s) => s.quote && s.quote.text)
 
-    if (filtered.length === 0) {
-      return [
-        {
-          quote: "The AI chatbot and reporting workflow transformed our customer experience. Sales have never been better.",
-          author: "Founder & Managing Director",
-          role: "Consumer Hardware & D2C Scale-Up",
-          slug: "boosts-conversion-rate-by-45-percent-automation-chatbot",
-        },
-      ]
-    }
-
-    return filtered.map((s) => {
-      const rawAuthor = s.quote?.author ? s.quote.author.replace(/^[—–-]\s*/, "").trim() : s.client
-      const commaIdx = rawAuthor.indexOf(",")
-      let authorName = rawAuthor
-      let authorOrg = s.client
-      if (commaIdx !== -1) {
-        authorName = rawAuthor.slice(0, commaIdx).trim()
-        authorOrg = rawAuthor.slice(commaIdx + 1).trim()
-      }
-      const roleStr = s.industry ? `${authorOrg} • ${s.industry}` : authorOrg
-
-      return {
-        quote: s.quote!.text,
-        author: authorName,
-        role: roleStr,
-        slug: s.slug || s.id,
+    // Ensure all 6 case studies are included
+    const combined = [...list]
+    caseStudiesList.forEach((cs) => {
+      if (!combined.some((item) => item.id === cs.id || item.slug === cs.slug)) {
+        combined.push(cs)
       }
     })
+
+    const filtered = combined
+      .map((s) => {
+        const fallback = caseStudiesList.find((c) => c.id === s.id || c.slug === s.slug)
+        const quoteObj = s.quote && s.quote.text ? s.quote : fallback?.quote
+        if (!quoteObj || !quoteObj.text) return null
+
+        const rawAuthor = quoteObj.author ? quoteObj.author.replace(/^[—–-]\s*/, "").trim() : s.client
+        const commaIdx = rawAuthor.indexOf(",")
+        let authorName = rawAuthor
+        let authorOrg = s.client
+        if (commaIdx !== -1) {
+          authorName = rawAuthor.slice(0, commaIdx).trim()
+          authorOrg = rawAuthor.slice(commaIdx + 1).trim()
+        }
+        const roleStr = s.industry ? `${authorOrg} • ${s.industry}` : authorOrg
+
+        return {
+          quote: quoteObj.text,
+          author: authorName,
+          role: roleStr,
+          slug: s.slug || s.id,
+        }
+      })
+      .filter((item): item is NonNullable<typeof item> => item !== null)
+
+    return filtered.length > 0
+      ? filtered
+      : [
+          {
+            quote:
+              "Having a bot that understands panicked local voice notes and texts back vet numbers stopped our team from monitoring emergency calls round the clock.",
+            author: "Senior Operations Manager",
+            role: "Brooke India • Animal Welfare & Veterinary Care",
+            slug: "brooke-india-whatsapp-equine-helpline",
+          },
+        ]
   }, [caseStudies])
 
   const featuredStudies = useMemo(() => {
-    if (caseStudyService === "all") return caseStudies.slice(0, 2)
-    return caseStudies.filter((study) => study.branchKey === caseStudyService).slice(0, 2)
+    const list = caseStudies && caseStudies.length > 0 ? caseStudies : caseStudiesList
+    if (caseStudyService === "all") return list.slice(0, 2)
+    return list.filter((study) => study.branchKey === caseStudyService).slice(0, 2)
   }, [caseStudyService, caseStudies])
+
   const [testimonialIndex, setTestimonialIndex] = useState(0)
   const [testimonialPaused, setTestimonialPaused] = useState(false)
 
   const featuredProduct = products[0]
 
-  // Increased rotation speed for testimonials (2.8s snappy cycle)
+  // Relaxed, comfortably readable dynamic loop for testimonials (7.0s cycle)
   useEffect(() => {
-    if (testimonialPaused || caseStudyTestimonials.length === 0) return
+    if (testimonialPaused || caseStudyTestimonials.length <= 1) return
     const timer = setInterval(() => {
       setTestimonialIndex((prev) => (prev + 1) % caseStudyTestimonials.length)
-    }, 2800)
+    }, 7000)
     return () => clearInterval(timer)
   }, [testimonialPaused, caseStudyTestimonials.length])
 
@@ -95,50 +120,30 @@ export function HomePage() {
       {/* Hero Section */}
       <section className="page-hero home-hero" aria-labelledby="home-title">
         <div className="site-container">
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
+          <div className="hero-entrance-eyebrow">
             <span className="eyebrow eyebrow--mono">DATA, AI &amp; AUTOMATION</span>
-          </motion.div>
+          </div>
 
-          <motion.h1
-            id="home-title"
-            className="display-title"
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.65, delay: 0.1 }}
-          >
+          <h1 id="home-title" className="display-title hero-entrance-title">
             Your Business,
             <br />
             made easier with <em>Technology</em>
             <span className="accent-dot">.</span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            className="hero-copy"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.65, delay: 0.2 }}
-          >
+          <p className="hero-copy hero-entrance-copy">
             We build intelligent systems and products that help businesses work faster,
             automate the busywork, and make better decisions.
-          </motion.p>
+          </p>
 
-          <motion.div
-            className="hero-actions"
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.65, delay: 0.3 }}
-          >
+          <div className="hero-actions hero-entrance-actions">
             <Link to="/contact" className="button-primary">
               Start a Conversation →
             </Link>
             <a href="#products" className="button-secondary">
               Explore Products
             </a>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -294,7 +299,9 @@ export function HomePage() {
             </p>
           </SectionReveal>
 
-          <ProcessStack />
+          <Suspense fallback={null}>
+            <ProcessStack />
+          </Suspense>
         </div>
       </section>
 
@@ -380,20 +387,28 @@ export function HomePage() {
       </section>
 
       {/* FAQ Section */}
-      <FaqSection items={faqItems} />
+      <Suspense fallback={null}>
+        <FaqSection items={faqItems} />
+      </Suspense>
 
       {/* Signature Brand Band */}
-      <SignatureBand />
+      <Suspense fallback={null}>
+        <SignatureBand />
+      </Suspense>
 
       {/* Site Footer */}
       <SiteFooter />
 
       {/* Product Interactive Demo Modal */}
-      <ProductPreviewDialog
-        product={featuredProduct}
-        open={productPreviewOpen}
-        onOpenChange={setProductPreviewOpen}
-      />
+      {productPreviewOpen && (
+        <Suspense fallback={null}>
+          <ProductPreviewDialog
+            product={featuredProduct}
+            open={productPreviewOpen}
+            onOpenChange={setProductPreviewOpen}
+          />
+        </Suspense>
+      )}
     </div>
   )
 }

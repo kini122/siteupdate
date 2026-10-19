@@ -8,7 +8,6 @@ import { ProductRow } from "@/components/site/ProductRow"
 import { SiteFooter } from "@/components/site/SiteFooter"
 import { Button } from "@/components/ui/button"
 import { ServiceDropdown } from "@/components/site/ServiceDropdown"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { products, workFaqItems } from "@/data/siteContent"
 import { useCaseStudies } from "@/hooks/useCaseStudies"
 import { SeoHead } from "@/components/seo/SeoHead"
@@ -59,28 +58,49 @@ export function WorkPage() {
         description="Tools and systems built around real business problems."
       />
 
-      {/* Centralized Pill Switcher for Case Studies / Projects */}
+      {/* Centralized Switcher for Case Studies / Projects (styled identical to Data & BI toggle) */}
       <motion.div
         className="work-switcher-container"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
-        <Tabs
-          value={tab}
-          onValueChange={setTab}
-          aria-label="Work category selection"
-          className="items-center justify-center"
-        >
-          <TabsList className="pill-tabs-centered">
-            <TabsTrigger value="case-studies" className="pill-tab-item">
+        <div className="shift-tabs-container">
+          <div
+            role="tablist"
+            aria-label="Work category selection"
+            className="shift-tabs-pill [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          >
+            <button
+              type="button"
+              role="tab"
+              id="work-tab-case-studies"
+              aria-selected={tab === "case-studies"}
+              tabIndex={tab === "case-studies" ? 0 : -1}
+              onClick={() => setTab("case-studies")}
+              className={`shift-tab-button after:hidden after:content-none ${
+                tab === "case-studies" ? "data-[state=active]" : "data-[state=inactive]"
+              }`}
+              data-state={tab === "case-studies" ? "active" : "inactive"}
+            >
               Case Studies
-            </TabsTrigger>
-            <TabsTrigger value="projects" className="pill-tab-item">
+            </button>
+            <button
+              type="button"
+              role="tab"
+              id="work-tab-projects"
+              aria-selected={tab === "projects"}
+              tabIndex={tab === "projects" ? 0 : -1}
+              onClick={() => setTab("projects")}
+              className={`shift-tab-button after:hidden after:content-none ${
+                tab === "projects" ? "data-[state=active]" : "data-[state=inactive]"
+              }`}
+              data-state={tab === "projects" ? "active" : "inactive"}
+            >
               Projects
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+            </button>
+          </div>
+        </div>
       </motion.div>
 
       <section className="section section--tight work-section-main">

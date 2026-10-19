@@ -262,7 +262,19 @@ export function useCaseStudies() {
           setIsUsingFallback(true)
         }
       } else {
-        const mapped = (rows as unknown as DbCaseStudyRow[]).map(mapDbRowToCaseStudy)
+        const mapped = (rows as unknown as DbCaseStudyRow[]).map((row) => {
+          const mappedItem = mapDbRowToCaseStudy(row)
+          const localMatch = caseStudiesList.find((c) => c.id === row.id)
+          if (localMatch) {
+            if (!row.slug || row.slug !== localMatch.slug) {
+              return { ...localMatch, sortOrder: row.sort_order ?? localMatch.sortOrder }
+            }
+            if (!mappedItem.quote || !mappedItem.quote.text) {
+              mappedItem.quote = localMatch.quote
+            }
+          }
+          return mappedItem
+        })
         setData(mapped)
         setCachedData(mapped)
         setIsUsingFallback(false)
@@ -279,15 +291,17 @@ export function useCaseStudies() {
   }, [cached])
 
   useEffect(() => {
-    // If cache is missing or stale, revalidate silently after initial paint
+    // If cache is missing or stale, revalidate silently without competing with initial paint
     if (!cached || !cached.isFresh) {
-      if (typeof window !== "undefined" && "requestIdleCallback" in window) {
-        const id = window.requestIdleCallback(() => fetchStudies(true), { timeout: 2500 })
-        return () => window.cancelIdleCallback(id)
-      } else {
-        const id = setTimeout(() => fetchStudies(true), 1200)
-        return () => clearTimeout(id)
-      }
+      const delayMs = cached ? 2000 : 8500
+      const timerId = setTimeout(() => {
+        if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+          window.requestIdleCallback(() => fetchStudies(true), { timeout: 2000 })
+        } else {
+          fetchStudies(true)
+        }
+      }, delayMs)
+      return () => clearTimeout(timerId)
     }
 
     // Optimization 3: Listen for local & broadcast cache invalidation events
@@ -348,7 +362,14 @@ export function useAdminCaseStudies() {
       } else if (!rows || rows.length === 0) {
         setCaseStudies(caseStudiesList)
       } else {
-        const mapped = (rows as unknown as DbCaseStudyRow[]).map(mapDbRowToCaseStudy)
+        const mapped = (rows as unknown as DbCaseStudyRow[]).map((row) => {
+          const mappedItem = mapDbRowToCaseStudy(row)
+          const localMatch = caseStudiesList.find((c) => c.id === row.id)
+          if (localMatch && (!row.slug || row.slug !== localMatch.slug)) {
+            return { ...localMatch, sortOrder: row.sort_order ?? localMatch.sortOrder }
+          }
+          return mappedItem
+        })
         setCaseStudies(mapped)
       }
     } catch (err: unknown) {

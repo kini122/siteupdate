@@ -57,6 +57,10 @@ export default defineConfig({
       output: {
         manualChunks(id: string) {
           if (id.includes("node_modules")) {
+            if (id.includes("tslib")) return "react-core"
+            if (id.includes("/react/") || id.includes("/react-dom/") || id.includes("/scheduler/")) {
+              return "react-core"
+            }
             if (id.includes("@supabase")) return "supabase"
             if (id.includes("lucide-react")) return "lucide"
             if (id.includes("motion")) return "motion"
