@@ -20,9 +20,13 @@ interface SolutionTabsProps {
 const toolNames: Record<string, string> = {
   // Data & BI:
   "53cb26.png": "Microsoft Power BI",
+  "53cb26.webp": "Microsoft Power BI",
   "0c5d97.png": "Python Coding Editor & IDE App",
+  "0c5d97.webp": "Python Coding Editor & IDE App",
   "57de97.png": "SQL Playground",
+  "57de97.webp": "SQL Playground",
   "e8263c.png": "API Requester - HTTP Client",
+  "e8263c.webp": "API Requester - HTTP Client",
 
   // AI Assistants & Knowledge Systems:
   "openai.svg": "OpenAI - Models & Embeddings",
@@ -314,6 +318,8 @@ export function SolutionTabs({
                           alt={name}
                           className="tool-stack-img"
                           loading="lazy"
+                          width={48}
+                          height={48}
                         />
                       </motion.div>
                     )

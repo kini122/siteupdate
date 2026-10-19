@@ -22,7 +22,7 @@ interface MediaCollageProps {
 
 export const defaultProjectItems: ProjectPreviewItem[] = [
   {
-    image: "/assets/4a80c6.jpg",
+    image: "/assets/4a80c6.webp",
     title: "Business Dashboard",
     description: "Built to cut decision-making time by 20%.",
     label: "01 ANALYTICS & BI",
@@ -30,7 +30,7 @@ export const defaultProjectItems: ProjectPreviewItem[] = [
     category: "Analytics & BI",
   },
   {
-    image: "/assets/e467dd.jpg",
+    image: "/assets/e467dd.webp",
     title: "AI Customer Copilot",
     description: "Automate responses & save 15+ hours per week.",
     label: "02 AI ASSISTANTS",
@@ -38,7 +38,7 @@ export const defaultProjectItems: ProjectPreviewItem[] = [
     category: "AI Assistants",
   },
   {
-    image: "/assets/3132a8.jpg",
+    image: "/assets/3132a8.webp",
     title: "Executive Decision Engine",
     description: "Unified metrics across operations and sales.",
     label: "03 BUSINESS INTELLIGENCE",
@@ -46,7 +46,7 @@ export const defaultProjectItems: ProjectPreviewItem[] = [
     category: "Business Intelligence",
   },
   {
-    image: "/assets/671883.jpg",
+    image: "/assets/671883.webp",
     title: "Mobile Ops Hub",
     description: "Streamlined workflow and team coordination.",
     label: "04 AUTOMATION & OPS",
@@ -54,7 +54,7 @@ export const defaultProjectItems: ProjectPreviewItem[] = [
     category: "Automation",
   },
   {
-    image: "/assets/d5b56b.jpg",
+    image: "/assets/d5b56b.webp",
     title: "Workflow Automation",
     description: "Automated alerts and instant synchronization.",
     label: "05 WORKFLOW SYNC",
@@ -62,7 +62,7 @@ export const defaultProjectItems: ProjectPreviewItem[] = [
     category: "Operations",
   },
   {
-    image: "/assets/0c83b9.jpg",
+    image: "/assets/0c83b9.webp",
     title: "Knowledge Research AI",
     description: "Turn scattered info into actionable briefs.",
     label: "06 ENTERPRISE AI",
@@ -233,7 +233,9 @@ export function MediaCollage({
                     <div className="tab-rail-track" aria-hidden="true">
                       <div
                         className="tab-rail-progress"
-                        style={{ height: `${Math.min(100, Math.max(0, progress))}%` }}
+                        style={{
+                          transform: `scaleY(${Math.min(1, Math.max(0, progress / 100))})`,
+                        }}
                       />
                     </div>
                   </div>

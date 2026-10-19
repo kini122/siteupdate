@@ -1,6 +1,32 @@
 import type { CaseStudy, FaqItem, FeatureCardData, ProductItem, ServiceTab, SolutionPanel, TeamMember } from "@/types/site"
 
-export const asset = (name: string) => `/assets/${name}`
+const WEBP_ASSETS = new Set([
+  "9fa5e8.png",
+  "53cb26.png",
+  "0c5d97.png",
+  "57de97.png",
+  "e8263c.png",
+  "4a80c6.jpg",
+  "e467dd.jpg",
+  "3132a8.jpg",
+  "671883.jpg",
+  "d5b56b.jpg",
+  "0c83b9.jpg",
+  "33108f.jpg",
+  "60ed30.jpg",
+  "fd345e.jpg",
+  "642e0f.png",
+  "887522.png",
+  "ai-tools-platform.jpg",
+  "recruiter-ai.jpg",
+])
+
+export const asset = (name: string) => {
+  if (WEBP_ASSETS.has(name)) {
+    return `/assets/${name.replace(/\.(png|jpe?g)$/, ".webp")}`
+  }
+  return `/assets/${name}`
+}
 
 export const homeFaqItems: FaqItem[] = [
   {

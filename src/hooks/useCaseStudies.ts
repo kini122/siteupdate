@@ -1,8 +1,13 @@
 import { useEffect, useState, useCallback, useRef } from "react"
-import { isSupabaseConfigured, supabase, getOptimizedMediaUrl } from "@/lib/supabase"
+import { isSupabaseConfigured, getOptimizedMediaUrl } from "@/lib/supabaseUtils"
 import { caseStudiesList } from "@/data/siteContent"
 import { generateSlug } from "@/lib/slug"
 import type { CaseStudy } from "@/types/site"
+
+async function getSupabaseClient() {
+  const mod = await import("@/lib/supabase")
+  return mod.supabase
+}
 
 // Database row interface matching Supabase table
 export interface DbCaseStudyRow {
@@ -243,8 +248,9 @@ export function useCaseStudies() {
     }
 
     try {
+      const client = await getSupabaseClient()
       // Selective projection minimizes egress & payload
-      const { data: rows, error } = await supabase
+      const { data: rows, error } = await client
         .from("case_studies")
         .select(CASE_STUDIES_SELECT_FIELDS)
         .eq("is_published", true)
@@ -273,9 +279,15 @@ export function useCaseStudies() {
   }, [cached])
 
   useEffect(() => {
-    // If cache is missing or stale, revalidate
+    // If cache is missing or stale, revalidate silently after initial paint
     if (!cached || !cached.isFresh) {
-      fetchStudies(true)
+      if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+        const id = window.requestIdleCallback(() => fetchStudies(true), { timeout: 2500 })
+        return () => window.cancelIdleCallback(id)
+      } else {
+        const id = setTimeout(() => fetchStudies(true), 1200)
+        return () => clearTimeout(id)
+      }
     }
 
     // Optimization 3: Listen for local & broadcast cache invalidation events
@@ -324,7 +336,8 @@ export function useAdminCaseStudies() {
     try {
       setLoading(true)
       setError(null)
-      const { data: rows, error: fetchErr } = await supabase
+      const client = await getSupabaseClient()
+      const { data: rows, error: fetchErr } = await client
         .from("case_studies")
         .select(CASE_STUDIES_SELECT_FIELDS)
         .order("sort_order", { ascending: true })
@@ -357,7 +370,8 @@ export function useAdminCaseStudies() {
 
     try {
       const payload = mapCaseStudyToDbRow(study)
-      const { error: saveErr } = await supabase
+      const client = await getSupabaseClient()
+      const { error: saveErr } = await client
         .from("case_studies")
         .upsert(payload, { onConflict: "id" })
 
@@ -380,7 +394,8 @@ export function useAdminCaseStudies() {
     }
 
     try {
-      const { error: delErr } = await supabase
+      const client = await getSupabaseClient()
+      const { error: delErr } = await client
         .from("case_studies")
         .delete()
         .eq("id", id)
@@ -403,7 +418,8 @@ export function useAdminCaseStudies() {
     }
 
     try {
-      const { error: updateErr } = await supabase
+      const client = await getSupabaseClient()
+      const { error: updateErr } = await client
         .from("case_studies")
         .update({ is_published: published, updated_at: new Date().toISOString() })
         .eq("id", id)
@@ -426,9 +442,10 @@ export function useAdminCaseStudies() {
     }
 
     try {
+      const client = await getSupabaseClient()
       if (replaceLegacy) {
         // Delete old demo/legacy records
-        await supabase
+        await client
           .from("case_studies")
           .delete()
           .in("id", ["finscale", "globalbi", "techgadgets", "healthops", "apexautomation", "autoops", "case-mv9dxvd1"])
@@ -439,7 +456,7 @@ export function useAdminCaseStudies() {
         return payload
       })
 
-      const { error: seedErr } = await supabase
+      const { error: seedErr } = await client
         .from("case_studies")
         .upsert(rowsToInsert, { onConflict: "id" })
 
@@ -516,7 +533,8 @@ export function useCaseStudyBySlug(slugOrId: string | undefined) {
 
       const queryCaseStudy = async () => {
         try {
-          const { data: row, error: fetchErr } = await supabase
+          const client = await getSupabaseClient()
+          const { data: row, error: fetchErr } = await client
             .from("case_studies")
             .select(CASE_STUDIES_SELECT_FIELDS)
             .or(`slug.eq.${slugOrId},id.eq.${slugOrId}`)

@@ -31,10 +31,18 @@ export function SiteHeader() {
 
   // Track scroll state for subtle elevation shadow
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20)
-    handleScroll()
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 20
+      setScrolled((prev) => (prev !== isScrolled ? isScrolled : prev))
+    }
+    const rafId = requestAnimationFrame(() => {
+      if (window.scrollY > 20) setScrolled(true)
+    })
     window.addEventListener("scroll", handleScroll, { passive: true })
-    return () => window.removeEventListener("scroll", handleScroll)
+    return () => {
+      cancelAnimationFrame(rafId)
+      window.removeEventListener("scroll", handleScroll)
+    }
   }, [])
 
   // Auto-expand services submenu if current route is /services

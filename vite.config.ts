@@ -48,6 +48,11 @@ export default defineConfig({
     },
   },
   build: {
+    modulePreload: {
+      resolveDependencies: (_filename, deps) => {
+        return deps.filter((dep) => !dep.includes("supabase"))
+      },
+    },
     rollupOptions: {
       output: {
         manualChunks(id: string) {
