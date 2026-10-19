@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=Inter:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -544,7 +543,7 @@
     padding: 5px 14px;
     border: 1px solid var(--line-strong);
     border-radius: 999px;
-    color: var(--muted-light);
+    color: #55514B;
     font-family: var(--font-body);
     font-size: 13px;
     font-weight: 500;
@@ -560,7 +559,7 @@
     border: 1px solid var(--line-strong, #e5e2dc);
     border-radius: 999px;
     background: rgba(255, 254, 251, 0.85);
-    color: var(--muted-light, #8d8980);
+    color: #55514B;
     font-family: var(--font-body);
     font-size: 12px;
     font-weight: 600;
@@ -624,14 +623,14 @@
   }
 
   .button-primary {
-    background: var(--orange);
-    color: #ffffff;
-    box-shadow: 0 6px 18px rgba(255, 110, 48, 0.24);
+    background: #E05315;
+    color: #ffffff !important;
+    box-shadow: 0 6px 18px rgba(224, 83, 21, 0.28);
   }
 
   .button-primary:hover {
-    background: #e85c20;
-    box-shadow: 0 10px 24px rgba(255, 110, 48, 0.35);
+    background: #c2410c;
+    box-shadow: 0 10px 24px rgba(224, 83, 21, 0.38);
     transform: translateY(-2px);
   }
 
@@ -779,7 +778,7 @@
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.06em;
-    color: #8D8980;
+    color: #55514B;
     white-space: nowrap;
     text-transform: uppercase;
   }
@@ -925,7 +924,7 @@
     font-size: 11.5px;
     font-weight: 500;
     letter-spacing: 0.06em;
-    color: #8D8980;
+    color: #55514B;
     white-space: nowrap;
     text-transform: uppercase;
     transition: color 200ms ease;
@@ -1003,33 +1002,43 @@
   .project-gallery-dots {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 12px;
   }
 
   .gallery-dot {
+    position: relative;
     width: 7px;
     height: 7px;
     border-radius: 50%;
     border: 0;
     padding: 0;
-    background: var(--taupe);
+    background: #8D8980;
     cursor: pointer;
     transition: all 260ms cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
+  .gallery-dot::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 36px;
+    min-height: 36px;
+  }
+
   .gallery-dot:hover {
-    background: #8D8980;
+    background: #55514B;
   }
 
   .gallery-dot.is-active {
     width: 24px;
     height: 6px;
     border-radius: 9999px;
-    background: #FF6E30;
+    background: #E05315;
     transform: none;
   }
 
-  /* Metrics & Testimonials */
   /* Metrics & Testimonials */
   .metrics-row {
     display: grid;
@@ -1058,7 +1067,7 @@
     font-size: clamp(15px, 1.2vw, 17px);
     font-weight: 500;
     line-height: 1.35;
-    color: #5a5651;
+    color: #55514B;
     min-height: 46px;
     display: flex;
     align-items: flex-start;
@@ -1070,9 +1079,9 @@
     padding-top: 14px;
     font-family: var(--font-mono);
     font-size: clamp(38px, 3.8vw, 48px);
-    font-weight: 500;
+    font-weight: 600;
     line-height: 1.05;
-    color: var(--orange);
+    color: #D64F16;
     letter-spacing: -0.02em;
     white-space: nowrap;
   }
@@ -1149,7 +1158,7 @@
     font-family: var(--font-body);
     font-size: 17px;
     line-height: 1.55;
-    color: #606060;
+    color: #383531;
   }
 
   .testimonial-quote-inner strong {
@@ -1168,7 +1177,7 @@
     font-family: var(--font-editorial);
     font-size: 14.5px;
     font-style: italic;
-    color: rgba(96, 96, 96, 0.75);
+    color: #55514B;
   }
 
   /* Solutions / Shift Section (Secondary Surface: #F8F7F5) */
@@ -1220,10 +1229,10 @@
     border: 0;
     border-radius: 8px;
     background: transparent;
-    color: #8D8980;
+    color: #55514B;
     font-family: var(--font-body);
     font-size: 14.5px;
-    font-weight: 400;
+    font-weight: 500;
     cursor: pointer;
     transition: all 180ms ease;
   }
@@ -1262,7 +1271,7 @@
   .mono-step-count {
     font-family: var(--font-mono);
     font-size: 18px;
-    color: #c4c0b8;
+    color: #635F57;
   }
 
   .shift-category-label {
@@ -1270,7 +1279,7 @@
     font-size: 16px;
     font-weight: 500;
     letter-spacing: 0.04em;
-    color: #8d8980;
+    color: #55514B;
     margin-top: 20px;
   }
 
@@ -1279,7 +1288,7 @@
     font-size: clamp(28px, 3.2vw, 36px);
     font-weight: 500;
     line-height: 1.25;
-    color: #c1beb5;
+    color: #5A5650;
     margin-top: 36px;
   }
 
@@ -1348,7 +1357,7 @@
     font-family: var(--font-body);
     font-size: 18px;
     line-height: 1.65;
-    color: #757575;
+    color: #55514B;
     margin-top: 36px;
     max-width: 500px;
   }
@@ -1479,10 +1488,10 @@
     transform-origin: center center;
     font-family: 'DM Sans', var(--font-body), sans-serif;
     font-style: normal;
-    font-weight: 400;
+    font-weight: 500;
     font-size: 17.0857px;
     line-height: 31px;
-    color: rgba(96, 96, 96, 0.63);
+    color: #55514B;
     white-space: nowrap;
     user-select: none;
   }
@@ -2016,7 +2025,7 @@
     font-size: 20px;
     font-weight: 700;
     line-height: 1.15;
-    color: #FF6E30;
+    color: #D64F16;
     text-align: left;
     word-break: break-word;
     letter-spacing: -0.02em;
@@ -2026,7 +2035,7 @@
     font-family: var(--font-body);
     font-size: 11.5px;
     line-height: 14px;
-    color: #6D6861;
+    color: #55514B;
     text-align: left;
     word-break: break-word;
     font-weight: 500;
@@ -2066,7 +2075,7 @@
     font-size: 13px;
     line-height: 18px;
     letter-spacing: 0.04em;
-    color: #8D8980;
+    color: #55514B;
     overflow-wrap: break-word;
     word-break: break-word;
     width: 100%;
@@ -2301,7 +2310,7 @@
     font-family: var(--font-editorial);
     font-size: 18px;
     line-height: 1.6;
-    color: #757575;
+    color: #55514B;
     max-width: 660px;
   }
 
@@ -2490,8 +2499,8 @@
     align-items: center;
     padding: 3px 8px;
     border-radius: 5px;
-    background: rgba(235, 94, 40, 0.09);
-    color: var(--orange, #EB5E28);
+    background: rgba(194, 65, 12, 0.12);
+    color: #C2410C;
     font-family: var(--font-mono);
     font-size: 10.5px;
     font-weight: 700;
@@ -2502,7 +2511,7 @@
   .dark-product-version {
     font-family: var(--font-mono);
     font-size: 10.5px;
-    color: #8C8782;
+    color: #55514B;
     letter-spacing: 0.05em;
   }
 
@@ -2819,7 +2828,7 @@
   .faq-number {
     flex: 0 0 44px;
     min-width: 44px;
-    color: #c1beb5;
+    color: #716D66;
     font-family: var(--font-mono);
     font-size: 24px;
     font-weight: 500;

@@ -47,4 +47,19 @@ export default defineConfig({
       "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id: string) {
+          if (id.includes("node_modules")) {
+            if (id.includes("@supabase")) return "supabase"
+            if (id.includes("lucide-react")) return "lucide"
+            if (id.includes("motion")) return "motion"
+            if (id.includes("@tanstack")) return "router"
+          }
+        },
+      },
+    },
+    chunkSizeWarningLimit: 600,
+  },
 })

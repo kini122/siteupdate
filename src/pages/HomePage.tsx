@@ -145,6 +145,7 @@ export function HomePage() {
       {/* Selected Projects Media Collage & Results */}
       <section className="section section--tight project-gallery-section" aria-label="Selected projects">
         <div className="site-container">
+          <h2 className="sr-only">Featured Systems &amp; Capabilities</h2>
           <MediaCollage />
 
           {/* Metrics Row */}
@@ -324,6 +325,9 @@ export function HomePage() {
                 src={featuredProduct.image}
                 alt={featuredProduct.title}
                 className="dark-product-img"
+                loading="lazy"
+                width={800}
+                height={450}
               />
               <a
                 href={featuredProduct.demoUrl || "https://www.loom.com/share/a0e96cbbd64e46188561d0eb22c3d0ea"}

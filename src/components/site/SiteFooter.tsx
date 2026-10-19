@@ -17,7 +17,7 @@ export function SiteFooter() {
           </div>
 
           <div className="footer-nav-column">
-            <h4 className="footer-nav-heading">Navigation</h4>
+            <h3 className="footer-nav-heading">Navigation</h3>
             <ul className="footer-nav-list">
               <li><Link to="/services" search={{ tab: "data-bi" }} className="footer-nav-link">Services</Link></li>
               <li><Link to="/products" className="footer-nav-link">Products</Link></li>
@@ -29,7 +29,7 @@ export function SiteFooter() {
           </div>
 
           <div className="footer-contact-column">
-            <h4 className="footer-nav-heading">Get in Touch</h4>
+            <h3 className="footer-nav-heading">Get in Touch</h3>
             <div className="footer-contact-links">
               <div className="footer-phones-group">
                 <a href="tel:+917306261147" className="footer-contact-phone font-mono">

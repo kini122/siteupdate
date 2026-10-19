@@ -217,9 +217,7 @@ export function MediaCollage({
                   tabRefs.current[idx] = el
                 }}
                 className="project-accordion-tab is-expanded"
-                role="tabpanel"
-                aria-label={`Expanded view: ${item.title}`}
-                aria-selected={true}
+                aria-label={`Featured system: ${item.title}`}
               >
                 <div className="tab-expanded-card">
                   {/* Left Rail (Label + Vertical Orange Progress Line) */}
@@ -249,6 +247,9 @@ export function MediaCollage({
                           alt={item.title}
                           className="tab-image-cover"
                           loading="eager"
+                          fetchPriority={idx === 0 ? "high" : "auto"}
+                          width={720}
+                          height={450}
                         />
                         {/* Dark Gradient Overlay for optimal contrast */}
                         <div className="tab-gradient-overlay" />
@@ -280,9 +281,8 @@ export function MediaCollage({
               }}
               type="button"
               className="project-accordion-tab is-collapsed"
-              role="tab"
               aria-label={`Open tab: ${item.title} (${itemLabel})`}
-              aria-selected={false}
+              aria-expanded={false}
               onClick={() => selectProject(idx)}
               onMouseEnter={() => {
                 // Desktop hover-to-expand

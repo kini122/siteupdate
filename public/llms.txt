@@ -1,0 +1,31 @@
+# Kozker Tech
+
+> Intelligent systems, custom business intelligence, AI triage copilots, and multi-system workflow automation that scale modern operations.
+
+Kozker Tech designs and engineers production BI dashboards, multilingual AI voice & chat assistants, and multi-system automations that eliminate manual busywork and streamline operations.
+
+## Core Services & Capabilities
+
+- [Data & BI Services](https://kozker.com/services?tab=data-bi): Scalable real-time executive dashboards, multi-source ETL pipelines, and SQL/Power BI architecture.
+- [AI Assistants & Copilots](https://kozker.com/services?tab=ai-assistants): 24/7 multilingual conversational triage systems, RAG knowledge copilots, and EHR integration.
+- [Workflow Automation](https://kozker.com/services?tab=automation): Cross-platform API pipelines, inventory sync, multi-carrier logistics, and SLA automation.
+
+## Products & Platforms
+
+- [Kozker Recruiter AI](https://recruiter-landing-page-olive.vercel.app/): End-to-end recruitment operations platform, candidate screening, automated portal triage, and SLA tracking.
+- [Automated Financial BI Suite](https://kozker.com/products): Financial modeling, automated month-end reconciliation, and real-time executive dashboards.
+
+## Case Studies & Verified Outcomes
+
+- [24/7 Multilingual AI Equine Healthcare Assistant](https://kozker.com/case-studies/multilingual-ai-equine-health-assistant): Handles emergency triage across 5 languages with <3s response time.
+- [Automated Financial Modeling for FinScale Analytics](https://kozker.com/case-studies/automated-financial-modeling-real-time-executive-dashboards): 75% faster executive reporting and 5-day to 20-minute cycle reduction.
+- [Cross-Border Logistics Ops Sync & BI Metrics](https://kozker.com/case-studies/cross-border-logistics-ops-sync-bi-metrics): 99.8% tracking synchronization and 12-hour customs turnaround reduction.
+- [AI-Powered Patient Triage & EHR Routing](https://kozker.com/case-studies/ai-powered-patient-triage-ehr-routing): Automated clinical triage and appointment routing with 99.4% accuracy.
+- [WhatsApp Order & Inventory Sync Automation](https://kozker.com/case-studies/end-to-end-whatsapp-order-inventory-sync-automation): End-to-end multi-store inventory sync with 99.8% order accuracy.
+- [Multi-Carrier Fulfillment & Exception Pipeline](https://kozker.com/case-studies/automated-multi-carrier-fulfillment-exception-pipeline): Automated shipment triage and exception alerts for enterprise freight.
+
+## Company & Contact
+
+- [About Kozker](https://kozker.com/about): Mission, engineering standards, and leadership.
+- [Partnership Program](https://kozker.com/partners): Growth agencies, technology consultancies, and referral network.
+- [Contact Engineering Team](https://kozker.com/contact): Architecture consultations and custom systems scoping.

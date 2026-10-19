@@ -1,16 +1,8 @@
-import { createRootRoute, createRoute, createRouter } from "@tanstack/react-router"
+import { createRootRoute, createRoute, createRouter, lazyRouteComponent } from "@tanstack/react-router"
 
 import { SiteLayout } from "@/components/site/SiteLayout"
-import { AboutPage } from "@/pages/AboutPage"
-import { ContactPage } from "@/pages/ContactPage"
 import { HomePage } from "@/pages/HomePage"
 import { NotFoundPage } from "@/pages/NotFoundPage"
-import { PartnershipPage } from "@/pages/PartnershipPage"
-import { ProductsPage } from "@/pages/ProductsPage"
-import { ServicesPage } from "@/pages/ServicesPage"
-import { WorkPage } from "@/pages/WorkPage"
-import { CaseStudyDetailPage } from "@/pages/CaseStudyDetailPage"
-import { AdminPage } from "@/pages/admin/AdminPage"
 
 const rootRoute = createRootRoute({ component: SiteLayout })
 
@@ -21,24 +13,48 @@ const servicesRoute = createRoute({
   validateSearch: (search: Record<string, unknown>) => ({
     tab: (search.tab as string) || "data-bi",
   }),
-  component: ServicesPage,
+  component: lazyRouteComponent(() => import("@/pages/ServicesPage"), "ServicesPage"),
 })
-const productsRoute = createRoute({ getParentRoute: () => rootRoute, path: "/products", component: ProductsPage })
-const workRoute = createRoute({ getParentRoute: () => rootRoute, path: "/work", component: WorkPage })
-const caseStudiesHubRoute = createRoute({ getParentRoute: () => rootRoute, path: "/case-studies", component: WorkPage })
+const productsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/products",
+  component: lazyRouteComponent(() => import("@/pages/ProductsPage"), "ProductsPage"),
+})
+const workRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/work",
+  component: lazyRouteComponent(() => import("@/pages/WorkPage"), "WorkPage"),
+})
+const caseStudiesHubRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/case-studies",
+  component: lazyRouteComponent(() => import("@/pages/WorkPage"), "WorkPage"),
+})
 const caseStudyDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/case-studies/$slug",
-  component: CaseStudyDetailPage,
+  component: lazyRouteComponent(() => import("@/pages/CaseStudyDetailPage"), "CaseStudyDetailPage"),
 })
 const workCaseStudyDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/work/$slug",
-  component: CaseStudyDetailPage,
+  component: lazyRouteComponent(() => import("@/pages/CaseStudyDetailPage"), "CaseStudyDetailPage"),
 })
-const aboutRoute = createRoute({ getParentRoute: () => rootRoute, path: "/about", component: AboutPage })
-const partnersRoute = createRoute({ getParentRoute: () => rootRoute, path: "/partners", component: PartnershipPage })
-const adminRoute = createRoute({ getParentRoute: () => rootRoute, path: "/admin", component: AdminPage })
+const aboutRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/about",
+  component: lazyRouteComponent(() => import("@/pages/AboutPage"), "AboutPage"),
+})
+const partnersRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/partners",
+  component: lazyRouteComponent(() => import("@/pages/PartnershipPage"), "PartnershipPage"),
+})
+const adminRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/admin",
+  component: lazyRouteComponent(() => import("@/pages/admin/AdminPage"), "AdminPage"),
+})
 interface ContactSearch {
   service?: string
   subject?: string
@@ -53,7 +69,7 @@ const contactRoute = createRoute({
     subject: search.subject ? String(search.subject) : undefined,
     message: search.message ? String(search.message) : undefined,
   }),
-  component: ContactPage,
+  component: lazyRouteComponent(() => import("@/pages/ContactPage"), "ContactPage"),
 })
 
 const routeTree = rootRoute.addChildren([

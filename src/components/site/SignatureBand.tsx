@@ -1,17 +1,49 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 
 export function SignatureBand() {
+  const [shouldLoadIframe, setShouldLoadIframe] = useState(false)
   const [isIframeLoaded, setIsIframeLoaded] = useState(false)
   const [iframeHeight, setIframeHeight] = useState<number | null>(null)
   const [isMobile, setIsMobile] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    // Check if directly navigating to #cal or #book-call
+    if (typeof window !== "undefined" && (window.location.hash === "#cal" || window.location.hash === "#book-call")) {
+      setShouldLoadIframe(true)
+    }
+
     const checkMobile = () => {
       setIsMobile(typeof window !== "undefined" && window.innerWidth <= 768)
     }
     checkMobile()
     window.addEventListener("resize", checkMobile)
-    return () => window.removeEventListener("resize", checkMobile)
+
+    // Defer loading heavy 3rd-party Cal.com scripts until user scrolls within proximity
+    const el = containerRef.current
+    if (el && typeof IntersectionObserver !== "undefined") {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0]?.isIntersecting) {
+            setShouldLoadIframe(true)
+            observer.disconnect()
+          }
+        },
+        { rootMargin: "400px" }
+      )
+      observer.observe(el)
+      return () => {
+        observer.disconnect()
+        window.removeEventListener("resize", checkMobile)
+      }
+    } else {
+      // Fallback: load after initial idle period
+      const timer = setTimeout(() => setShouldLoadIframe(true), 3500)
+      return () => {
+        clearTimeout(timer)
+        window.removeEventListener("resize", checkMobile)
+      }
+    }
   }, [])
 
   useEffect(() => {
@@ -97,7 +129,7 @@ export function SignatureBand() {
         </div>
 
         {/* Embedded Cal.com Card with Calendar & Details */}
-        <div className="cal-embed-card">
+        <div className="cal-embed-card" ref={containerRef}>
           <div
             className="cal-iframe-container"
             style={
@@ -106,21 +138,25 @@ export function SignatureBand() {
                 : undefined
             }
           >
-            {!isIframeLoaded && (
+            {(!isIframeLoaded || !shouldLoadIframe) && (
               <div className="cal-loading-placeholder" aria-label="Loading calendar">
                 <div className="cal-loading-spinner" />
-                <span className="cal-loading-text">Loading calendar...</span>
+                <span className="cal-loading-text">
+                  {shouldLoadIframe ? "Loading calendar..." : "Initializing scheduling calendar..."}
+                </span>
               </div>
             )}
-            <iframe
-              src="https://cal.com/kozker/data-ai-consulting?embed=true&theme=light"
-              title="30 Minute Introductory Consulting Call | Kozker Tech"
-              className={`cal-embed-iframe ${isIframeLoaded ? "is-loaded" : "is-loading"}`}
-              loading="eager"
-              scrolling={isMobile ? "auto" : "no"}
-              onLoad={() => setIsIframeLoaded(true)}
-              allow="camera; microphone; autoplay; clipboard-write; encrypted-media; fullscreen"
-            />
+            {shouldLoadIframe && (
+              <iframe
+                src="https://cal.com/kozker/data-ai-consulting?embed=true&theme=light"
+                title="30 Minute Introductory Consulting Call | Kozker Tech"
+                className={`cal-embed-iframe ${isIframeLoaded ? "is-loaded" : "is-loading"}`}
+                loading="lazy"
+                scrolling={isMobile ? "auto" : "no"}
+                onLoad={() => setIsIframeLoaded(true)}
+                allow="camera; microphone; autoplay; clipboard-write; encrypted-media; fullscreen"
+              />
+            )}
           </div>
         </div>
       </div>

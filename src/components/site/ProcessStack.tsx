@@ -111,7 +111,7 @@ export function ProcessStack() {
             top: `calc(100px + ${index * 20}px)`,
             zIndex: index + 1,
           }}
-          initial={{ opacity: 0.4, y: 36 }}
+          initial={{ opacity: 1, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.15 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}

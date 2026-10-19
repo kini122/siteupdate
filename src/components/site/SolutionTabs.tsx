@@ -11,6 +11,12 @@ const serviceTabSlugs: Record<ServiceTab, string> = {
   Automation: "automation",
 }
 
+const slugToTab: Record<string, ServiceTab> = {
+  "data-bi": "Data & BI",
+  "ai-assistants": "AI Assistants",
+  automation: "Automation",
+}
+
 interface SolutionTabsProps {
   panels: Record<ServiceTab, SolutionPanel>
   showComparisons?: boolean
@@ -74,8 +80,8 @@ export function SolutionTabs({
       {/* Pills Container */}
       <div className="shift-tabs-container">
         <Tabs
-          value={activeTab}
-          onValueChange={(value) => setActiveTab(value as ServiceTab)}
+          value={serviceTabSlugs[activeTab]}
+          onValueChange={(val) => setActiveTab(slugToTab[val] || "Data & BI")}
           aria-label="Solution categories"
           className="items-center justify-center"
         >
@@ -83,7 +89,7 @@ export function SolutionTabs({
             {tabKeys.map((tab) => (
               <TabsTrigger
                 key={tab}
-                value={tab}
+                value={serviceTabSlugs[tab]}
                 className="shift-tab-button after:hidden after:content-none"
               >
                 {tab}
@@ -180,6 +186,8 @@ export function SolutionTabs({
                   alt={`${panel.id} system flow diagram`}
                   className="shift-panel-flow-img"
                   loading="lazy"
+                  width={422}
+                  height={261}
                   initial={{ opacity: 0, scale: 0.96 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.45, ease: "easeOut" }}

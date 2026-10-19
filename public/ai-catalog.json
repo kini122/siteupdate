@@ -1,0 +1,46 @@
+{
+  "$schema": "https://agenticresourcediscovery.org/spec/v1/schema.json",
+  "name": "Kozker Tech AI & Automation Platform",
+  "description": "Enterprise engineering firm specializing in custom business intelligence, multilingual AI copilots, and multi-system workflow automation.",
+  "version": "1.0.0",
+  "url": "https://kozker.com",
+  "provider": {
+    "name": "Kozker Tech Pvt Ltd",
+    "url": "https://kozker.com",
+    "contact": "contact@kozker.com"
+  },
+  "capabilities": [
+    {
+      "id": "data-bi",
+      "name": "Data Analytics & Business Intelligence",
+      "description": "Executive BI dashboards, multi-source financial modeling, ETL data pipelines, and automated KPI reporting.",
+      "url": "https://kozker.com/services?tab=data-bi"
+    },
+    {
+      "id": "ai-assistants",
+      "name": "Multilingual AI Copilots & Knowledge Systems",
+      "description": "Production LLM agents, 24/7 triage systems, private RAG knowledge bases, and multi-channel chat/voice automation.",
+      "url": "https://kozker.com/services?tab=ai-assistants"
+    },
+    {
+      "id": "workflow-automation",
+      "name": "Enterprise Workflow Automation",
+      "description": "Cross-platform API orchestrations, multi-carrier logistics pipelines, inventory synchronization, and SLA management.",
+      "url": "https://kozker.com/services?tab=automation"
+    }
+  ],
+  "resources": [
+    {
+      "type": "documentation",
+      "url": "https://kozker.com/llms.txt"
+    },
+    {
+      "type": "case-studies",
+      "url": "https://kozker.com/work"
+    },
+    {
+      "type": "contact",
+      "url": "https://kozker.com/contact"
+    }
+  ]
+}
