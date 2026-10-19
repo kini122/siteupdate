@@ -121,31 +121,38 @@ export function MediaCollage({
   )
 
   // Auto-scroll track when active tab changes on mobile/overflowing screens
+  // Wrapped in requestAnimationFrame to eliminate forced reflow on mount
   useEffect(() => {
-    const activeEl = tabRefs.current[activeIndex]
-    const trackEl = trackRef.current
-    if (activeEl && trackEl) {
-      const isOverflowing = trackEl.scrollWidth > trackEl.clientWidth + 10
-      if (isOverflowing) {
-        // Calculate offset to center active element with neighboring collapsed tabs visible
-        const trackRect = trackEl.getBoundingClientRect()
-        const elRect = activeEl.getBoundingClientRect()
-        const scrollLeftOffset =
-          trackEl.scrollLeft +
-          (elRect.left - trackRect.left) -
-          (trackEl.clientWidth / 2 - elRect.width / 2)
+    if (activeIndex === 0 && !trackRef.current?.scrollLeft) return
 
-        trackEl.scrollTo({
-          left: Math.max(0, scrollLeftOffset),
-          behavior: "smooth",
-        })
-      } else if (trackEl.scrollLeft > 0) {
-        trackEl.scrollTo({
-          left: 0,
-          behavior: "smooth",
-        })
+    const rafId = requestAnimationFrame(() => {
+      const activeEl = tabRefs.current[activeIndex]
+      const trackEl = trackRef.current
+      if (activeEl && trackEl) {
+        const isOverflowing = trackEl.scrollWidth > trackEl.clientWidth + 10
+        if (isOverflowing) {
+          // Calculate offset to center active element with neighboring collapsed tabs visible
+          const trackRect = trackEl.getBoundingClientRect()
+          const elRect = activeEl.getBoundingClientRect()
+          const scrollLeftOffset =
+            trackEl.scrollLeft +
+            (elRect.left - trackRect.left) -
+            (trackEl.clientWidth / 2 - elRect.width / 2)
+
+          trackEl.scrollTo({
+            left: Math.max(0, scrollLeftOffset),
+            behavior: "smooth",
+          })
+        } else if (trackEl.scrollLeft > 0) {
+          trackEl.scrollTo({
+            left: 0,
+            behavior: "smooth",
+          })
+        }
       }
-    }
+    })
+
+    return () => cancelAnimationFrame(rafId)
   }, [activeIndex])
 
   // Auto-play timer with progress bar
@@ -281,7 +288,7 @@ export function MediaCollage({
               }}
               type="button"
               className="project-accordion-tab is-collapsed"
-              aria-label={`Open tab: ${item.title} (${itemLabel})`}
+              aria-label={`${itemLabel}: ${item.title}`}
               aria-expanded={false}
               onClick={() => selectProject(idx)}
               onMouseEnter={() => {
@@ -310,13 +317,13 @@ export function MediaCollage({
           <ChevronLeft className="h-5 w-5" />
         </button>
 
-        <div className="project-gallery-dots" aria-label="Select project slide">
+        <div className="project-gallery-dots" role="group" aria-label="Project slide navigation">
           {projectList.map((item, idx) => (
             <button
               key={`dot-${idx}`}
               type="button"
               className={`gallery-dot ${idx === activeIndex ? "is-active" : ""}`}
-              aria-label={`Go to ${item.label || item.title}`}
+              aria-label={`Slide ${idx + 1}: ${item.title}`}
               aria-pressed={idx === activeIndex}
               onClick={() => selectProject(idx)}
             />

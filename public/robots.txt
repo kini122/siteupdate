@@ -31,3 +31,7 @@ Disallow: /admin/*
 # Host & Dynamic XML Sitemap
 Host: https://kozker.com
 Sitemap: https://kozker.com/sitemap.xml
+
+# Agentic Resource Discovery (ARD)
+Agentmap: https://kozker.com/.well-known/ai-catalog.json
+

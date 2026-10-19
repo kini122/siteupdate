@@ -2,7 +2,6 @@ import { useState } from "react"
 import { Link } from "@tanstack/react-router"
 import { AnimatePresence, motion } from "motion/react"
 
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { ServiceTab, SolutionPanel } from "@/types/site"
 
 const serviceTabSlugs: Record<ServiceTab, string> = {
@@ -11,11 +10,6 @@ const serviceTabSlugs: Record<ServiceTab, string> = {
   Automation: "automation",
 }
 
-const slugToTab: Record<string, ServiceTab> = {
-  "data-bi": "Data & BI",
-  "ai-assistants": "AI Assistants",
-  automation: "Automation",
-}
 
 interface SolutionTabsProps {
   panels: Record<ServiceTab, SolutionPanel>
@@ -79,29 +73,43 @@ export function SolutionTabs({
     <div className={`solution-tabs-root ${className}`}>
       {/* Pills Container */}
       <div className="shift-tabs-container">
-        <Tabs
-          value={serviceTabSlugs[activeTab]}
-          onValueChange={(val) => setActiveTab(slugToTab[val] || "Data & BI")}
+        <div
+          role="tablist"
           aria-label="Solution categories"
-          className="items-center justify-center"
+          className="shift-tabs-pill [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
         >
-          <TabsList className="shift-tabs-pill [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-            {tabKeys.map((tab) => (
-              <TabsTrigger
+          {tabKeys.map((tab) => {
+            const isSelected = activeTab === tab
+            const slug = serviceTabSlugs[tab]
+            return (
+              <button
                 key={tab}
-                value={serviceTabSlugs[tab]}
-                className="shift-tab-button after:hidden after:content-none"
+                type="button"
+                role="tab"
+                id={`tab-${slug}`}
+                aria-selected={isSelected}
+                aria-controls="solution-panel"
+                tabIndex={isSelected ? 0 : -1}
+                onClick={() => setActiveTab(tab)}
+                className={`shift-tab-button after:hidden after:content-none ${
+                  isSelected ? "data-[state=active]" : "data-[state=inactive]"
+                }`}
+                data-state={isSelected ? "active" : "inactive"}
               >
                 {tab}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={panel.id}
+          id="solution-panel"
+          role="tabpanel"
+          aria-labelledby={`tab-${serviceTabSlugs[activeTab]}`}
+          tabIndex={0}
           className={`shift-content-layout ${
             showComparisons ? "shift-content--comparisons" : ""
           }`}

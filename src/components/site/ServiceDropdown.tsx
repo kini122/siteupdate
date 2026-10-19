@@ -109,7 +109,7 @@ export function ServiceDropdown({
         }}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        aria-label={ariaLabel}
+        aria-label={`${selectedOption.label} - ${ariaLabel}`}
       >
         <span className="case-study-service-label">{selectedOption.label}</span>
         <ChevronDown
@@ -135,11 +135,11 @@ export function ServiceDropdown({
               const isSelected = opt.id === value
               const isHighlighted = idx === highlightedIndex
               return (
-                <button
+                <div
                   key={opt.id}
-                  type="button"
                   role="option"
                   aria-selected={isSelected}
+                  tabIndex={0}
                   className={`service-dropdown-item ${
                     isSelected ? "is-selected" : ""
                   } ${isHighlighted ? "is-highlighted" : ""}`}
@@ -147,13 +147,19 @@ export function ServiceDropdown({
                     e.preventDefault()
                     handleSelect(opt.id)
                   }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault()
+                      handleSelect(opt.id)
+                    }
+                  }}
                   onMouseEnter={() => setHighlightedIndex(idx)}
                 >
                   <span className="service-dropdown-item-label">{opt.label}</span>
                   {isSelected && (
                     <Check className="h-4 w-4 text-[#FF6E30] stroke-[2.4] shrink-0" aria-hidden="true" />
                   )}
-                </button>
+                </div>
               )
             })}
           </motion.div>

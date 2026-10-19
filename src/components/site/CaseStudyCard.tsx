@@ -106,7 +106,7 @@ export function CaseStudyCard({ study }: CaseStudyCardProps) {
             to="/case-studies/$slug"
             params={{ slug: slugParam }}
             className="case-card-read-more-btn"
-            aria-label={`Read ${study.client} story`}
+            aria-label={`Read Story: ${study.client}`}
           >
             <span>Read Story</span>
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -116,7 +116,6 @@ export function CaseStudyCard({ study }: CaseStudyCardProps) {
             to={baseRoute || "/contact"}
             search={contactSearchParams}
             className="case-card-cta-btn"
-            aria-label={ctaLabel}
           >
             <span>{ctaLabel}</span>
             <ArrowRight className="h-4 w-4" aria-hidden="true" />

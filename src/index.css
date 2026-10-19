@@ -343,8 +343,10 @@
     display: none;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
     border: 0;
     background: transparent;
     color: #ffffff;
@@ -389,8 +391,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
     border: 0;
     background: transparent;
     color: #ffffff;
@@ -979,8 +983,10 @@
     box-shadow: none;
     border-radius: 0;
     padding: 0;
-    width: 28px;
-    height: 28px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
     color: #8D8980;
     cursor: pointer;
     transition: color 180ms ease, transform 180ms ease;
@@ -990,7 +996,7 @@
     background: transparent;
     border: none;
     color: var(--orange);
-    transform: scale(1.15);
+    transform: scale(1.12);
   }
 
   .gallery-nav-btn svg {
@@ -1023,8 +1029,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    min-width: 36px;
-    min-height: 36px;
+    min-width: 44px;
+    min-height: 44px;
   }
 
   .gallery-dot:hover {
@@ -3194,7 +3200,7 @@
   .footer-note {
     max-width: 320px;
     margin-top: 14px;
-    color: rgba(255, 254, 251, 0.65);
+    color: rgba(255, 254, 251, 0.84);
     font-size: 14px;
     line-height: 1.55;
   }
@@ -3213,12 +3219,14 @@
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
 
   .footer-nav-link {
-    color: rgba(255, 254, 251, 0.7);
+    color: rgba(255, 254, 251, 0.86);
     font-size: 14px;
+    display: inline-block;
+    padding: 4px 0;
     transition: color 160ms ease;
   }
 
@@ -3239,7 +3247,7 @@
 
   .footer-contact-sub {
     margin-top: 16px;
-    color: rgba(255, 254, 251, 0.6);
+    color: rgba(255, 254, 251, 0.8);
     font-size: 13px;
     line-height: 1.5;
   }
@@ -3255,7 +3263,7 @@
     display: flex;
     justify-content: space-between;
     margin-top: 24px;
-    color: rgba(255, 254, 251, 0.5);
+    color: rgba(255, 254, 251, 0.76);
     font-family: var(--font-mono);
     font-size: 12px;
   }
@@ -8118,10 +8126,12 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: #a49e96;
+    color: #C8C4BD;
     background: transparent;
     border: none;
-    padding: 0;
+    padding: 8px;
+    min-width: 44px;
+    min-height: 44px;
     transition: color 180ms ease, transform 180ms ease;
   }
 

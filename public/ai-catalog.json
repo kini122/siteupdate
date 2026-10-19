@@ -1,46 +1,94 @@
 {
-  "$schema": "https://agenticresourcediscovery.org/spec/v1/schema.json",
-  "name": "Kozker Tech AI & Automation Platform",
-  "description": "Enterprise engineering firm specializing in custom business intelligence, multilingual AI copilots, and multi-system workflow automation.",
-  "version": "1.0.0",
-  "url": "https://kozker.com",
-  "provider": {
-    "name": "Kozker Tech Pvt Ltd",
-    "url": "https://kozker.com",
-    "contact": "contact@kozker.com"
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Kozker Tech",
+    "identifier": "did:web:kozker.com",
+    "documentationUrl": "https://kozker.com/llms.txt",
+    "logoUrl": "https://kozker.com/assets/19d5f3.png"
   },
-  "capabilities": [
+  "entries": [
     {
-      "id": "data-bi",
-      "name": "Data Analytics & Business Intelligence",
-      "description": "Executive BI dashboards, multi-source financial modeling, ETL data pipelines, and automated KPI reporting.",
-      "url": "https://kozker.com/services?tab=data-bi"
+      "identifier": "urn:air:kozker.com:service:data-bi",
+      "displayName": "Data Analytics & Business Intelligence",
+      "type": "text/html",
+      "url": "https://kozker.com/services?tab=data-bi",
+      "representativeQueries": [
+        "Executive business intelligence dashboards",
+        "Automated financial modeling and ETL data pipelines",
+        "Real-time operational KPI reporting"
+      ],
+      "tags": [
+        "analytics",
+        "business-intelligence",
+        "dashboards",
+        "data-engineering"
+      ]
     },
     {
-      "id": "ai-assistants",
-      "name": "Multilingual AI Copilots & Knowledge Systems",
-      "description": "Production LLM agents, 24/7 triage systems, private RAG knowledge bases, and multi-channel chat/voice automation.",
-      "url": "https://kozker.com/services?tab=ai-assistants"
+      "identifier": "urn:air:kozker.com:service:ai-assistants",
+      "displayName": "Multilingual AI Copilots & Knowledge Systems",
+      "type": "text/html",
+      "url": "https://kozker.com/services?tab=ai-assistants",
+      "representativeQueries": [
+        "24/7 multilingual AI triage assistant",
+        "Private RAG knowledge base for enterprise teams",
+        "Autonomous customer service AI agents"
+      ],
+      "tags": [
+        "ai",
+        "copilots",
+        "rag",
+        "llm-agents",
+        "multilingual"
+      ]
     },
     {
-      "id": "workflow-automation",
-      "name": "Enterprise Workflow Automation",
-      "description": "Cross-platform API orchestrations, multi-carrier logistics pipelines, inventory synchronization, and SLA management.",
-      "url": "https://kozker.com/services?tab=automation"
-    }
-  ],
-  "resources": [
-    {
-      "type": "documentation",
-      "url": "https://kozker.com/llms.txt"
+      "identifier": "urn:air:kozker.com:service:workflow-automation",
+      "displayName": "Enterprise Workflow Automation",
+      "type": "text/html",
+      "url": "https://kozker.com/services?tab=automation",
+      "representativeQueries": [
+        "Multi-system API automation and syncing",
+        "Recruitment and candidate screening automation",
+        "Cross-platform logistics and SLA management"
+      ],
+      "tags": [
+        "workflow-automation",
+        "integrations",
+        "api-orchestration",
+        "sla-management"
+      ]
     },
     {
-      "type": "case-studies",
-      "url": "https://kozker.com/work"
+      "identifier": "urn:air:kozker.com:resource:llms-txt",
+      "displayName": "Kozker LLM Content & Capabilities Reference",
+      "type": "text/markdown",
+      "url": "https://kozker.com/llms.txt",
+      "representativeQueries": [
+        "What services does Kozker provide?",
+        "Kozker technical case studies and client results"
+      ],
+      "tags": [
+        "llms-txt",
+        "ai-context",
+        "capabilities"
+      ]
     },
     {
-      "type": "contact",
-      "url": "https://kozker.com/contact"
+      "identifier": "urn:air:kozker.com:resource:case-studies",
+      "displayName": "Kozker Verified Production Case Studies",
+      "type": "text/html",
+      "url": "https://kozker.com/work",
+      "representativeQueries": [
+        "View Kozker client portfolio and ROI benchmarks",
+        "Production engineering case studies"
+      ],
+      "tags": [
+        "case-studies",
+        "portfolio",
+        "roi"
+      ]
     }
   ]
 }

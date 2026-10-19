@@ -85,7 +85,6 @@ export function SiteHeader() {
               <button
                 className={`nav-link nav-service-trigger ${isActive("/services") ? "is-active" : ""}`}
                 type="button"
-                aria-label="Open services menu"
                 data-active={isActive("/services")}
               >
                 <span>Services</span>
