@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, useCallback } from "react"
-import { AnimatePresence, motion } from "motion/react"
 
 export interface ProjectPreviewItem {
   image: string
@@ -212,39 +211,34 @@ export function MediaCollage({
 
                   {/* Right Image & Content Area */}
                   <div className="tab-image-area">
-                    <AnimatePresence mode="wait" initial={false}>
-                      <motion.div
-                        key={`img-${item.title}-${idx}`}
-                        className="tab-image-inner"
-                        initial={{ opacity: 0.85, scale: 0.99 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0.85 }}
-                        transition={{ duration: 0.3, ease: [0.22, 0.61, 0.36, 1] }}
-                      >
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="tab-image-cover"
-                          loading="eager"
-                          fetchPriority={idx === 0 ? "high" : "auto"}
-                          width={720}
-                          height={450}
-                        />
-                        {/* Dark Gradient Overlay for optimal contrast */}
-                        <div className="tab-gradient-overlay" />
+                    <div
+                      key={`img-${item.title}-${idx}`}
+                      className="tab-image-inner"
+                    >
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="tab-image-cover"
+                        loading={idx === 0 ? "eager" : "lazy"}
+                        fetchPriority={idx === 0 ? "high" : "auto"}
+                        decoding={idx === 0 ? "sync" : "async"}
+                        width={720}
+                        height={450}
+                      />
+                      {/* Dark Gradient Overlay for optimal contrast */}
+                      <div className="tab-gradient-overlay" />
 
-                        {/* Title & Description Overlay */}
-                        <div className="tab-content-overlay">
-                          {item.category && (
-                            <span className="tab-category-badge">
-                              {item.category}
-                            </span>
-                          )}
-                          <h3 className="tab-title">{item.title}</h3>
-                          <p className="tab-desc">{item.description}</p>
-                        </div>
-                      </motion.div>
-                    </AnimatePresence>
+                      {/* Title & Description Overlay */}
+                      <div className="tab-content-overlay">
+                        {item.category && (
+                          <span className="tab-category-badge">
+                            {item.category}
+                          </span>
+                        )}
+                        <h3 className="tab-title">{item.title}</h3>
+                        <p className="tab-desc">{item.description}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </article>

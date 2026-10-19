@@ -95,7 +95,7 @@ export const caseStudy: CaseStudy = {
   client: "Brooke India",
   category: "WORKFLOW AUTOMATION & AI",
   title: "Building an AI-Powered WhatsApp Voice & Health Helpline for Brooke India",
-  image: "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=1200&q=80",
+  image: "/assets/brooke_india_cover.webp",
   description: "A WhatsApp helpline for Brooke India (+91 99711 93955) that transcribes regional voice notes, checks a veterinary knowledge base, and texts back local vet contacts.",
   industry: "Animal Welfare & Veterinary Care",
   timeline: "6 Weeks",
