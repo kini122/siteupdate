@@ -627,14 +627,14 @@
   }
 
   .button-primary {
-    background: #E05315;
+    background: var(--orange, #FF6E30);
     color: #ffffff !important;
-    box-shadow: 0 6px 18px rgba(224, 83, 21, 0.28);
+    box-shadow: 0 6px 18px rgba(255, 110, 48, 0.28);
   }
 
   .button-primary:hover {
-    background: #c2410c;
-    box-shadow: 0 10px 24px rgba(224, 83, 21, 0.38);
+    background: #e85c20;
+    box-shadow: 0 10px 24px rgba(255, 110, 48, 0.38);
     transform: translateY(-2px);
   }
 
@@ -1008,41 +1008,42 @@
   .project-gallery-dots {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
   }
 
   .gallery-dot {
     position: relative;
+    width: 24px;
+    height: 24px;
+    border-radius: 0;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 180ms ease;
+  }
+
+  .gallery-dot::after {
+    content: "";
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    border: 0;
-    padding: 0;
     background: #8D8980;
-    cursor: pointer;
     transition: all 260ms cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
-  .gallery-dot::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    min-width: 44px;
-    min-height: 44px;
-  }
-
-  .gallery-dot:hover {
+  .gallery-dot:hover::after {
     background: #55514B;
   }
 
-  .gallery-dot.is-active {
-    width: 24px;
+  .gallery-dot.is-active::after {
+    width: 22px;
     height: 6px;
     border-radius: 9999px;
-    background: #E05315;
-    transform: none;
+    background: var(--orange, #FF6E30);
   }
 
   /* Metrics & Testimonials */
@@ -1087,7 +1088,7 @@
     font-size: clamp(38px, 3.8vw, 48px);
     font-weight: 600;
     line-height: 1.05;
-    color: #D64F16;
+    color: var(--orange, #FF6E30);
     letter-spacing: -0.02em;
     white-space: nowrap;
   }
@@ -2031,7 +2032,7 @@
     font-size: 20px;
     font-weight: 700;
     line-height: 1.15;
-    color: #D64F16;
+    color: var(--orange, #FF6E30);
     text-align: left;
     word-break: break-word;
     letter-spacing: -0.02em;
@@ -2505,8 +2506,8 @@
     align-items: center;
     padding: 3px 8px;
     border-radius: 5px;
-    background: rgba(194, 65, 12, 0.12);
-    color: #C2410C;
+    background: rgba(255, 110, 48, 0.12);
+    color: var(--orange, #FF6E30);
     font-family: var(--font-mono);
     font-size: 10.5px;
     font-weight: 700;
@@ -3062,7 +3063,7 @@
   .cal-loading-text {
     font-size: 13.5px;
     font-weight: 500;
-    color: #8c827a;
+    color: #55514B;
     letter-spacing: 0.01em;
   }
 

@@ -294,33 +294,10 @@ export function useCaseStudies() {
       }
     }
 
-    // Optimization 3: Supabase Realtime subscription on case_studies table
-    let realtimeChannel: ReturnType<typeof supabase.channel> | null = null
-    if (isSupabaseConfigured()) {
-      try {
-        realtimeChannel = supabase
-          .channel("public:case_studies_changes")
-          .on(
-            "postgres_changes",
-            { event: "*", schema: "public", table: "case_studies" },
-            () => {
-              invalidateCaseStudiesCache()
-              fetchStudies(false)
-            }
-          )
-          .subscribe()
-      } catch {
-        // Fallback silently if realtime replication is not configured on project
-      }
-    }
-
     return () => {
       window.removeEventListener("kozker:case-studies:cache-invalidated", handleInvalidation)
       if (broadcastChannel) {
         broadcastChannel.close()
-      }
-      if (realtimeChannel) {
-        supabase.removeChannel(realtimeChannel)
       }
     }
   }, [fetchStudies])
