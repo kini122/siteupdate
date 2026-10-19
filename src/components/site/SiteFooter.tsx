@@ -8,7 +8,7 @@ export function SiteFooter() {
         <div className="footer-inner">
           <div className="footer-brand-column">
             <Link to="/" className="footer-brand" aria-label="Kozker Tech home">
-              <img src="/assets/19d5f3.png" alt="Kozker Tech" className="footer-brand-img" />
+              <img src="/assets/19d5f3.png" alt="Kozker Tech" className="footer-brand-img" width="48" height="44" loading="lazy" decoding="async" />
               <span className="footer-brand-text">Kozker Tech.</span>
             </Link>
             <p className="footer-note">

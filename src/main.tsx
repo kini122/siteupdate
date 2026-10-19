@@ -1,19 +1,40 @@
 import { StrictMode } from "react"
-import { createRoot } from "react-dom/client"
+import { createRoot, hydrateRoot } from "react-dom/client"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { MotionConfig } from "motion/react"
 
 import "./index.css"
 import App from "./App.tsx"
+import { router } from "./router"
 
 const queryClient = new QueryClient()
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <MotionConfig reducedMotion="user" transition={{ duration: 0.55, ease: "easeOut" }}>
+const rootEl = document.getElementById("root")!
+
+const mount = async () => {
+  try {
+    await router.load()
+  } catch {
+    // Ignore
+  }
+
+  const content = (
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
         <App />
-      </MotionConfig>
-    </QueryClientProvider>
-  </StrictMode>,
-)
+      </QueryClientProvider>
+    </StrictMode>
+  )
+
+  if (rootEl && rootEl.hasChildNodes()) {
+    try {
+      hydrateRoot(rootEl, content)
+      return
+    } catch {
+      // Fallback to createRoot if hydration encounters an issue
+    }
+  }
+
+  createRoot(rootEl).render(content)
+}
+
+mount()
