@@ -1,4 +1,6 @@
 import { useEffect } from "react"
+import { usePageMetadata, resolveOgImageUrl } from "@/hooks/usePageMetadata"
+import { trackPageView } from "@/lib/analytics"
 
 interface SeoHeadProps {
   title: string
@@ -8,20 +10,34 @@ interface SeoHeadProps {
   ogType?: "website" | "article" | "profile"
   ogImage?: string
   jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>
+  pageType?: string
 }
 
-const SITE_URL = "https://kozker.com"
-const DEFAULT_IMAGE = "https://kozker.com/assets/19d5f3.png"
+const DEFAULT_INTERNAL_IMAGE = "/assets/og-preview.jpg"
 
 export function SeoHead({
-  title,
-  description,
+  title: fallbackTitle,
+  description: fallbackDescription,
   canonicalPath = "",
-  noindex = false,
-  ogType = "website",
-  ogImage = DEFAULT_IMAGE,
+  noindex: fallbackNoindex = false,
+  ogType: fallbackOgType = "website",
+  ogImage: fallbackOgImage = DEFAULT_INTERNAL_IMAGE,
   jsonLd,
+  pageType = "website",
 }: SeoHeadProps) {
+  // Check for dynamic CMS-managed metadata for the canonical path or route
+  const routePath = canonicalPath || (typeof window !== "undefined" ? window.location.pathname : "/")
+  const { metadata, siteUrl } = usePageMetadata(routePath)
+
+  // Dynamic overrides from CMS if defined
+  const title = metadata?.title || fallbackTitle
+  const description = metadata?.description || fallbackDescription
+  const rawOgImage = metadata?.ogImage || fallbackOgImage
+  const resolvedOgImage = resolveOgImageUrl(rawOgImage, siteUrl)
+  const ogType = metadata?.ogType || fallbackOgType
+  const noindex = metadata?.noindex !== undefined ? metadata.noindex : fallbackNoindex
+  const twitterCard = metadata?.twitterCard || "summary_large_image"
+
   useEffect(() => {
     // 1. Title
     document.title = title
@@ -48,8 +64,9 @@ export function SeoHead({
     )
 
     // 3. Canonical Tag
-    const cleanPath = canonicalPath.startsWith("/") ? canonicalPath : `/${canonicalPath}`
-    const canonicalUrl = `${SITE_URL}${cleanPath === "/" ? "" : cleanPath}`
+    const cleanPath = routePath.startsWith("/") ? routePath : `/${routePath}`
+    const baseDomain = (siteUrl || "https://siteupdate-opal.vercel.app").replace(/\/+$/, "")
+    const canonicalUrl = metadata?.canonicalUrl || `${baseDomain}${cleanPath === "/" ? "" : cleanPath}`
     let canonicalLink = document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
     if (!canonicalLink) {
       canonicalLink = document.createElement("link")
@@ -58,19 +75,22 @@ export function SeoHead({
     }
     canonicalLink.setAttribute("href", canonicalUrl)
 
-    // 4. Open Graph Tags
+    // 4. Open Graph Tags (Facebook, WhatsApp, LinkedIn, Slack, Discord unfurling)
     setMeta("og:title", title, true)
     setMeta("og:description", description, true)
     setMeta("og:url", canonicalUrl, true)
     setMeta("og:type", ogType, true)
-    setMeta("og:image", ogImage, true)
+    setMeta("og:image", resolvedOgImage, true)
+    setMeta("og:image:alt", title, true)
+    setMeta("og:image:width", "1200", true)
+    setMeta("og:image:height", "630", true)
     setMeta("og:site_name", "Kozker", true)
 
-    // 5. Twitter Card Tags
-    setMeta("twitter:card", "summary_large_image")
+    // 5. Twitter / X Specific Cards
+    setMeta("twitter:card", twitterCard)
     setMeta("twitter:title", title)
     setMeta("twitter:description", description)
-    setMeta("twitter:image", ogImage)
+    setMeta("twitter:image", resolvedOgImage)
     setMeta("twitter:url", canonicalUrl)
 
     // 6. JSON-LD Structured Data
@@ -89,12 +109,18 @@ export function SeoHead({
       jsonLdScript.remove()
     }
 
+    // 7. Google Analytics & DataLayer Page View Tracking
+    trackPageView(cleanPath, title, {
+      page_type: pageType,
+      og_type: ogType,
+    })
+
     return () => {
       // Clean up route-specific script on unmount
       const existing = document.getElementById(scriptId)
       if (existing) existing.remove()
     }
-  }, [title, description, canonicalPath, noindex, ogType, ogImage, jsonLd])
+  }, [title, description, routePath, noindex, ogType, resolvedOgImage, twitterCard, metadata?.canonicalUrl, siteUrl, jsonLd, pageType])
 
   return null
 }

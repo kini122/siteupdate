@@ -18,12 +18,16 @@ import {
   Clock,
   Globe,
   Sparkles,
+  BarChart3,
+  Share2,
 } from "lucide-react"
 
 import { isSupabaseConfigured, supabase, uploadCaseStudyImage } from "@/lib/supabase"
 import { useAdminCaseStudies } from "@/hooks/useCaseStudies"
 import { generateSlug, validateSlug } from "@/lib/slug"
 import { CaseStudyPagePreview } from "@/components/admin/CaseStudyPagePreview"
+import { PageMetadataEditor } from "@/components/admin/PageMetadataEditor"
+import { AnalyticsSettingsEditor } from "@/components/admin/AnalyticsSettingsEditor"
 import { SeoHead } from "@/components/seo/SeoHead"
 import type { CaseStudy, CaseStudyCapability } from "@/types/site"
 
@@ -34,6 +38,9 @@ export function AdminPage() {
   const [password, setPassword] = useState("")
   const [authMessage, setAuthMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
   const [isSubmittingAuth, setIsSubmittingAuth] = useState(false)
+
+  // Top-level CMS section
+  const [cmsSection, setCmsSection] = useState<"case-studies" | "metadata" | "analytics">("case-studies")
 
   // CMS state
   const {
@@ -384,6 +391,37 @@ export function AdminPage() {
                 </>
               )}
             </span>
+
+            {/* CMS Section Navigation Tabs */}
+            <nav className="admin-section-nav" role="tablist" aria-label="CMS Sections">
+              <button
+                type="button"
+                onClick={() => setCmsSection("case-studies")}
+                className={`admin-section-btn ${cmsSection === "case-studies" ? "active" : ""}`}
+              >
+                <FileText className="h-3.5 w-3.5" />
+                <span>Case Studies</span>
+                <span className="admin-section-count">{caseStudies.length}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCmsSection("metadata")}
+                className={`admin-section-btn ${cmsSection === "metadata" ? "active" : ""}`}
+              >
+                <Share2 className="h-3.5 w-3.5" />
+                <span>Page Metadata &amp; OG</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCmsSection("analytics")}
+                className={`admin-section-btn ${cmsSection === "analytics" ? "active" : ""}`}
+              >
+                <BarChart3 className="h-3.5 w-3.5" />
+                <span>Analytics (GA4)</span>
+              </button>
+            </nav>
           </div>
 
           <div className="admin-nav-right">
@@ -407,7 +445,11 @@ export function AdminPage() {
 
       {/* Main Content Area */}
       <main className="admin-main-content">
-        {activeTab === "list" ? (
+        {cmsSection === "metadata" ? (
+          <PageMetadataEditor />
+        ) : cmsSection === "analytics" ? (
+          <AnalyticsSettingsEditor isAdminUser={Boolean(user)} />
+        ) : activeTab === "list" ? (
           <div className="admin-list-view">
             {/* Action Bar */}
             <div className="admin-header-row">

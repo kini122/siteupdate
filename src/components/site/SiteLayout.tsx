@@ -2,10 +2,14 @@ import { useEffect } from "react"
 import { Outlet, useRouterState } from "@tanstack/react-router"
 
 import { SiteHeader } from "@/components/site/SiteHeader"
+import { useSiteAnalytics } from "@/hooks/usePageMetadata"
 
 export function SiteLayout() {
   const routerState = useRouterState()
   const isAdmin = routerState.location.pathname.startsWith("/admin")
+
+  // Automated Google Analytics (GA4) initialization with environment & admin controls
+  useSiteAnalytics(isAdmin)
 
   // Technical SEO: Enforce canonical domain (apex), lowercase paths, and remove trailing slashes
   useEffect(() => {
