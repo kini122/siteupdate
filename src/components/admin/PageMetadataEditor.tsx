@@ -58,6 +58,14 @@ export function PageMetadataEditor() {
 
   const [formData, setFormData] = useState<PageMetadata>(currentItem)
 
+  // Keep formData in sync when allMetadata finishes loading or updates
+  useEffect(() => {
+    const match = allMetadata.find((m) => m.path === selectedPath)
+    if (match) {
+      setFormData(match)
+    }
+  }, [selectedPath, allMetadata])
+
   // Helper to ensure internal paths are used for previewing without domain errors
   const getPreviewImageSrc = (img?: string) => {
     if (!img || !img.trim()) return "/assets/og-preview.jpg"

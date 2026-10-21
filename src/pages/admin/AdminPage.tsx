@@ -251,15 +251,17 @@ export function AdminPage() {
     }
   }
 
-  // Filtered case studies
-  const filteredStudies = caseStudies.filter((s) => {
-    const matchesSearch =
-      s.client.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.category.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesBranch = filterBranch === "all" || s.branchKey === filterBranch
-    return matchesSearch && matchesBranch
-  })
+  // Filtered case studies (excluding system storage records)
+  const filteredStudies = caseStudies
+    .filter((s) => !s.id.startsWith("__"))
+    .filter((s) => {
+      const matchesSearch =
+        s.client.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        s.category.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesBranch = filterBranch === "all" || s.branchKey === filterBranch
+      return matchesSearch && matchesBranch
+    })
 
   // If not logged in, show Login Page
   const isAuthenticated = Boolean(user)
@@ -401,7 +403,7 @@ export function AdminPage() {
               >
                 <FileText className="h-3.5 w-3.5" />
                 <span>Case Studies</span>
-                <span className="admin-section-count">{caseStudies.length}</span>
+                <span className="admin-section-count">{caseStudies.filter((s) => !s.id.startsWith("__")).length}</span>
               </button>
 
               <button
