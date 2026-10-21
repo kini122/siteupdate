@@ -32,11 +32,12 @@ const DEFAULT_METADATA: Record<string, MetaData> = {
     twitterCard: "summary_large_image",
   },
   "/products": {
-    title: "Products & Systems — AI Tools & Platforms | Kozker",
+    title: "Products & Systems — AI Tools & Platforms | Kozker tech..",
     description: "Discover specialized software products engineered by Kozker, including AI recruitment platforms, automated workflow agents, and business analytics suites.",
-    ogImage: "/assets/3132a8.webp",
+    ogImage: "/assets/e467dd.webp",
     ogType: "website",
     twitterCard: "summary_large_image",
+    canonicalUrl: "https://siteupdate-opal.vercel.app/products",
   },
   "/about": {
     title: "About Kozker — Systems, Speed & Pragmatic AI",
@@ -63,7 +64,10 @@ const DEFAULT_METADATA: Record<string, MetaData> = {
 
 export default async function handler(req: any, res: any) {
   const rawPath = String(req.query.path || req.query.p || "/").trim()
-  const cleanPath = rawPath.startsWith("/") ? rawPath : `/${rawPath}`
+  let cleanPath = rawPath.startsWith("/") ? rawPath : `/${rawPath}`
+  if (cleanPath.length > 1 && cleanPath.endsWith("/")) {
+    cleanPath = cleanPath.slice(0, -1)
+  }
 
   const supabaseUrl =
     process.env.VITE_SUPABASE_URL ||
@@ -227,6 +231,6 @@ export default async function handler(req: any, res: any) {
 </html>`
 
   res.setHeader("Content-Type", "text/html; charset=utf-8")
-  res.setHeader("Cache-Control", "public, max-age=60, s-maxage=300, stale-while-revalidate=86400")
+  res.setHeader("Cache-Control", "public, max-age=10, s-maxage=60, stale-while-revalidate=300")
   return res.status(200).send(html)
 }

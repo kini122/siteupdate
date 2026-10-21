@@ -68,12 +68,13 @@ export const DEFAULT_PAGE_METADATA: PageMetadata[] = [
   {
     id: "meta-products",
     path: "/products",
-    title: "Products & Systems — AI Tools & Platforms | Kozker",
+    title: "Products & Systems — AI Tools & Platforms | Kozker tech..",
     description: "Discover specialized software products engineered by Kozker, including AI recruitment platforms, automated workflow agents, and business analytics suites.",
-    ogImage: "/assets/3132a8.webp",
+    ogImage: "/assets/e467dd.webp",
     ogType: "website",
     twitterCard: "summary_large_image",
     noindex: false,
+    canonicalUrl: "https://siteupdate-opal.vercel.app/products",
   },
   {
     id: "meta-about",

@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router"
+import { Link, useNavigate } from "@tanstack/react-router"
 import { motion } from "motion/react"
 import { ArrowRight, Quote } from "lucide-react"
 
@@ -10,6 +10,7 @@ interface CaseStudyCardProps {
 }
 
 export function CaseStudyCard({ study }: CaseStudyCardProps) {
+  const navigate = useNavigate()
   const slugParam = study.slug || study.id
 
   // Cleanly split base route path and query parameters from ctaHref
@@ -38,11 +39,39 @@ export function CaseStudyCard({ study }: CaseStudyCardProps) {
 
   const ctaLabel = study.ctaText || "Start a Conversation"
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // If clicking an existing anchor or button, let its own action handle it
+    const target = e.target as HTMLElement
+    if (target.closest("a, button")) {
+      return
+    }
+    navigate({
+      to: "/case-studies/$slug",
+      params: { slug: slugParam },
+    })
+  }
+
   return (
     <motion.article
       className="case-study-card-figma"
       whileHover={{ y: -6 }}
       transition={{ duration: 0.25, ease: [0.22, 0.61, 0.36, 1] }}
+      onClick={handleCardClick}
+      style={{ cursor: "pointer" }}
+      role="article"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          const target = e.target as HTMLElement
+          if (!target.closest("a, button")) {
+            e.preventDefault()
+            navigate({
+              to: "/case-studies/$slug",
+              params: { slug: slugParam },
+            })
+          }
+        }
+      }}
     >
       {/* Top Image (Rectangle 113) - Direct link to dedicated slug page */}
       <Link
@@ -112,22 +141,15 @@ export function CaseStudyCard({ study }: CaseStudyCardProps) {
           </div>
         )}
 
-        {/* Bottom Actions Row: Direct Read Case Study Button + Customized Action Button */}
+        {/* Bottom Actions Row: Customized Action Button */}
         <div className="case-card-cta-wrap">
-          <Link
-            to="/case-studies/$slug"
-            params={{ slug: slugParam }}
-            className="case-card-read-more-btn"
-            aria-label={`Read Story: ${study.client}`}
-          >
-            <span>Read Story</span>
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </Link>
-
           <Link
             to={baseRoute || "/contact"}
             search={contactSearchParams}
             className="case-card-cta-btn"
+            onClick={(e) => {
+              e.stopPropagation()
+            }}
           >
             <span>{ctaLabel}</span>
             <ArrowRight className="h-4 w-4" aria-hidden="true" />

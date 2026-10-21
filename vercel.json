@@ -24,7 +24,7 @@
         {
           "type": "header",
           "key": "user-agent",
-          "value": "(?i).*(facebookexternalhit|whatsapp|twitterbot|linkedinbot|slackbot|discordbot|telegrambot|applebot|skypeuripreview|yandex|duckduckbot).*"
+          "value": ".*([wW]hats[aA]pp|[fF]acebookexternalhit|[fF]acebot|[tT]witterbot|[lL]inked[iI]n[bB]ot|[sS]lackbot|[dD]iscordbot|[tT]elegram[bB]ot|[aA]pplebot|[sS]kype[uU]ri[pP]review|[yY]andex|[dD]uck[dD]uck[bB]ot|[pP]interest|[rR]edditbot|[bB]ingbot|[gG]ooglebot).*"
         }
       ],
       "destination": "/api/og?path=/$1"

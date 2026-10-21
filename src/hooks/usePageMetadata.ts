@@ -178,19 +178,32 @@ async function fetchRemoteMetadata(): Promise<PageMetadata[] | null> {
       .select("*")
 
     if (!metaErr && rows && rows.length > 0) {
-      return DEFAULT_PAGE_METADATA.map((def) => {
-        const remote = rows.find((r: { path?: string }) => r.path === def.path)
-        if (!remote) return def
-        return {
-          ...def,
-          ...remote,
-          ogType: remote.og_type || remote.ogType || def.ogType,
-          ogImage: remote.og_image || remote.ogImage || def.ogImage,
-          twitterCard: remote.twitter_card || remote.twitterCard || def.twitterCard,
-          canonicalUrl: remote.canonical_url || remote.canonicalUrl || def.canonicalUrl,
-          updatedAt: remote.updated_at || remote.updatedAt,
+      const map = new Map<string, PageMetadata>()
+      DEFAULT_PAGE_METADATA.forEach((def) => map.set(def.path, { ...def }))
+      rows.forEach((remote: any) => {
+        if (remote && remote.path) {
+          const existing: PageMetadata = map.get(remote.path) || {
+            id: remote.id || `meta-${remote.path.replace(/\//g, "-")}`,
+            path: remote.path,
+            title: remote.title || "Kozker Tech",
+            description: remote.description || "",
+            ogImage: "/assets/og-preview.jpg",
+            ogType: "website" as const,
+            twitterCard: "summary_large_image" as const,
+            noindex: false,
+          }
+          map.set(remote.path, {
+            ...existing,
+            ...remote,
+            ogType: remote.og_type || remote.ogType || existing.ogType,
+            ogImage: remote.og_image || remote.ogImage || existing.ogImage,
+            twitterCard: remote.twitter_card || remote.twitterCard || existing.twitterCard,
+            canonicalUrl: remote.canonical_url || remote.canonicalUrl || existing.canonicalUrl,
+            updatedAt: remote.updated_at || remote.updatedAt,
+          })
         }
       })
+      return Array.from(map.values())
     }
 
     // 2. If table doesn't exist, try fallback storage in case_studies
@@ -204,10 +217,15 @@ async function fetchRemoteMetadata(): Promise<PageMetadata[] | null> {
       try {
         const parsed = JSON.parse(fbRow.description)
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return DEFAULT_PAGE_METADATA.map((def) => {
-            const found = parsed.find((p: { path?: string }) => p.path === def.path)
-            return found ? { ...def, ...found } : def
+          const map = new Map<string, PageMetadata>()
+          DEFAULT_PAGE_METADATA.forEach((def) => map.set(def.path, { ...def }))
+          parsed.forEach((p: PageMetadata) => {
+            if (p && p.path) {
+              const existing = map.get(p.path)
+              map.set(p.path, existing ? { ...existing, ...p } : p)
+            }
           })
+          return Array.from(map.values())
         }
       } catch {
         // Ignore parse error
@@ -322,8 +340,8 @@ export function useSiteSettings() {
           { onConflict: "key" }
         )
 
-        // If site_settings table doesn't exist, fall back to case_studies storage
-        if (setErr && (setErr.code === "PGRST205" || setErr.message?.includes("not find"))) {
+        // If site_settings table doesn't exist or errors, fall back to case_studies storage
+        if (setErr) {
           const { error: fbErr } = await client.from("case_studies").upsert(
             {
               id: SYSTEM_SETTINGS_ID,
@@ -493,8 +511,8 @@ export function useAdminMetadata() {
           { onConflict: "path" }
         )
 
-        // 2. If table doesn't exist, fall back to case_studies fallback storage
-        if (metaErr && (metaErr.code === "PGRST205" || metaErr.message?.includes("not find"))) {
+        // 2. If table doesn't exist or errors, fall back to case_studies fallback storage
+        if (metaErr) {
           const { error: fbErr } = await client.from("case_studies").upsert(
             {
               id: SYSTEM_METADATA_ID,
@@ -654,7 +672,7 @@ export function useSiteAnalytics(isAdminUser = false) {
         )
 
         // Fallback to case_studies storage
-        if (setErr && (setErr.code === "PGRST205" || setErr.message?.includes("not find"))) {
+        if (setErr) {
           await client.from("case_studies").upsert(
             {
               id: SYSTEM_ANALYTICS_ID,
