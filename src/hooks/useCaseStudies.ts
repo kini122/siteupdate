@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react"
 import { isSupabaseConfigured, getOptimizedMediaUrl } from "@/lib/supabaseUtils"
-import { caseStudiesList } from "@/data/siteContent"
 import { generateSlug } from "@/lib/slug"
 import type { CaseStudy } from "@/types/site"
 
@@ -132,7 +131,7 @@ export function mapCaseStudyToDbRow(study: CaseStudy): Partial<DbCaseStudyRow> {
 // ============================================================================
 // Optimization 2 & 3: Stale-While-Revalidate (SWR) & In-Memory / Storage Caching
 // ============================================================================
-const SWR_CACHE_KEY = "kozker_case_studies_swr_cache"
+const SWR_CACHE_KEY = "kozker_case_studies_cms_v2"
 const SWR_CACHE_TTL_MS = 60 * 60 * 1000 // 1 hour (3600 seconds fresh window)
 const SWR_STALE_MAX_AGE_MS = 24 * 60 * 60 * 1000 // Up to 24 hours stale-while-revalidate
 
@@ -160,6 +159,9 @@ function getCachedData(): { data: CaseStudy[]; isFresh: boolean } | null {
   // 2. localStorage check
   if (typeof window !== "undefined") {
     try {
+      // Purge obsolete legacy cache key if present
+      window.localStorage.removeItem("kozker_case_studies_swr_cache")
+
       const stored = window.localStorage.getItem(SWR_CACHE_KEY)
       if (stored) {
         const parsed: SwrCachePayload = JSON.parse(stored)
@@ -206,6 +208,7 @@ export function invalidateCaseStudiesCache() {
   if (typeof window !== "undefined") {
     try {
       window.localStorage.removeItem(SWR_CACHE_KEY)
+      window.localStorage.removeItem("kozker_case_studies_swr_cache")
       window.dispatchEvent(new CustomEvent("kozker:case-studies:cache-invalidated"))
       if ("BroadcastChannel" in window) {
         const channel = new BroadcastChannel("kozker_cms_sync")
@@ -219,23 +222,18 @@ export function invalidateCaseStudiesCache() {
 }
 
 /**
- * Public hook for fetching published case studies with SWR (Stale-While-Revalidate).
- * - Instant paint from in-memory / local cache (0ms latency, zero layout shift)
- * - 0 Supabase API hits when cache is fresh (< 1 hour)
- * - Silent background revalidation when stale
- * - Realtime / on-demand webhook cache bust listener
+ * Public hook for fetching published case studies directly from Supabase CMS.
+ * No hardcoded fallbacks are used.
  */
 export function useCaseStudies() {
   const cached = getCachedData()
-  const [data, setData] = useState<CaseStudy[]>(cached ? cached.data : caseStudiesList)
+  const [data, setData] = useState<CaseStudy[]>(cached ? cached.data : [])
   const [loading, setLoading] = useState<boolean>(!cached)
-  const [isUsingFallback, setIsUsingFallback] = useState<boolean>(!isSupabaseConfigured() && !cached)
   const isFetchingRef = useRef<boolean>(false)
 
   const fetchStudies = useCallback(async (isInitial = false) => {
     if (!isSupabaseConfigured()) {
-      setData(caseStudiesList)
-      setIsUsingFallback(true)
+      setData([])
       setLoading(false)
       return
     }
@@ -243,46 +241,30 @@ export function useCaseStudies() {
     if (isFetchingRef.current) return
     isFetchingRef.current = true
 
-    if (isInitial && !cached) {
+    if (isInitial && (!cached || cached.data.length === 0)) {
       setLoading(true)
     }
 
     try {
       const client = await getSupabaseClient()
-      // Selective projection minimizes egress & payload
       const { data: rows, error } = await client
         .from("case_studies")
         .select(CASE_STUDIES_SELECT_FIELDS)
         .eq("is_published", true)
         .order("sort_order", { ascending: true })
 
-      if (error || !rows || rows.length === 0) {
+      if (error || !rows) {
         if (!cached) {
-          setData(caseStudiesList)
-          setIsUsingFallback(true)
+          setData([])
         }
       } else {
-        const mapped = (rows as unknown as DbCaseStudyRow[]).map((row) => {
-          const mappedItem = mapDbRowToCaseStudy(row)
-          const localMatch = caseStudiesList.find((c) => c.id === row.id)
-          if (localMatch) {
-            if (!row.slug || row.slug !== localMatch.slug) {
-              return { ...localMatch, sortOrder: row.sort_order ?? localMatch.sortOrder }
-            }
-            if (!mappedItem.quote || !mappedItem.quote.text) {
-              mappedItem.quote = localMatch.quote
-            }
-          }
-          return mappedItem
-        })
+        const mapped = (rows as unknown as DbCaseStudyRow[]).map(mapDbRowToCaseStudy)
         setData(mapped)
         setCachedData(mapped)
-        setIsUsingFallback(false)
       }
     } catch {
       if (!cached) {
-        setData(caseStudiesList)
-        setIsUsingFallback(true)
+        setData([])
       }
     } finally {
       isFetchingRef.current = false
@@ -291,20 +273,9 @@ export function useCaseStudies() {
   }, [cached])
 
   useEffect(() => {
-    // If cache is missing or stale, revalidate silently without competing with initial paint
-    if (!cached || !cached.isFresh) {
-      const delayMs = cached ? 2000 : 8500
-      const timerId = setTimeout(() => {
-        if (typeof window !== "undefined" && "requestIdleCallback" in window) {
-          window.requestIdleCallback(() => fetchStudies(true), { timeout: 2000 })
-        } else {
-          fetchStudies(true)
-        }
-      }, delayMs)
-      return () => clearTimeout(timerId)
-    }
+    // Immediate fetch on mount without delay
+    fetchStudies(true)
 
-    // Optimization 3: Listen for local & broadcast cache invalidation events
     const handleInvalidation = () => {
       fetchStudies(false)
     }
@@ -328,12 +299,11 @@ export function useCaseStudies() {
     }
   }, [fetchStudies])
 
-  return { caseStudies: data, loading, isUsingFallback, refetch: () => fetchStudies(false) }
+  return { caseStudies: data, loading, isUsingFallback: false, refetch: () => fetchStudies(false) }
 }
 
 /**
- * Admin hook with CRUD operations, storage sync, one-click seeding,
- * and automatic on-demand cache invalidation.
+ * Admin hook with CRUD operations, storage sync, and automatic on-demand cache invalidation.
  */
 export function useAdminCaseStudies() {
   const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([])
@@ -342,7 +312,7 @@ export function useAdminCaseStudies() {
 
   const fetchAll = useCallback(async () => {
     if (!isSupabaseConfigured()) {
-      setCaseStudies(caseStudiesList)
+      setCaseStudies([])
       setLoading(false)
       return
     }
@@ -358,23 +328,16 @@ export function useAdminCaseStudies() {
 
       if (fetchErr) {
         setError(fetchErr.message)
-        setCaseStudies(caseStudiesList)
+        setCaseStudies([])
       } else if (!rows || rows.length === 0) {
-        setCaseStudies(caseStudiesList)
+        setCaseStudies([])
       } else {
-        const mapped = (rows as unknown as DbCaseStudyRow[]).map((row) => {
-          const mappedItem = mapDbRowToCaseStudy(row)
-          const localMatch = caseStudiesList.find((c) => c.id === row.id)
-          if (localMatch && (!row.slug || row.slug !== localMatch.slug)) {
-            return { ...localMatch, sortOrder: row.sort_order ?? localMatch.sortOrder }
-          }
-          return mappedItem
-        })
+        const mapped = (rows as unknown as DbCaseStudyRow[]).map(mapDbRowToCaseStudy)
         setCaseStudies(mapped)
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : String(err))
-      setCaseStudies(caseStudiesList)
+      setCaseStudies([])
     } finally {
       setLoading(false)
     }
@@ -457,40 +420,8 @@ export function useAdminCaseStudies() {
     }
   }
 
-  const seedCurrentCards = async (replaceLegacy = true): Promise<{ success: boolean; count: number; error?: string }> => {
-    if (!isSupabaseConfigured()) {
-      return { success: false, count: 0, error: "Supabase is not configured yet." }
-    }
-
-    try {
-      const client = await getSupabaseClient()
-      if (replaceLegacy) {
-        // Delete old demo/legacy records
-        await client
-          .from("case_studies")
-          .delete()
-          .in("id", ["finscale", "globalbi", "techgadgets", "healthops", "apexautomation", "autoops", "case-mv9dxvd1"])
-      }
-
-      const rowsToInsert = caseStudiesList.map((item, index) => {
-        const payload = mapCaseStudyToDbRow({ ...item, sortOrder: index + 1, isPublished: true })
-        return payload
-      })
-
-      const { error: seedErr } = await client
-        .from("case_studies")
-        .upsert(rowsToInsert, { onConflict: "id" })
-
-      if (seedErr) {
-        return { success: false, count: 0, error: seedErr.message }
-      }
-
-      invalidateCaseStudiesCache()
-      await fetchAll()
-      return { success: true, count: rowsToInsert.length }
-    } catch (err: unknown) {
-      return { success: false, count: 0, error: err instanceof Error ? err.message : String(err) }
-    }
+  const seedCurrentCards = async (): Promise<{ success: boolean; count: number; error?: string }> => {
+    return { success: false, count: 0, error: "Static seed cards disabled. All case studies are managed solely in Supabase CMS." }
   }
 
   return {
@@ -506,20 +437,13 @@ export function useAdminCaseStudies() {
 }
 
 /**
- * Hook for fetching a single case study by slug (or fallback to id).
- * 1. Checks memory & SWR cached list for 0ms immediate render
- * 2. Checks static default list
- * 3. If missing from cache and Supabase is configured, fetches on-demand
+ * Hook for fetching a single case study by slug (or id) directly from CMS.
  */
 export function useCaseStudyBySlug(slugOrId: string | undefined) {
   const { caseStudies, loading: listLoading } = useCaseStudies()
   const [study, setStudy] = useState<CaseStudy | null>(() => {
     if (!slugOrId) return null
-    return (
-      caseStudies.find((s) => s.slug === slugOrId || s.id === slugOrId) ||
-      caseStudiesList.find((s) => s.slug === slugOrId || s.id === slugOrId) ||
-      null
-    )
+    return caseStudies.find((s) => s.slug === slugOrId || s.id === slugOrId) || null
   })
   const [loading, setLoading] = useState<boolean>(!study && listLoading)
   const [error, setError] = useState<string | null>(null)
@@ -531,7 +455,7 @@ export function useCaseStudyBySlug(slugOrId: string | undefined) {
       return
     }
 
-    // 1. Check loaded caseStudies list
+    // 1. Check already loaded caseStudies from CMS
     const matched = caseStudies.find((s) => s.slug === slugOrId || s.id === slugOrId)
     if (matched) {
       setStudy(matched)
@@ -539,15 +463,7 @@ export function useCaseStudyBySlug(slugOrId: string | undefined) {
       return
     }
 
-    // 2. Check fallback list
-    const fallbackMatch = caseStudiesList.find((s) => s.slug === slugOrId || s.id === slugOrId)
-    if (fallbackMatch && !isSupabaseConfigured()) {
-      setStudy(fallbackMatch)
-      setLoading(false)
-      return
-    }
-
-    // 3. Direct Supabase query if not found in cache and Supabase is configured
+    // 2. Direct Supabase query if not found in list and Supabase is configured
     if (isSupabaseConfigured()) {
       let cancelled = false
       setLoading(true)
@@ -565,16 +481,16 @@ export function useCaseStudyBySlug(slugOrId: string | undefined) {
           if (cancelled) return
           if (fetchErr) {
             setError(fetchErr.message)
-            setStudy(fallbackMatch || null)
+            setStudy(null)
           } else if (row) {
             setStudy(mapDbRowToCaseStudy(row as unknown as DbCaseStudyRow))
           } else {
-            setStudy(fallbackMatch || null)
+            setStudy(null)
           }
         } catch (err: unknown) {
           if (cancelled) return
           setError(err instanceof Error ? err.message : String(err))
-          setStudy(fallbackMatch || null)
+          setStudy(null)
         } finally {
           if (!cancelled) {
             setLoading(false)
@@ -588,7 +504,7 @@ export function useCaseStudyBySlug(slugOrId: string | undefined) {
         cancelled = true
       }
     } else {
-      setStudy(fallbackMatch || null)
+      setStudy(null)
       setLoading(false)
     }
   }, [slugOrId, caseStudies])

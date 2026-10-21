@@ -24,7 +24,7 @@ import { SectionReveal } from "@/components/site/SectionReveal"
 import { SiteFooter } from "@/components/site/SiteFooter"
 import { SolutionTabs } from "@/components/site/SolutionTabs"
 import { SeoHead } from "@/components/seo/SeoHead"
-import { faqItems, products, solutionPanels, caseStudiesList } from "@/data/siteContent"
+import { faqItems, products, solutionPanels } from "@/data/siteContent"
 import { useCaseStudies } from "@/hooks/useCaseStudies"
 import { TEMPORARY_SECTION_VISIBILITY } from "@/config/visibility"
 
@@ -33,22 +33,13 @@ export function HomePage() {
   const [productPreviewOpen, setProductPreviewOpen] = useState(false)
   const [caseStudyService, setCaseStudyService] = useState<string>("all")
 
-  // Dynamically derive client testimonials directly from live case studies
+  // Dynamically derive client testimonials directly from live case studies in CMS
   const caseStudyTestimonials = useMemo(() => {
-    const list = caseStudies && caseStudies.length > 0 ? caseStudies : caseStudiesList
+    if (!caseStudies || caseStudies.length === 0) return []
 
-    // Ensure all 6 case studies are included
-    const combined = [...list]
-    caseStudiesList.forEach((cs) => {
-      if (!combined.some((item) => item.id === cs.id || item.slug === cs.slug)) {
-        combined.push(cs)
-      }
-    })
-
-    const filtered = combined
+    const filtered = caseStudies
       .map((s) => {
-        const fallback = caseStudiesList.find((c) => c.id === s.id || c.slug === s.slug)
-        const quoteObj = s.quote && s.quote.text ? s.quote : fallback?.quote
+        const quoteObj = s.quote && s.quote.text ? s.quote : null
         if (!quoteObj || !quoteObj.text) return null
 
         const rawAuthor = quoteObj.author ? quoteObj.author.replace(/^[—–-]\s*/, "").trim() : s.client
@@ -70,21 +61,11 @@ export function HomePage() {
       })
       .filter((item): item is NonNullable<typeof item> => item !== null)
 
-    return filtered.length > 0
-      ? filtered
-      : [
-          {
-            quote:
-              "Having a bot that understands panicked local voice notes and texts back vet numbers stopped our team from monitoring emergency calls round the clock.",
-            author: "Senior Operations Manager",
-            role: "Brooke India • Animal Welfare & Veterinary Care",
-            slug: "brooke-india-whatsapp-equine-helpline",
-          },
-        ]
+    return filtered
   }, [caseStudies])
 
   const featuredStudies = useMemo(() => {
-    const list = caseStudies && caseStudies.length > 0 ? caseStudies : caseStudiesList
+    const list = caseStudies || []
     if (caseStudyService === "all") return list.slice(0, 2)
     return list.filter((study) => study.branchKey === caseStudyService).slice(0, 2)
   }, [caseStudyService, caseStudies])
@@ -185,9 +166,10 @@ export function HomePage() {
               <div className="testimonial-rotator-area">
                 <AnimatePresence mode="wait" initial={false}>
                   {(() => {
+                    if (caseStudyTestimonials.length === 0) return null
                     const currentTestimonial =
-                      caseStudyTestimonials[testimonialIndex % (caseStudyTestimonials.length || 1)] ||
-                      caseStudyTestimonials[0]
+                      caseStudyTestimonials[testimonialIndex % caseStudyTestimonials.length]
+                    if (!currentTestimonial) return null
                     return (
                       <motion.div
                         key={testimonialIndex}
