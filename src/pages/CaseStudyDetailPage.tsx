@@ -70,14 +70,39 @@ export function CaseStudyDetailPage() {
 
   const canonicalUrlPath = `/case-studies/${study.slug || slug}`
 
+  const effectiveKeywords =
+    study.keywords && study.keywords.length > 0
+      ? study.keywords
+      : [
+          "Augment existing software with AI",
+          "AI for your existing software",
+          "AI systems development",
+          "custom AI solutions development",
+          "Build AI-powered systems",
+          "Custom AI layer",
+          "AI & Analytics Layer",
+          "AI automation",
+          "intelligent systems for business",
+          "Extend existing systems with AI",
+          "Tailored AI systems for service companies",
+          "Custom AI systems for business",
+          "AI extension for business software",
+          "AI integration layer",
+          "Intelligent systems built around yours",
+          "Automated Reporting",
+          "Integrated AI Platform",
+          "Agentic-AI Systems For Your Existing Systems",
+        ]
+
   // CreativeWork & Article Schema JSON-LD
   const jsonLdData = [
     {
       "@context": "https://schema.org",
       "@type": "Article",
-      headline: study.title,
+      headline: study.seoTitle || study.title,
       name: `${study.client} Case Study: ${study.title}`,
-      description: study.description || study.overview || "",
+      description: study.seoDescription || study.description || study.overview || "",
+      keywords: effectiveKeywords.join(", "),
       image: [publicImageUrl],
       author: {
         "@type": "Organization",
@@ -126,14 +151,16 @@ export function CaseStudyDetailPage() {
     <div className="case-detail-page-root">
       {/* Dynamic SEO Meta & Self-Referencing Canonical */}
       <SeoHead
-        title={`${study.title} | Kozker`}
+        title={study.seoTitle ? `${study.seoTitle} | Kozker` : `${study.title} | Kozker`}
         description={
+          study.seoDescription ||
           study.description ||
           `Read how Kozker partnered with ${study.client} to build ${study.title}, delivering measurable operational ROI.`
         }
         canonicalPath={canonicalUrlPath}
         ogType="article"
         ogImage={publicImageUrl}
+        keywords={effectiveKeywords}
         jsonLd={jsonLdData}
       />
 

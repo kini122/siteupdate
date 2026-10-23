@@ -18,8 +18,20 @@ export function AboutPage() {
   return (
     <div className="about-page-root">
       <SeoHead
-        title="About Kozker — Our Story, Mission & Founder | Kozker"
-        description="Learn about Kozker's story and mission to make advanced technology accessible. Founded by Govind Bhat, we bridge the divide between off-the-shelf software and costly enterprise builds."
+        title="About Kozker — AI Systems Development & Custom AI Solutions"
+        description="Learn about Kozker's AI systems development. We build custom AI solutions, intelligent systems built around yours, and custom AI layers that integrate into daily operations."
+        keywords={[
+          "AI systems development",
+          "custom AI solutions development",
+          "Custom AI layer",
+          "AI integration layer",
+          "Intelligent systems built around yours",
+          "Custom AI systems for business",
+          "Augment existing software with AI",
+          "Extend existing systems with AI",
+          "Tailored AI systems for service companies",
+          "Agentic-AI Systems For Your Existing Systems",
+        ]}
         canonicalPath="/about"
         jsonLd={{
           "@context": "https://schema.org",
@@ -82,8 +94,7 @@ export function AboutPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            We&apos;re on a mission to help businesses leverage cutting-edge technology to
-            grow, innovate, and succeed in the digital age.
+            We are on a mission to advance custom AI solutions development and AI systems development, engineering intelligent systems built around yours to help businesses scale.
           </motion.p>
         </div>
 
@@ -109,11 +120,13 @@ export function AboutPage() {
       {/* Story Section */}
       <section className="story-section">
         <div className="site-container">
+          <div className="story-header">
+            <h2>
+              Our Story<span className="accent-dot">.</span>
+            </h2>
+          </div>
           <div className="story-grid">
             <div className="story-copy">
-              <h2>
-                Our Story<span className="accent-dot">.</span>
-              </h2>
               <p>
                 Founded in 2024, KozkerTech is the technology division of Kozker, a
                 brand established in 2022. We began with a simple vision: to make
@@ -122,8 +135,7 @@ export function AboutPage() {
               <p>
                 Too many growing companies get caught between off-the-shelf software
                 that doesn&apos;t fit their workflows and enterprise systems that cost too
-                much to build and maintain. We bridge that divide—delivering custom,
-                interconnected systems that fit into daily operations from day one.
+                much to build and maintain. We bridge that divide through custom AI solutions development—delivering a custom AI layer and custom AI systems for business that fit into daily operations from day one.
               </p>
               <p className="story-highlight">
                 Our startup is young, our experience isn&apos;t.
@@ -147,10 +159,7 @@ export function AboutPage() {
                     that need it.
                   </p>
                   <p>
-                    We envision an operating standard where data intelligence, private
-                    assistants, and workflow automation aren&apos;t exclusive to massive tech
-                    enterprises, but practical tools that lean teams use every day to outpace
-                    operational friction and scale confidently.
+                    We envision an operating standard where custom AI systems for business, AI automation, and intelligent systems built around yours aren&apos;t exclusive to massive tech enterprises, but practical tools that lean teams use every day to outpace operational friction and scale confidently.
                   </p>
                 </AccordionContent>
               </AccordionItem>
@@ -165,10 +174,7 @@ export function AboutPage() {
                     time deciding.
                   </p>
                   <p>
-                    We engineer dependable, low-overhead software layers that integrate
-                    directly into existing stacks—eliminating repetitive manual work,
-                    reconciling disconnected data, and giving operators clear, reliable
-                    visibility that compounds over time.
+                    We engineer dependable, low-overhead software layers and an AI integration layer to augment existing software with AI—eliminating repetitive manual work, automating reporting, and giving operators clear, reliable visibility that compounds over time.
                   </p>
                 </AccordionContent>
               </AccordionItem>
@@ -241,9 +247,7 @@ export function AboutPage() {
             <span className="mono-label">WHAT WE BUILD</span>
             <h2>From business problems to useful technology.</h2>
             <p>
-              Founded in 2024, KozkerTech is the technology division of Kozker, a
-              brand established in 2022. We began with a simple vision: to make
-              advanced technology accessible to businesses of all sizes.
+              We specialize in AI systems development and intelligent systems built around yours, deploying a tailored AI integration layer to extend existing systems with AI without operational disruption.
             </p>
           </div>
           <div className="what-build-links">

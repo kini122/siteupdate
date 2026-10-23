@@ -153,15 +153,24 @@ export function ContactPage() {
   return (
     <div className="contact-page-root">
       <SeoHead
-        title="Start a Conversation | Kozker"
-        description="Get in touch with Kozker to discuss your company's data analytics, custom AI assistant, or workflow automation requirements. Fast turnaround and direct founder engagement."
+        title="Contact Kozker | Custom AI Solutions & AI Systems Development"
+        description="Augment existing software with AI. Reach out for custom AI solutions development, AI systems development, intelligent systems for business, and automated reporting."
+        keywords={[
+          "Augment existing software with AI",
+          "custom AI solutions development",
+          "AI systems development",
+          "intelligent systems for business",
+          "Custom AI layer",
+          "Automated Reporting",
+          "Extend existing systems with AI",
+        ]}
         canonicalPath="/contact"
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "ContactPage",
           name: "Contact Kozker",
           url: "https://kozker.com/contact",
-          description: "Get in touch with Kozker for custom software, AI automations, and data analytics inquiries.",
+          description: "Augment existing software with AI. Get in touch with Kozker for custom AI solutions development and intelligent systems for business.",
           mainEntity: {
             "@type": "Organization",
             name: "Kozker",
@@ -198,7 +207,7 @@ export function ContactPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            Have questions or need assistance? Our team is here to help you.
+            Looking to augment existing software with AI or explore custom AI solutions development? Our team engineers intelligent systems built around yours to eliminate operational bottlenecks.
           </motion.p>
         </div>
       </section>

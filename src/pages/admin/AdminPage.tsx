@@ -20,6 +20,7 @@ import {
   Sparkles,
   BarChart3,
   Share2,
+  Info,
 } from "lucide-react"
 
 import { isSupabaseConfigured, supabase, uploadCaseStudyImage } from "@/lib/supabase"
@@ -30,6 +31,27 @@ import { PageMetadataEditor } from "@/components/admin/PageMetadataEditor"
 import { AnalyticsSettingsEditor } from "@/components/admin/AnalyticsSettingsEditor"
 import { SeoHead } from "@/components/seo/SeoHead"
 import type { CaseStudy, CaseStudyCapability } from "@/types/site"
+
+const TARGET_SEO_KEYWORDS = [
+  "Augment existing software with AI",
+  "AI for your existing software",
+  "AI systems development",
+  "custom AI solutions development",
+  "Build AI-powered systems",
+  "Custom AI layer",
+  "AI & Analytics Layer",
+  "AI automation",
+  "intelligent systems for business",
+  "Extend existing systems with AI",
+  "Tailored AI systems for service companies",
+  "Custom AI systems for business",
+  "AI extension for business software",
+  "AI integration layer",
+  "Intelligent systems built around yours",
+  "Automated Reporting",
+  "Integrated AI Platform",
+  "Agentic-AI Systems For Your Existing Systems",
+]
 
 export function AdminPage() {
   const [user, setUser] = useState<{ email?: string } | null>(null)
@@ -171,6 +193,9 @@ export function AdminPage() {
       prefilledMessage: "Hi Kozker, I was reviewing your case study and would like to explore similar solutions for our company.",
       sortOrder: (caseStudies.length || 0) + 1,
       isPublished: true,
+      keywords: ["Augment existing software with AI", "AI for your existing software", "AI systems development"],
+      seoTitle: "",
+      seoDescription: "",
     })
     setActiveTab("edit")
     setMobileTab("form")
@@ -184,6 +209,9 @@ export function AdminPage() {
       stats: study.stats ? [...study.stats] : [],
       deliverables: study.deliverables ? [...study.deliverables] : [],
       techStack: study.techStack ? [...study.techStack] : [],
+      keywords: study.keywords ? [...study.keywords] : [],
+      seoTitle: study.seoTitle || "",
+      seoDescription: study.seoDescription || "",
     })
     setActiveTab("edit")
     setMobileTab("form")
@@ -1211,6 +1239,127 @@ export function AdminPage() {
                         onChange={(e) => setEditingStudy({ ...editingStudy, prefilledMessage: e.target.value })}
                         className="admin-input admin-textarea"
                       />
+                    </div>
+                  </div>
+
+                  {/* Card Section 9: Dynamic SEO & Keyword Injection Schema */}
+                  <div className="admin-section-card">
+                    <h3 className="admin-section-heading">9. Dynamic SEO &amp; Keyword Injection Schema</h3>
+                    <p className="admin-section-sub">
+                      Inject and customize target keywords dynamically for this case study. Injected keywords feed directly into Schema.org Article structured data and search indexing.
+                    </p>
+
+                    <div className="admin-form-group">
+                      <label>Active Target SEO Keywords (Comma-separated)</label>
+                      <textarea
+                        rows={2}
+                        value={editingStudy.keywords?.join(", ") || ""}
+                        onChange={(e) => {
+                          const tags = e.target.value.split(",").map((s) => s.trim()).filter(Boolean)
+                          setEditingStudy({ ...editingStudy, keywords: tags })
+                        }}
+                        placeholder="e.g. Augment existing software with AI, AI for your existing software, AI systems development"
+                        className="admin-input admin-textarea"
+                      />
+                    </div>
+
+                    {/* Quick-Inject Keyword Presets */}
+                    <div className="admin-form-group">
+                      <span className="admin-hint" style={{ fontSize: "12px", fontWeight: 600, color: "#C0BBB0", display: "block", marginBottom: "8px" }}>
+                        Quick-Inject Target SEO Keywords (Click to toggle):
+                      </span>
+                      <div className="admin-domain-presets" style={{ gap: "6px" }}>
+                        {TARGET_SEO_KEYWORDS.map((kw) => {
+                          const isIncluded = (editingStudy.keywords || []).some(
+                            (k) => k.toLowerCase() === kw.toLowerCase()
+                          )
+                          return (
+                            <button
+                              key={kw}
+                              type="button"
+                              onClick={() => {
+                                const current = editingStudy.keywords || []
+                                if (isIncluded) {
+                                  setEditingStudy({
+                                    ...editingStudy,
+                                    keywords: current.filter((k) => k.toLowerCase() !== kw.toLowerCase()),
+                                  })
+                                } else {
+                                  setEditingStudy({
+                                    ...editingStudy,
+                                    keywords: [...current, kw],
+                                  })
+                                }
+                              }}
+                              className={`admin-preset-chip ${isIncluded ? "active" : ""}`}
+                              style={{
+                                fontSize: "11px",
+                                padding: "4px 9px",
+                                borderColor: isIncluded ? "#FF6E30" : "rgba(255, 255, 255, 0.1)",
+                                background: isIncluded ? "rgba(255, 110, 48, 0.15)" : "rgba(255, 255, 255, 0.03)",
+                                color: isIncluded ? "#FF6E30" : "#D4D0C5",
+                              }}
+                            >
+                              <span>{isIncluded ? "✓ " : "+ "}</span>
+                              <span>{kw}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="admin-grid-two">
+                      <div className="admin-form-group">
+                        <label>SEO Title Override (Optional)</label>
+                        <input
+                          type="text"
+                          value={editingStudy.seoTitle || ""}
+                          onChange={(e) => setEditingStudy({ ...editingStudy, seoTitle: e.target.value })}
+                          placeholder={editingStudy.title || "Custom SEO headline for search crawlers"}
+                          className="admin-input"
+                        />
+                      </div>
+                      <div className="admin-form-group">
+                        <label>SEO Description Override (Optional)</label>
+                        <input
+                          type="text"
+                          value={editingStudy.seoDescription || ""}
+                          onChange={(e) => setEditingStudy({ ...editingStudy, seoDescription: e.target.value })}
+                          placeholder={editingStudy.description || "Custom meta description for search snippets"}
+                          className="admin-input"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Dynamic Structured Schema.org Preview */}
+                    <div className="admin-meta-code-preview" style={{ marginTop: "12px" }}>
+                      <div className="admin-code-header">
+                        <Info className="h-3.5 w-3.5 text-[#A5A095]" />
+                        <span>Dynamic Schema.org (JSON-LD) Output Preview</span>
+                      </div>
+                      <pre className="admin-code-block" style={{ maxHeight: "180px", overflow: "auto" }}>
+{JSON.stringify(
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: editingStudy.seoTitle || editingStudy.title,
+    name: `${editingStudy.client} Case Study: ${editingStudy.title}`,
+    description: editingStudy.seoDescription || editingStudy.description || editingStudy.overview,
+    keywords: (editingStudy.keywords && editingStudy.keywords.length > 0)
+      ? editingStudy.keywords.join(", ")
+      : undefined,
+    about: editingStudy.industry || editingStudy.category,
+    publisher: {
+      "@type": "Organization",
+      name: "Kozker",
+      url: "https://kozker.com",
+    },
+    mainEntityOfPage: `https://kozker.com/case-studies/${editingStudy.slug || editingStudy.id}`,
+  },
+  null,
+  2
+)}
+                      </pre>
                     </div>
                   </div>
                 </div>

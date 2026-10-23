@@ -25,6 +25,28 @@ BEGIN
   ) THEN
     ALTER TABLE public.case_studies ADD COLUMN published BOOLEAN GENERATED ALWAYS AS (is_published) STORED;
   END IF;
+
+  -- 3. Add dynamic SEO & keyword columns if not present
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' AND table_name = 'case_studies' AND column_name = 'keywords'
+  ) THEN
+    ALTER TABLE public.case_studies ADD COLUMN keywords TEXT[] DEFAULT '{}';
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' AND table_name = 'case_studies' AND column_name = 'seo_title'
+  ) THEN
+    ALTER TABLE public.case_studies ADD COLUMN seo_title TEXT;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' AND table_name = 'case_studies' AND column_name = 'seo_description'
+  ) THEN
+    ALTER TABLE public.case_studies ADD COLUMN seo_description TEXT;
+  END IF;
 END $$;
 
 -- 3. Populate SEO Slugs for the 6 existing Case Studies (Exact preservation)
@@ -94,6 +116,9 @@ CREATE TABLE IF NOT EXISTS public.case_studies (
   sort_order INT DEFAULT 0,
   is_published BOOLEAN DEFAULT true,
   published BOOLEAN GENERATED ALWAYS AS (is_published) STORED,
+  keywords TEXT[] DEFAULT '{}',
+  seo_title TEXT DEFAULT '',
+  seo_description TEXT DEFAULT '',
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );

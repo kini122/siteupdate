@@ -38,8 +38,19 @@ export function ServicesPage() {
   return (
     <div className="services-page-root">
       <SeoHead
-        title="Services — Data Analytics, AI Assistants & Automation | Kozker"
-        description="Explore Kozker's engineering services: unified financial & operational BI, custom private AI copilots, and end-to-end webhook workflow automation."
+        title="Services — AI Systems Development & AI Integration Layer | Kozker"
+        description="Explore Kozker's engineering services: AI systems development, custom AI solutions development, AI & Analytics Layer, automated reporting, and AI automation."
+        keywords={[
+          "AI systems development",
+          "custom AI solutions development",
+          "AI & Analytics Layer",
+          "AI automation",
+          "AI integration layer",
+          "Custom AI layer",
+          "Automated Reporting",
+          "Augment existing software with AI",
+          "Build AI-powered systems",
+        ]}
         canonicalPath="/services"
         jsonLd={{
           "@context": "https://schema.org",

@@ -34,12 +34,45 @@ export interface DbCaseStudyRow {
   sort_order?: number
   is_published?: boolean
   published?: boolean
+  keywords?: string[]
+  seo_title?: string
+  seo_description?: string
   created_at?: string
   updated_at?: string
 }
 
 // Optimization 4: Selective projection fields to minimize payload & Supabase egress
 const CASE_STUDIES_SELECT_FIELDS = [
+  "id",
+  "slug",
+  "client",
+  "category",
+  "title",
+  "image",
+  "description",
+  "industry",
+  "timeline",
+  "overview",
+  "challenge",
+  "solution",
+  "stats",
+  "quote",
+  "deliverables",
+  "tech_stack",
+  "branch_key",
+  "cta_text",
+  "cta_href",
+  "prefilled_subject",
+  "prefilled_message",
+  "sort_order",
+  "is_published",
+  "keywords",
+  "seo_title",
+  "seo_description",
+  "updated_at",
+].join(", ")
+
+const CASE_STUDIES_SELECT_FIELDS_LEGACY = [
   "id",
   "slug",
   "client",
@@ -92,6 +125,9 @@ export function mapDbRowToCaseStudy(row: DbCaseStudyRow): CaseStudy {
     prefilledMessage: row.prefilled_message,
     sortOrder: row.sort_order ?? 0,
     isPublished: row.is_published ?? true,
+    keywords: row.keywords || [],
+    seoTitle: row.seo_title,
+    seoDescription: row.seo_description,
   }
 }
 
@@ -124,6 +160,9 @@ export function mapCaseStudyToDbRow(study: CaseStudy): Partial<DbCaseStudyRow> {
     prefilled_message: study.prefilledMessage || "",
     sort_order: study.sortOrder ?? 0,
     is_published: study.isPublished ?? true,
+    keywords: study.keywords || [],
+    seo_title: study.seoTitle || "",
+    seo_description: study.seoDescription || "",
     updated_at: new Date().toISOString(),
   }
 }
@@ -247,11 +286,21 @@ export function useCaseStudies() {
 
     try {
       const client = await getSupabaseClient()
-      const { data: rows, error } = await client
+      let { data: rows, error } = await client
         .from("case_studies")
         .select(CASE_STUDIES_SELECT_FIELDS)
         .eq("is_published", true)
         .order("sort_order", { ascending: true })
+
+      if (error && (error.message.includes("keywords") || error.message.includes("seo_"))) {
+        const retry = await client
+          .from("case_studies")
+          .select(CASE_STUDIES_SELECT_FIELDS_LEGACY)
+          .eq("is_published", true)
+          .order("sort_order", { ascending: true })
+        rows = retry.data
+        error = retry.error
+      }
 
       if (error || !rows) {
         if (!cached) {
@@ -321,10 +370,19 @@ export function useAdminCaseStudies() {
       setLoading(true)
       setError(null)
       const client = await getSupabaseClient()
-      const { data: rows, error: fetchErr } = await client
+      let { data: rows, error: fetchErr } = await client
         .from("case_studies")
         .select(CASE_STUDIES_SELECT_FIELDS)
         .order("sort_order", { ascending: true })
+
+      if (fetchErr && (fetchErr.message.includes("keywords") || fetchErr.message.includes("seo_"))) {
+        const retry = await client
+          .from("case_studies")
+          .select(CASE_STUDIES_SELECT_FIELDS_LEGACY)
+          .order("sort_order", { ascending: true })
+        rows = retry.data
+        fetchErr = retry.error
+      }
 
       if (fetchErr) {
         setError(fetchErr.message)
@@ -355,9 +413,18 @@ export function useAdminCaseStudies() {
     try {
       const payload = mapCaseStudyToDbRow(study)
       const client = await getSupabaseClient()
-      const { error: saveErr } = await client
+      let { error: saveErr } = await client
         .from("case_studies")
         .upsert(payload, { onConflict: "id" })
+
+      if (saveErr && (saveErr.message.includes("keywords") || saveErr.message.includes("seo_"))) {
+        // Fallback without new schema columns if migration has not yet been executed in Supabase
+        const { keywords, seo_title, seo_description, ...cleanPayload } = payload
+        const retryRes = await client
+          .from("case_studies")
+          .upsert(cleanPayload, { onConflict: "id" })
+        saveErr = retryRes.error
+      }
 
       if (saveErr) {
         return { success: false, error: saveErr.message }
@@ -471,12 +538,23 @@ export function useCaseStudyBySlug(slugOrId: string | undefined) {
       const queryCaseStudy = async () => {
         try {
           const client = await getSupabaseClient()
-          const { data: row, error: fetchErr } = await client
+          let { data: row, error: fetchErr } = await client
             .from("case_studies")
             .select(CASE_STUDIES_SELECT_FIELDS)
             .or(`slug.eq.${slugOrId},id.eq.${slugOrId}`)
             .eq("is_published", true)
             .maybeSingle()
+
+          if (fetchErr && (fetchErr.message.includes("keywords") || fetchErr.message.includes("seo_"))) {
+            const retry = await client
+              .from("case_studies")
+              .select(CASE_STUDIES_SELECT_FIELDS_LEGACY)
+              .or(`slug.eq.${slugOrId},id.eq.${slugOrId}`)
+              .eq("is_published", true)
+              .maybeSingle()
+            row = retry.data
+            fetchErr = retry.error
+          }
 
           if (cancelled) return
           if (fetchErr) {

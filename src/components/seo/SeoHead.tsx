@@ -11,6 +11,7 @@ interface SeoHeadProps {
   ogImage?: string
   jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>
   pageType?: string
+  keywords?: string[] | string
 }
 
 const DEFAULT_INTERNAL_IMAGE = "/assets/og-preview.jpg"
@@ -24,6 +25,7 @@ export function SeoHead({
   ogImage: fallbackOgImage = DEFAULT_INTERNAL_IMAGE,
   jsonLd,
   pageType = "website",
+  keywords: fallbackKeywords,
 }: SeoHeadProps) {
   // Check for dynamic CMS-managed metadata for the canonical path or route
   const routePath = canonicalPath || (typeof window !== "undefined" ? window.location.pathname : "/")
@@ -37,6 +39,8 @@ export function SeoHead({
   const ogType = metadata?.ogType || fallbackOgType
   const noindex = metadata?.noindex !== undefined ? metadata.noindex : fallbackNoindex
   const twitterCard = metadata?.twitterCard || "summary_large_image"
+  const rawKeywords = metadata?.keywords && metadata.keywords.length > 0 ? metadata.keywords : fallbackKeywords
+  const keywordsString = Array.isArray(rawKeywords) ? rawKeywords.join(", ") : rawKeywords || ""
 
   useEffect(() => {
     // 1. Title
@@ -56,6 +60,9 @@ export function SeoHead({
 
     // 2. Primary Meta Tags
     setMeta("description", description)
+    if (keywordsString) {
+      setMeta("keywords", keywordsString)
+    }
     setMeta(
       "robots",
       noindex
@@ -120,7 +127,7 @@ export function SeoHead({
       const existing = document.getElementById(scriptId)
       if (existing) existing.remove()
     }
-  }, [title, description, routePath, noindex, ogType, resolvedOgImage, twitterCard, metadata?.canonicalUrl, siteUrl, jsonLd, pageType])
+  }, [title, description, keywordsString, routePath, noindex, ogType, resolvedOgImage, twitterCard, metadata?.canonicalUrl, siteUrl, jsonLd, pageType])
 
   return null
 }

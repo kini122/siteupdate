@@ -14,20 +14,20 @@ import { partnershipFaqItems } from "@/data/siteContent"
 const whyUsCards = [
   {
     id: "practical-systems",
-    title: "Practical Systems",
-    description: "Clear tools that fit how your partners already work.",
+    title: "Practical AI Systems",
+    description: "Extend existing systems with AI through clear tools that fit how partners already work.",
     icon: Rocket,
   },
   {
     id: "shared-growth",
-    title: "Shared Growth",
-    description: "A product direction shaped around useful outcomes.",
+    title: "Tailored AI Systems",
+    description: "Tailored AI systems for service companies shaped around measurable business outcomes.",
     icon: TrendingUp,
   },
   {
     id: "built-together",
-    title: "Built Together",
-    description: "A responsive team from first idea to steady adoption.",
+    title: "AI Integration Layer",
+    description: "A custom AI integration layer and responsive squad from first idea to steady adoption.",
     icon: Layers,
   },
 ]
@@ -37,21 +37,21 @@ const processCards = [
     id: "process-1",
     num: "01",
     title: "Discovery & Mapping",
-    description: "Audit existing workflows and identify high-leverage automation opportunities.",
+    description: "Audit existing software and identify high-leverage opportunities to augment existing software with AI.",
     icon: Workflow,
   },
   {
     id: "process-2",
     num: "02",
     title: "Co-Build & Integrate",
-    description: "Engineer custom AI solutions and connect seamlessly with your team's tools.",
+    description: "Custom AI solutions development: engineer intelligent systems built around yours and connect seamlessly.",
     icon: Rocket,
   },
   {
     id: "process-3",
     num: "03",
-    title: "Scale & Ongoing Support",
-    description: "Deploy production-grade systems with operator training and continuous iteration.",
+    title: "Scale & Support",
+    description: "Deploy production-grade custom AI systems for business with continuous iteration and automated reporting.",
     icon: Users2,
   },
 ]
@@ -237,8 +237,19 @@ export function PartnershipPage() {
   return (
     <div className="partnership-page-root">
       <SeoHead
-        title="Partnerships — Co-Building Scalable Systems | Kozker"
-        description="Partner with Kozker to deliver tailored AI tools, automated workflow systems, and data pipelines to your clients, networks, and portfolio companies."
+        title="Partnerships — Tailored AI Systems & AI Integration Layer | Kozker"
+        description="Partner with Kozker to deliver tailored AI systems for service companies, AI extension for business software, and intelligent systems built around yours."
+        keywords={[
+          "Tailored AI systems for service companies",
+          "Extend existing systems with AI",
+          "AI integration layer",
+          "Augment existing software with AI",
+          "custom AI solutions development",
+          "Custom AI systems for business",
+          "AI extension for business software",
+          "Intelligent systems built around yours",
+          "Build AI-powered systems",
+        ]}
         canonicalPath="/partners"
       />
       {/* Partnership Hero */}
@@ -262,7 +273,7 @@ export function PartnershipPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            We partner with HR professionals, service providers, and businesses to bring AI-powered systems and automation to more teams.
+            We partner with service companies and consultants to build AI-powered systems, delivering tailored AI systems for service companies and an AI extension for business software.
           </motion.p>
           <motion.div
             className="hero-actions"

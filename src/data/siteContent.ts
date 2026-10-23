@@ -32,27 +32,27 @@ export const homeFaqItems: FaqItem[] = [
   {
     id: "home-businesses",
     question: "What kind of businesses do you work with?",
-    answer: "We work with growing companies, regional enterprises, and lean operations teams across retail, logistics, healthcare, and professional services that need clearer visibility and less manual overhead.",
+    answer: "We work with growing companies, regional enterprises, and lean teams across retail, logistics, healthcare, and professional services that need tailored AI systems for service companies and intelligent systems for business.",
   },
   {
     id: "home-engagement",
     question: "How does a typical engagement work from start to finish?",
-    answer: "We start with a focused mapping session to understand your current tools and bottlenecks. Next, we architect and deliver a working version in about 4 weeks, followed by iterative refinement alongside your operators.",
+    answer: "We start with a focused mapping session to understand your current tools and bottlenecks. Next, we architect and deliver custom AI solutions development in about 4 weeks, creating intelligent systems built around yours.",
   },
   {
     id: "home-stack",
     question: "Do we need to replace our current software stack?",
-    answer: "No. We build connected layers and automations that integrate directly with your existing CRM, ERP, spreadsheets, and databases—protecting your current investments while making them dramatically more useful.",
+    answer: "No. We augment existing software with AI, building a custom AI layer and AI integration layer that connects directly with your existing CRM, ERP, and databases—providing AI for your existing software.",
   },
   {
     id: "home-roi",
     question: "How do you measure the ROI of a Kozker build?",
-    answer: "Every build is anchored to clear operational KPIs—such as hours saved per week, reporting latency reduced from days to minutes, error rate cuts, or lead response times—with transparent before-and-after tracking.",
+    answer: "Every build is anchored to clear operational KPIs—such as hours saved per week via automated reporting, latency reduced from days to minutes, and error cuts—with transparent before-and-after tracking.",
   },
   {
     id: "home-support",
     question: "What happens after the system goes live?",
-    answer: "We don't hand off code and disappear. We provide comprehensive team onboarding, continuous monitoring, and ongoing support to ensure your workflows evolve smoothly as your business scales.",
+    answer: "We don't hand off code and disappear. We provide comprehensive team onboarding, continuous monitoring, and ongoing support to ensure your intelligent systems for business evolve smoothly as you scale.",
   },
 ]
 
@@ -63,7 +63,7 @@ export const products: ProductItem[] = [
     id: "recruitment",
     title: "RECRUITMENT MANAGEMENT TOOL",
     image: asset("recruiter-ai.jpg"),
-    description: "AI recruitment operations platform built for high-speed hiring. Converts client briefs into job descriptions, parses resumes, ranks talent using weighted skills, and tracks hiring stages from one workspace.",
+    description: "An integrated AI platform and AI extension for business software built for high-speed hiring. Converts client briefs into job descriptions, parses resumes, ranks talent using weighted skills, and tracks hiring stages from one workspace.",
     bullets: [
       "AI Job Description & personalized screening question generation",
       "Weighted skills approval & semantic candidate scoring (0–100)",
@@ -77,7 +77,7 @@ export const products: ProductItem[] = [
     id: "ai-tools",
     title: "AI-POWERED BUSINESS TOOLS",
     image: asset("ai-tools-platform.jpg"),
-    description: "Discover powerful AI tools designed to help you create content, generate images, write code, automate workflows, and make smarter business decisions — all in minutes.",
+    description: "Build AI-powered systems with specialized web utilities designed to extend existing systems with AI, automate repetitive workflows, and make smarter business decisions in minutes.",
     bullets: [
       "12+ free generative tools for branding, copy & business launch",
       "Domain Name Genie, proposal generator & landing page copy",
@@ -92,10 +92,10 @@ export const products: ProductItem[] = [
 export const caseStudiesList: CaseStudy[] = []
 
 export const featureCards: FeatureCardData[] = [
-  { id: "dashboards", title: "Performance Dashboards", description: "Track the metrics that matter.", icon: asset("906f3a.svg") },
-  { id: "assistants", title: "AI Assistants", description: "Make useful answers available to your team.", icon: asset("906f3a.svg") },
-  { id: "automation", title: "Workflow Automation", description: "Reduce repetitive work across your day.", icon: asset("906f3a.svg") },
-  { id: "systems", title: "Connected Systems", description: "Bring the tools you already use together.", icon: asset("906f3a.svg") },
+  { id: "dashboards", title: "Automated Reporting", description: "AI & Analytics Layer for live visibility.", icon: asset("906f3a.svg") },
+  { id: "assistants", title: "Custom AI Layer", description: "AI for your existing software & team.", icon: asset("906f3a.svg") },
+  { id: "automation", title: "AI Automation", description: "Agentic-AI systems for your existing systems.", icon: asset("906f3a.svg") },
+  { id: "systems", title: "AI Integration Layer", description: "Extend existing systems with AI.", icon: asset("906f3a.svg") },
 ]
 
 export const partnerFeatureCards: FeatureCardData[] = [
@@ -107,52 +107,52 @@ export const partnerFeatureCards: FeatureCardData[] = [
 export const solutionPanels: Record<ServiceTab, SolutionPanel> = {
   "Data & BI": {
     id: "Data & BI",
-    label: "DATA ANALYTICS & BUSINESS INTELLIGENCE",
+    label: "AI & ANALYTICS LAYER & REPORTING",
     title: "SCATTERED DATA",
     lead: "CLEAR INSIGHTS",
-    copy: "Bring data from across your business into one clear view, so teams spend less time searching and more time deciding.",
-    builds: ["Performance dashboards", "Automated reporting", "Connected data models"],
+    copy: "Bring data across your business into an AI & Analytics Layer with automated reporting, so teams spend less time searching and more time deciding.",
+    builds: ["AI & Analytics Layer", "Automated Reporting", "Connected data models"],
     heroImage: asset("9fa5e8.png"),
     stackIcons: [asset("53cb26.png"), asset("0c5d97.png"), asset("57de97.png"), asset("e8263c.png")],
     comparisons: [
-      { from: "Fragmented Data", to: "Unified Insights", copy: "Connect scattered business information into one clearer view." },
-      { from: "Manual Reporting", to: "Automated Reporting", copy: "Reduce repetitive reporting and get critical information faster." },
-      { from: "Limited Visibility", to: "Clear Decisions", copy: "Turn complex data into insights your team can act on." },
-      { from: "Disconnected Systems", to: "Connected Data", copy: "Bring relevant sources together for more reliable analysis." },
+      { from: "Fragmented Data", to: "AI & Analytics Layer", copy: "Connect scattered business information into an intelligent systems for business view." },
+      { from: "Manual Reporting", to: "Automated Reporting", copy: "Eliminate repetitive tasks with automated reporting built into your pipeline." },
+      { from: "Limited Visibility", to: "Clear Decisions", copy: "Turn complex data into insights your team can act on with real-time clarity." },
+      { from: "Disconnected Systems", to: "Connected Data", copy: "Bring relevant sources together for reliable, single-source operational analysis." },
     ],
     actionLabel: "Explore Data & BI",
   },
   "AI Assistants": {
     id: "AI Assistants",
-    label: "AI ASSISTANTS & KNOWLEDGE SYSTEMS",
+    label: "AI FOR YOUR EXISTING SOFTWARE",
     title: "SCATTERED KNOWLEDGE",
-    lead: "USEFUL ANSWERS",
-    copy: "Make the best knowledge in your business available to the people who need it, when they need it.",
-    builds: ["Customer support assistants", "Internal knowledge assistants", "Lead qualification interfaces"],
+    lead: "CUSTOM AI LAYER",
+    copy: "We engineer a custom AI layer and agentic-AI systems for your existing systems, making vital company knowledge available to operators instantly.",
+    builds: ["Custom AI layer", "AI for your existing software", "Agentic-AI systems"],
     heroImage: asset("e467dd.jpg"),
     stackIcons: [asset("openai.svg"), asset("anthropic.svg"), asset("langchain.svg"), asset("huggingface.svg")],
     comparisons: [
-      { from: "Scattered Knowledge", to: "Useful Answers", copy: "Give every team a faster path to trusted internal information." },
-      { from: "Slow Support", to: "Helpful Assistants", copy: "Automate first answers without losing your team’s voice." },
-      { from: "Repeated Questions", to: "Shared Context", copy: "Turn common questions into a reusable knowledge system." },
-      { from: "Manual Qualification", to: "Better Leads", copy: "Let your team spend more time on conversations that matter." },
+      { from: "Scattered Knowledge", to: "Custom AI Layer", copy: "Augment existing software with AI for instant, verified knowledge retrieval." },
+      { from: "Slow Support", to: "Helpful Assistants", copy: "Intelligent systems built around yours that resolve queries without losing voice." },
+      { from: "Repeated Questions", to: "Shared Context", copy: "Turn common questions into a reusable custom AI systems for business knowledge base." },
+      { from: "Manual Qualification", to: "Better Leads", copy: "Let your team spend more time on conversations that matter with automated qualification." },
     ],
     actionLabel: "Explore AI Assistants",
   },
   Automation: {
     id: "Automation",
-    label: "WORKFLOW AUTOMATION",
+    label: "AI AUTOMATION & INTEGRATION",
     title: "REPETITIVE WORK",
     lead: "SIMPLE FLOWS",
-    copy: "Connect the tools your team already uses and give routine work a clearer, faster path.",
-    builds: ["Workflow automation", "System integrations", "Operational alerts"],
+    copy: "Deploy AI automation to extend existing systems with AI, connecting your current tools and giving routine work a faster, reliable path.",
+    builds: ["AI automation", "AI integration layer", "AI extension for business software"],
     heroImage: asset("671883.jpg"),
     stackIcons: [asset("make.svg"), asset("zapier.svg"), asset("n8n.svg"), asset("airtable.svg")],
     comparisons: [
-      { from: "Repetitive Work", to: "Simple Flows", copy: "Remove handoffs and give recurring work a reliable path." },
-      { from: "Disconnected Tools", to: "Connected Actions", copy: "Move information between the tools your team already trusts." },
-      { from: "Missed Follow-ups", to: "Timely Signals", copy: "Keep important actions visible without adding more admin." },
-      { from: "Manual Operations", to: "Calmer Days", copy: "Build a system that supports people instead of slowing them down." },
+      { from: "Repetitive Work", to: "AI Automation", copy: "Custom AI solutions development to automate daily administrative handoffs." },
+      { from: "Disconnected Tools", to: "AI Integration Layer", copy: "An AI integration layer moving information between the tools your team already trusts." },
+      { from: "Missed Follow-ups", to: "Timely Signals", copy: "Keep important actions visible without adding more admin overhead." },
+      { from: "Manual Operations", to: "Calmer Days", copy: "Build tailored AI systems for service companies that support operators instead of slowing them down." },
     ],
     actionLabel: "Explore Automation",
   },
@@ -173,12 +173,12 @@ export const servicesFaqItems: FaqItem[] = [
   {
     id: "services-bi-integration",
     question: "Can our disparate databases and cloud tools connect into one real-time BI dashboard?",
-    answer: "Yes. We engineer unified data pipelines that pull from SQL databases, REST APIs, Google Sheets, ERPs, and warehouse logs, reconciling messy schemas into a clean, automated single source of truth.",
+    answer: "Yes. We engineer an AI & Analytics Layer that pulls from SQL databases, REST APIs, Google Sheets, and ERPs, reconciling messy schemas into automated reporting and a single source of truth.",
   },
   {
     id: "services-rag-assistants",
     question: "How do AI assistants handle complex or multi-step questions from our team?",
-    answer: "We build Retrieval-Augmented Generation (RAG) and agentic workflows that cite your exact verified internal sources, SOPs, and historical tickets, providing accurate answers with source attribution and human fallback mechanisms.",
+    answer: "We specialize in AI systems development, engineering agentic-AI systems for your existing systems and RAG workflows that cite your verified internal documents, SOPs, and tickets with source attribution.",
   },
   {
     id: "services-maintenance",
@@ -188,7 +188,7 @@ export const servicesFaqItems: FaqItem[] = [
   {
     id: "services-timeline",
     question: "How long does it take to deploy a custom service solution?",
-    answer: "Most focused solutions—such as an automated reporting engine or an intelligent triage assistant—launch in 3 to 4 weeks, allowing your team to realize operational gains immediately without multi-quarter roadmaps.",
+    answer: "Most focused solutions—such as an automated reporting pipeline, an AI integration layer, or a custom AI layer—launch in 3 to 4 weeks, delivering operational gains immediately without multi-quarter roadmaps.",
   },
 ]
 
@@ -201,7 +201,7 @@ export const productsFaqItems: FaqItem[] = [
   {
     id: "products-recruitment-integrations",
     question: "How does the Recruitment Management Tool connect with existing job boards and communication channels?",
-    answer: "It integrates bidirectionally with platforms like LinkedIn, WhatsApp, email, and Google Workspace, automatically scoring candidate submissions, updating pipeline status, and scheduling interviews without manual data entry.",
+    answer: "It operates as an AI extension for business software, integrating bidirectionally with platforms like LinkedIn, WhatsApp, email, and Google Workspace to score candidates and track stages without manual data entry.",
   },
   {
     id: "products-deployment",
@@ -244,7 +244,7 @@ export const workFaqItems: FaqItem[] = [
   {
     id: "work-scope",
     question: "What size project is best suited for Kozker?",
-    answer: "We excel at high-impact operational systems—whether that’s automating an end-to-end multi-carrier logistics pipeline or turning scattered company knowledge into an intelligent support system.",
+    answer: "We deliver tailored AI systems for service companies and high-impact operational systems—whether that's an AI extension for business software or intelligent systems built around yours.",
   },
 ]
 
@@ -262,12 +262,12 @@ export const partnershipFaqItems: FaqItem[] = [
   {
     id: "partners-tech-support",
     question: "What technical support does Kozker provide to partner organizations?",
-    answer: "We handle all underlying architecture, API connections, maintenance, and technical troubleshooting, letting your team focus on client relationships, strategy, and business growth.",
+    answer: "We handle the underlying AI integration layer, API connections, maintenance, and AI systems development, letting your team focus on client relationships, strategy, and business growth.",
   },
   {
     id: "partners-ideal-profile",
     question: "What type of partner profiles see the highest success with Kozker?",
-    answer: "HR consultancies looking to offer automated candidate screening, fractional COOs seeking modern operational toolkits, and niche digital agencies wanting to offer enterprise AI without hiring expensive in-house ML teams.",
+    answer: "HR consultancies looking to offer automated candidate screening, fractional COOs seeking modern operational toolkits, and niche digital agencies wanting to extend existing systems with AI without hiring in-house ML teams.",
   },
   {
     id: "partners-get-started",
@@ -297,23 +297,23 @@ export const servicesDetails: Record<string, ServiceDetail> = {
     id: "data-bi",
     num: "01",
     tabKey: "Data & BI",
-    name: "DATA ANALYTICS & BUSINESS INTELLIGENCE",
-    heroTitle: "Data Analytics & Business Intelligence",
-    heroSubtitle: "Turn your data into decisions.",
-    heroDescription: "Your business already has data. We help you bring it together, make sense of it, and turn it into clear insights that support better decisions.",
+    name: "AI & ANALYTICS LAYER & AUTOMATED REPORTING",
+    heroTitle: "AI & Analytics Layer & Automated Reporting",
+    heroSubtitle: "Turn your data into decisions with automated reporting.",
+    heroDescription: "Your business already has data. We build your AI & Analytics Layer with automated reporting, giving you clear insights that support confident decisions.",
     shiftHeading: "Turn your Data into Decisions.",
     comparisons: [
-      { from: "Fragmented Data", to: "Unified Insights", copy: "Connect scattered business information into one clearer view." },
-      { from: "Manual Reporting", to: "Automated Reporting", copy: "Reduce repetitive reporting and get critical information faster." },
+      { from: "Fragmented Data", to: "AI & Analytics Layer", copy: "Connect scattered business information into an intelligent systems for business view." },
+      { from: "Manual Reporting", to: "Automated Reporting", copy: "Eliminate repetitive reporting and get critical information faster." },
       { from: "Limited Visibility", to: "Clear Decisions", copy: "Turn complex data into insights your team can act on." },
       { from: "Disconnected Systems", to: "Connected Data", copy: "Bring relevant sources together for more reliable analysis." },
     ],
-    solutionHeading: "We build the systems that make your data useful.",
+    solutionHeading: "We build the AI & Analytics Layer that makes your data useful.",
     solutionCards: [
-      { title: "Performance Dashboards", description: "Track the metrics that matter." },
-      { title: "Automated Reporting", description: "Reports delivered without manual work." },
-      { title: "Connected Data Models", description: "Single source of truth across tools." },
-      { title: "Operational Analytics", description: "Real-time signals for fast decision-making." },
+      { title: "Automated Reporting", description: "Audit-ready operational reports delivered automatically." },
+      { title: "AI & Analytics Layer", description: "Consolidated business intelligence built on live data." },
+      { title: "Custom AI Systems for Business", description: "Predictive signals and KPIs tailored to service companies." },
+      { title: "Connected Data Models", description: "Single source of truth across all tools and databases." },
     ],
     processSteps: [
       { num: "01", label: "THE VISION", copy: "Turn complex data into insights your team can act on." },
@@ -333,23 +333,23 @@ export const servicesDetails: Record<string, ServiceDetail> = {
     id: "ai-assistants",
     num: "02",
     tabKey: "AI Assistants",
-    name: "AI CHATBOTS & KNOWLEDGE SYSTEMS",
-    heroTitle: "AI Chatbots & Knowledge Systems",
-    heroSubtitle: "Turn scattered knowledge into instant answers.",
-    heroDescription: "Make the best knowledge in your business available to the people who need it, when they need it, with custom AI assistants built on your data.",
+    name: "AI SYSTEMS DEVELOPMENT & COPILOTS",
+    heroTitle: "AI Systems Development & Knowledge Copilots",
+    heroSubtitle: "Augment existing software with AI.",
+    heroDescription: "Make company knowledge available when needed. We provide custom AI solutions development, creating an AI for your existing software that fits daily operations.",
     shiftHeading: "Turn Scattered Knowledge into Useful Answers.",
     comparisons: [
-      { from: "Scattered Knowledge", to: "Useful Answers", copy: "Give every team a faster path to trusted internal information." },
-      { from: "Slow Support", to: "Helpful Assistants", copy: "Automate first answers without losing your team’s voice." },
-      { from: "Repeated Questions", to: "Shared Context", copy: "Turn common questions into a reusable knowledge system." },
+      { from: "Scattered Knowledge", to: "Custom AI Layer", copy: "Augment existing software with AI for instant, verified knowledge retrieval." },
+      { from: "Slow Support", to: "Helpful Assistants", copy: "Intelligent systems built around yours that resolve queries without losing voice." },
+      { from: "Repeated Questions", to: "Shared Context", copy: "Turn common questions into a reusable custom AI systems for business knowledge base." },
       { from: "Manual Qualification", to: "Better Leads", copy: "Let your team spend more time on conversations that matter." },
     ],
-    solutionHeading: "We build the AI systems that empower your team.",
+    solutionHeading: "We deliver AI systems development that empowers your team.",
     solutionCards: [
-      { title: "Customer Support AI", description: "24/7 intelligent tier-1 ticket resolution." },
-      { title: "Internal Knowledge Copilots", description: "Instant semantic search over company docs." },
-      { title: "Lead Qualification Bots", description: "Convert website traffic into booked meetings." },
-      { title: "Multi-Channel AI", description: "Deploy seamlessly on WhatsApp, Slack & web." },
+      { title: "Custom AI Layer", description: "Private models grounded securely in your SOPs and docs." },
+      { title: "Agentic-AI Systems", description: "Agentic-AI systems for your existing systems performing workflows." },
+      { title: "AI Integration Layer", description: "Deploy seamlessly on WhatsApp, Slack & internal web apps." },
+      { title: "Intelligent Systems Built Around Yours", description: "Tailored AI systems for service companies that fit daily tools." },
     ],
     processSteps: [
       { num: "01", label: "THE KNOWLEDGE", copy: "Audit documentation, manuals, and customer FAQs for AI indexing." },
@@ -369,23 +369,23 @@ export const servicesDetails: Record<string, ServiceDetail> = {
     id: "automation",
     num: "03",
     tabKey: "Automation",
-    name: "WORKFLOW AUTOMATION",
-    heroTitle: "Workflow Automation",
-    heroSubtitle: "Connect tools, remove friction, save hours.",
-    heroDescription: "Connect the tools your team already uses and give routine work a clearer, faster path, eliminating manual data entry and errors.",
+    name: "AI AUTOMATION & WORKFLOW EXTENSIONS",
+    heroTitle: "AI Automation & Workflow Extensions",
+    heroSubtitle: "Extend existing systems with AI.",
+    heroDescription: "Connect the tools your team already uses. We engineer AI extensions for business software and AI automation flows that eliminate repetitive manual tasks.",
     shiftHeading: "Turn Repetitive Work into Simple Flows.",
     comparisons: [
-      { from: "Repetitive Work", to: "Simple Flows", copy: "Remove handoffs and give recurring work a reliable path." },
-      { from: "Disconnected Tools", to: "Connected Actions", copy: "Move information between the tools your team already trusts." },
-      { from: "Missed Follow-ups", to: "Timely Signals", copy: "Keep important actions visible without adding more admin." },
-      { from: "Manual Operations", to: "Calmer Days", copy: "Build a system that supports people instead of slowing them down." },
+      { from: "Repetitive Work", to: "AI Automation", copy: "Custom AI solutions development to automate daily administrative handoffs." },
+      { from: "Disconnected Tools", to: "AI Integration Layer", copy: "An AI integration layer moving information between the tools your team already trusts." },
+      { from: "Missed Follow-ups", to: "Timely Signals", copy: "Keep important actions visible without adding more admin overhead." },
+      { from: "Manual Operations", to: "Calmer Days", copy: "Build tailored AI systems for service companies that support operators instead of slowing them down." },
     ],
-    solutionHeading: "We build the automations that save your team hours.",
+    solutionHeading: "We build the AI automation that saves your team hours.",
     solutionCards: [
-      { title: "Workflow Automation", description: "Trigger end-to-end actions without manual input." },
-      { title: "System Integrations", description: "Sync CRM, ERP, and databases automatically." },
-      { title: "Operational Alerts", description: "Get notified before bottlenecks become problems." },
-      { title: "Custom API Pipelines", description: "Bespoke data movement tailored to your stack." },
+      { title: "AI Automation", description: "Trigger intelligent workflows and syncs without manual input." },
+      { title: "AI Extension for Business Software", description: "Bridge ERPs, CRMs, and accounting portals with custom APIs." },
+      { title: "Build AI-Powered Systems", description: "Custom AI solutions development tailored to your operational scale." },
+      { title: "Intelligent Systems for Business", description: "Resilient data movement with real-time operational alerts." },
     ],
     processSteps: [
       { num: "01", label: "THE BOTTLENECK", copy: "Identify manual handoffs and repetitive steps in your daily ops." },
@@ -435,7 +435,7 @@ export const contactFaqItems: FaqItem[] = [
     id: "contact-consultation-process",
     question: "What happens after I send a message?",
     answer:
-      "A senior systems engineer reviews your operational requirements, challenges, and goals. We then schedule a focused 30-minute discovery call to map out a concrete architecture and high-impact timeline for your build.",
+      "A senior systems engineer reviews your operational requirements. We then schedule a focused 30-minute discovery call to map how to augment existing software with AI and architect intelligent systems built around yours.",
   },
   {
     id: "contact-nda",
@@ -453,7 +453,7 @@ export const contactFaqItems: FaqItem[] = [
     id: "contact-pricing-scoping",
     question: "How does Kozker price custom projects and products?",
     answer:
-      "We provide predictable, milestone-based fixed pricing with transparent delivery deliverables. Every engagement includes clear timelines (typically 3 to 4 weeks to v1 live launch) and defined ROI metrics.",
+      "We provide predictable, milestone-based fixed pricing for custom AI solutions development and intelligent systems for business. Every engagement includes clear timelines (typically 3 to 4 weeks to v1 live launch) and defined ROI metrics.",
   },
 ]
 

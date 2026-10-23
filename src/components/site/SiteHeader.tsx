@@ -12,8 +12,8 @@ import {
 
 const serviceSubLinks = [
   { num: "01", label: "DATA ANALYTICS & BUSINESS INTELLIGENCE", to: "/services" as const, search: { tab: "data-bi" } },
-  { num: "02", label: "AI CHATBOTS", to: "/services" as const, search: { tab: "ai-assistants" } },
-  { num: "03", label: "AUTOMATION", to: "/services" as const, search: { tab: "automation" } },
+  { num: "02", label: "AI CHATBOTS & KNOWLEDGE SYSTEMS", to: "/services" as const, search: { tab: "ai-assistants" } },
+  { num: "03", label: "WORKFLOW AUTOMATION", to: "/services" as const, search: { tab: "automation" } },
 ]
 
 const primaryNavLinks = [

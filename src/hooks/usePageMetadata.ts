@@ -199,6 +199,7 @@ async function fetchRemoteMetadata(): Promise<PageMetadata[] | null> {
             ogImage: remote.og_image || remote.ogImage || existing.ogImage,
             twitterCard: remote.twitter_card || remote.twitterCard || existing.twitterCard,
             canonicalUrl: remote.canonical_url || remote.canonicalUrl || existing.canonicalUrl,
+            keywords: remote.keywords || existing.keywords,
             updatedAt: remote.updated_at || remote.updatedAt,
           })
         }
@@ -494,22 +495,48 @@ export function useAdminMetadata() {
       if (isSupabaseConfigured()) {
         const client = await getSupabaseClient()
 
-        // 1. Try dedicated page_metadata table
-        const { error: metaErr } = await client.from("page_metadata").upsert(
-          {
-            id: item.id || `meta-${item.path.replace(/\//g, "-")}`,
-            path: item.path,
-            title: item.title,
-            description: item.description,
-            og_image: item.ogImage,
-            og_type: item.ogType,
-            twitter_card: item.twitterCard,
-            noindex: item.noindex ?? false,
-            canonical_url: item.canonicalUrl || null,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "path" }
-        )
+        // 1. Try dedicated page_metadata table with keywords
+        let metaErr: { message?: string } | null = null
+        try {
+          const res = await client.from("page_metadata").upsert(
+            {
+              id: item.id || `meta-${item.path.replace(/\//g, "-")}`,
+              path: item.path,
+              title: item.title,
+              description: item.description,
+              og_image: item.ogImage,
+              og_type: item.ogType,
+              twitter_card: item.twitterCard,
+              noindex: item.noindex ?? false,
+              canonical_url: item.canonicalUrl || null,
+              keywords: item.keywords || [],
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: "path" }
+          )
+          metaErr = res.error
+          if (metaErr) {
+            // Retry without keywords column if column doesn't exist yet
+            const retryRes = await client.from("page_metadata").upsert(
+              {
+                id: item.id || `meta-${item.path.replace(/\//g, "-")}`,
+                path: item.path,
+                title: item.title,
+                description: item.description,
+                og_image: item.ogImage,
+                og_type: item.ogType,
+                twitter_card: item.twitterCard,
+                noindex: item.noindex ?? false,
+                canonical_url: item.canonicalUrl || null,
+                updated_at: new Date().toISOString(),
+              },
+              { onConflict: "path" }
+            )
+            metaErr = retryRes.error
+          }
+        } catch {
+          metaErr = { message: "page_metadata table unavailable" }
+        }
 
         // 2. If table doesn't exist or errors, fall back to case_studies fallback storage
         if (metaErr) {

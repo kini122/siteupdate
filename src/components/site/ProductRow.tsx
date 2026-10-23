@@ -97,57 +97,6 @@ export function ProductRow({ product, index, showIndex = true }: ProductRowProps
                 Try Product
               </button>
             )}
-            {product.demoUrl && (
-              <a
-                href={product.demoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="product-demo-btn"
-              >
-                <Play className="h-4 w-4 fill-current mr-1.5" />
-                Watch Demo
-              </a>
-            )}
-            {product.detailsUrl ? (
-              <a
-                href={product.detailsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="product-details-btn"
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  color: "#757575",
-                  fontSize: "14px",
-                  cursor: "pointer",
-                  padding: "8px 12px",
-                  textDecoration: "underline",
-                  textUnderlineOffset: "3px",
-                  display: "inline-flex",
-                  alignItems: "center",
-                }}
-              >
-                Details
-              </a>
-            ) : (
-              <button
-                type="button"
-                className="product-details-btn"
-                onClick={() => setPreviewOpen(true)}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  color: "#757575",
-                  fontSize: "14px",
-                  cursor: "pointer",
-                  padding: "8px 12px",
-                  textDecoration: "underline",
-                  textUnderlineOffset: "3px",
-                }}
-              >
-                Details
-              </button>
-            )}
           </div>
         </div>
       </div>

@@ -87,15 +87,35 @@ export function HomePage() {
   return (
     <div className="home-page-root">
       <SeoHead
-        title="Kozker Tech | Data, AI & Automation"
-        description="We build intelligent systems and products that help businesses work faster, automate the busywork, and make better decisions."
+        title="Kozker Tech | AI Systems Development & Intelligent Systems for Business"
+        description="Augment existing software with AI. We build AI-powered systems, custom AI layers, and automated reporting to extend existing systems with AI."
+        keywords={[
+          "Augment existing software with AI",
+          "AI for your existing software",
+          "AI systems development",
+          "custom AI solutions development",
+          "Build AI-powered systems",
+          "Custom AI layer",
+          "AI & Analytics Layer",
+          "AI automation",
+          "intelligent systems for business",
+          "Extend existing systems with AI",
+          "Tailored AI systems for service companies",
+          "Custom AI systems for business",
+          "AI extension for business software",
+          "AI integration layer",
+          "Intelligent systems built around yours",
+          "Automated Reporting",
+          "Integrated AI Platform",
+          "Agentic-AI Systems For Your Existing Systems",
+        ]}
         canonicalPath="/"
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "WebSite",
           name: "Kozker Tech",
           url: "https://kozker.com/",
-          description: "We build intelligent systems and products that help businesses work faster, automate the busywork, and make better decisions.",
+          description: "Augment existing software with AI. We build AI-powered systems, custom AI layers, and intelligent systems for business.",
         }}
       />
       {/* Hero Section */}
@@ -113,8 +133,7 @@ export function HomePage() {
           </h1>
 
           <p className="hero-copy hero-entrance-copy">
-            We build intelligent systems and products that help businesses work faster,
-            automate the busywork, and make better decisions.
+            We build AI-powered systems to augment existing software with AI, automate the busywork, and extend existing systems with AI.
           </p>
 
           <div className="hero-actions hero-entrance-actions">
@@ -203,8 +222,7 @@ export function HomePage() {
               <span className="accent-dot">.</span>
             </h2>
             <p>
-              Simple systems that save time, reduce manual work, and keep your business
-              moving.
+              Custom AI systems for business that save time, provide an AI integration layer, and keep your operations moving.
             </p>
           </SectionReveal>
 
@@ -231,7 +249,7 @@ export function HomePage() {
                 <span className="accent-dot">.</span>
               </h2>
               <p className="case-study-section-subtext">
-                Explore the respective featured case studies for specific service.
+                Explore custom AI solutions development and intelligent systems built around yours.
               </p>
             </div>
 
@@ -276,8 +294,7 @@ export function HomePage() {
               How we <span className="accent-text">Work</span>
             </h2>
             <p>
-              Simple systems that save time, reduce manual work, and keep your business
-              moving.
+              How we deploy a tailored AI integration layer to augment existing software with AI with zero disruption.
             </p>
           </SectionReveal>
 
@@ -295,8 +312,7 @@ export function HomePage() {
               Not everything <span>We Build</span> starts with a client.
             </h2>
             <p>
-              We explore problems &amp; apply the same thinking we bring to every
-              business we work with.
+              We explore industry bottlenecks and engineer an integrated AI platform and agentic-AI systems for your existing systems.
             </p>
             <Link to="/products" className="dark-product-link">
               View all Products →
@@ -342,16 +358,6 @@ export function HomePage() {
               <p className="dark-product-desc">{featuredProduct.description}</p>
 
               <div className="dark-product-actions">
-                <a
-                  href={featuredProduct.demoUrl || "https://www.loom.com/share/a0e96cbbd64e46188561d0eb22c3d0ea"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="dark-product-btn-demo"
-                  title="Recruitment App Admin Console and AI Copilot Tour"
-                >
-                  <Play className="h-4 w-4 fill-current" />
-                  <span>Watch 1 Min Demo</span>
-                </a>
                 <a
                   href={featuredProduct.exploreUrl || "https://recruiter-landing-page-olive.vercel.app/"}
                   target="_blank"

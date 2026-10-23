@@ -12,8 +12,16 @@ export function ProductsPage() {
   return (
     <div className="products-page">
       <SeoHead
-        title="Products — Intelligent Business Tools | Kozker"
-        description="Explore proprietary software tools engineered and operated by Kozker, including AI recruitment platforms, automated workflow consoles, and enterprise integrations."
+        title="Products — Integrated AI Platform & Business Software | Kozker"
+        description="Explore proprietary software tools engineered by Kozker: integrated AI platform, agentic-AI systems for your existing systems, and custom AI extensions."
+        keywords={[
+          "Integrated AI Platform",
+          "Agentic-AI Systems For Your Existing Systems",
+          "AI extension for business software",
+          "Build AI-powered systems",
+          "AI automation",
+          "Intelligent systems built around yours",
+        ]}
         canonicalPath="/products"
         jsonLd={{
           "@context": "https://schema.org",
@@ -26,7 +34,7 @@ export function ProductsPage() {
       <PageIntro
         eyebrow="Products"
         title="Products"
-        description="Tools built around real business problems."
+        description="Integrated AI platform tools and agentic-AI systems for your existing systems."
       />
       <section className="section section--tight">
         <div className="listing-shell product-list">

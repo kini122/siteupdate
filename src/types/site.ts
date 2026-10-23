@@ -52,6 +52,9 @@ export interface CaseStudy {
   prefilledMessage?: string
   sortOrder?: number
   isPublished?: boolean
+  keywords?: string[]
+  seoTitle?: string
+  seoDescription?: string
 }
 
 export interface TeamMember {

@@ -493,6 +493,21 @@ export function PageMetadataEditor() {
               />
             </div>
 
+            <div className="admin-form-group">
+              <label className="admin-label">SEO Target Keywords (Comma-separated)</label>
+              <textarea
+                rows={2}
+                value={formData.keywords?.join(", ") || ""}
+                onChange={(e) => {
+                  const arr = e.target.value.split(",").map((k) => k.trim()).filter(Boolean)
+                  handleFieldChange("keywords", arr)
+                }}
+                className="admin-textarea"
+                placeholder="Augment existing software with AI, AI for your existing software, AI systems development..."
+              />
+              <span className="admin-hint">Target SEO phrases injected dynamically into page metadata and search tags.</span>
+            </div>
+
             <div className="admin-form-checkbox-row">
               <label className="admin-checkbox-label">
                 <input
@@ -593,6 +608,10 @@ export function PageMetadataEditor() {
               </div>
               <pre className="admin-code-block">
 {`<head>
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="${formData.title}" />
+  <meta name="description" content="${formData.description}" />
+${formData.keywords && formData.keywords.length > 0 ? `  <meta name="keywords" content="${formData.keywords.join(", ")}" />\n` : ""}
   <!-- Basic Open Graph (WhatsApp, LinkedIn, Slack, Discord, FB) -->
   <meta property="og:type" content="${formData.ogType}" />
   <meta property="og:url" content="${resolvedOgUrl}" />

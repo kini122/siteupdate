@@ -41,8 +41,18 @@ export function WorkPage() {
   return (
     <div className="work-page-root">
       <SeoHead
-        title="Work & Case Studies — Proven ROI & Automation | Kozker"
-        description="Explore documented client case studies showing how Kozker built custom BI dashboards, AI copilots, and workflow automations that delivered up to 75% faster reporting and 3.2x ROI."
+        title="Work & Case Studies — Custom AI Solutions & Intelligent Systems | Kozker"
+        description="Explore documented client case studies showing how Kozker delivers custom AI solutions development, AI systems development, and automated reporting across enterprises."
+        keywords={[
+          "custom AI solutions development",
+          "AI systems development",
+          "Extend existing systems with AI",
+          "Augment existing software with AI",
+          "Automated Reporting",
+          "Custom AI layer",
+          "Intelligent systems built around yours",
+          "intelligent systems for business",
+        ]}
         canonicalPath={currentPath}
         jsonLd={{
           "@context": "https://schema.org",
@@ -55,7 +65,7 @@ export function WorkPage() {
       <PageIntro
         eyebrow="Portfolio"
         title="Our Work"
-        description="Tools and systems built around real business problems."
+        description="Intelligent systems built around yours to augment existing software with AI."
       />
 
       {/* Centralized Switcher for Case Studies / Projects (styled identical to Data & BI toggle) */}

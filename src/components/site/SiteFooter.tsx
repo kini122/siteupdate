@@ -12,7 +12,7 @@ export function SiteFooter() {
               <span className="footer-brand-text">Kozker Tech.</span>
             </Link>
             <p className="footer-note">
-              Simple systems that save time, reduce manual work, and keep your business moving.
+              Intelligent systems built around yours. Custom AI layer, AI automation, and automated reporting to keep your business moving.
             </p>
           </div>
 
@@ -82,7 +82,7 @@ export function SiteFooter() {
 
         <div className="footer-meta">
           <span>© 2026 Kozker Tech Pvt Ltd. All rights reserved.</span>
-          <span>Data, AI &amp; Automation</span>
+          <span>AI Systems Development • Data &amp; Automation</span>
         </div>
       </div>
     </footer>

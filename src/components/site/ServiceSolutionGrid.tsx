@@ -36,17 +36,48 @@ const contextIconMap: Record<string, LucideIcon> = {
   "Connected Data Models": Network,
   "Operational Analytics": Activity,
 
-  // Service 2: AI Chatbots & Knowledge Systems
+  // Service 2: AI Systems Development & Knowledge Copilots
+  "Custom AI Layer": BrainCircuit,
+  "Agentic-AI Systems": Bot,
+  "AI Integration Layer": Share2,
+  "Intelligent Systems Built Around Yours": Target,
+
+  // Service 3: AI Automation & Workflow Extensions
+  "AI Automation": Workflow,
+  "AI Extension for Business Software": Cable,
+  "Build AI-Powered Systems": Code2,
+  "Intelligent Systems for Business": BellRing,
+
+  // Legacy & Alternate Names
   "Customer Support AI": Bot,
   "Internal Knowledge Copilots": BrainCircuit,
   "Lead Qualification Bots": Target,
   "Multi-Channel AI": Share2,
-
-  // Service 3: Workflow Automation
   "Workflow Automation": Workflow,
   "System Integrations": Cable,
   "Operational Alerts": BellRing,
   "Custom API Pipelines": Code2,
+}
+
+function resolveSolutionIcon(title: string): LucideIcon {
+  if (contextIconMap[title]) {
+    return contextIconMap[title]
+  }
+  const clean = title.trim().toLowerCase()
+  for (const [key, icon] of Object.entries(contextIconMap)) {
+    if (key.trim().toLowerCase() === clean) {
+      return icon
+    }
+  }
+  if (clean.includes("custom ai layer") || clean.includes("knowledge") || clean.includes("private models")) return BrainCircuit
+  if (clean.includes("agentic") || clean.includes("bot") || clean.includes("agent")) return Bot
+  if (clean.includes("integration layer") || clean.includes("whatsapp") || clean.includes("slack") || clean.includes("multi-channel")) return Share2
+  if (clean.includes("built around") || clean.includes("tailored") || clean.includes("target")) return Target
+  if (clean.includes("automation") || clean.includes("workflow")) return Workflow
+  if (clean.includes("extension") || clean.includes("bridge") || clean.includes("erp") || clean.includes("cable")) return Cable
+  if (clean.includes("build") || clean.includes("powered") || clean.includes("pipeline") || clean.includes("code")) return Code2
+  if (clean.includes("alerts") || clean.includes("alert") || clean.includes("resilient") || clean.includes("business")) return BellRing
+  return Sparkles
 }
 
 export function ServiceSolutionGrid({
@@ -84,7 +115,7 @@ export function ServiceSolutionGrid({
         {/* 4 Cards Grid (Rectangle 109, 123, 124, 125) */}
         <div className="service-solution-grid">
           {cards.map((card, idx) => {
-            const IconComponent = contextIconMap[card.title] || Sparkles
+            const IconComponent = resolveSolutionIcon(card.title)
 
             return (
               <motion.article
