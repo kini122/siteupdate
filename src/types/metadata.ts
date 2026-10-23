@@ -38,10 +38,10 @@ export const DEFAULT_PAGE_METADATA: PageMetadata[] = [
   {
     id: "meta-home",
     path: "/",
-    title: "Kozker Tech | AI Systems Development & Custom AI Layer",
-    description: "Kozker delivers custom AI solutions development, building an AI & analytics layer to augment existing software with AI and eliminate manual operational overhead.",
+    title: "KozkerTech | Data, AI & Automation",
+    description: "Kozker engineers custom data intelligence pipelines, private AI assistants, and workflow automations that help modern businesses eliminate busywork and make confident.",
     ogImage: "/assets/og-preview.jpg",
-    ogType: "website",
+    ogType: "article",
     twitterCard: "summary_large_image",
     noindex: false,
     keywords: [

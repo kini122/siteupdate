@@ -41,7 +41,7 @@ export interface DbCaseStudyRow {
   updated_at?: string
 }
 
-// Optimization 4: Selective projection fields to minimize payload & Supabase egress
+// Safe projection fields matching active Supabase table schema
 const CASE_STUDIES_SELECT_FIELDS = [
   "id",
   "slug",
@@ -66,38 +66,10 @@ const CASE_STUDIES_SELECT_FIELDS = [
   "prefilled_message",
   "sort_order",
   "is_published",
-  "keywords",
-  "seo_title",
-  "seo_description",
   "updated_at",
 ].join(", ")
 
-const CASE_STUDIES_SELECT_FIELDS_LEGACY = [
-  "id",
-  "slug",
-  "client",
-  "category",
-  "title",
-  "image",
-  "description",
-  "industry",
-  "timeline",
-  "overview",
-  "challenge",
-  "solution",
-  "stats",
-  "quote",
-  "deliverables",
-  "tech_stack",
-  "branch_key",
-  "cta_text",
-  "cta_href",
-  "prefilled_subject",
-  "prefilled_message",
-  "sort_order",
-  "is_published",
-  "updated_at",
-].join(", ")
+const CASE_STUDIES_SELECT_FIELDS_LEGACY = CASE_STUDIES_SELECT_FIELDS
 
 export function mapDbRowToCaseStudy(row: DbCaseStudyRow): CaseStudy {
   const generatedSlug = generateSlug(row.title || row.client || row.id)
@@ -265,9 +237,8 @@ export function invalidateCaseStudiesCache() {
  * No hardcoded fallbacks are used.
  */
 export function useCaseStudies() {
-  const cached = getCachedData()
-  const [data, setData] = useState<CaseStudy[]>(cached ? cached.data : [])
-  const [loading, setLoading] = useState<boolean>(!cached)
+  const [data, setData] = useState<CaseStudy[]>(() => getCachedData()?.data || [])
+  const [loading, setLoading] = useState<boolean>(() => !getCachedData())
   const isFetchingRef = useRef<boolean>(false)
 
   const fetchStudies = useCallback(async (isInitial = false) => {
@@ -280,30 +251,21 @@ export function useCaseStudies() {
     if (isFetchingRef.current) return
     isFetchingRef.current = true
 
-    if (isInitial && (!cached || cached.data.length === 0)) {
+    const currentCached = getCachedData()
+    if (isInitial && (!currentCached || currentCached.data.length === 0)) {
       setLoading(true)
     }
 
     try {
       const client = await getSupabaseClient()
-      let { data: rows, error } = await client
+      const { data: rows, error } = await client
         .from("case_studies")
         .select(CASE_STUDIES_SELECT_FIELDS)
         .eq("is_published", true)
         .order("sort_order", { ascending: true })
 
-      if (error && (error.message.includes("keywords") || error.message.includes("seo_"))) {
-        const retry = await client
-          .from("case_studies")
-          .select(CASE_STUDIES_SELECT_FIELDS_LEGACY)
-          .eq("is_published", true)
-          .order("sort_order", { ascending: true })
-        rows = retry.data
-        error = retry.error
-      }
-
       if (error || !rows) {
-        if (!cached) {
+        if (!currentCached) {
           setData([])
         }
       } else {
@@ -312,14 +274,14 @@ export function useCaseStudies() {
         setCachedData(mapped)
       }
     } catch {
-      if (!cached) {
+      if (!currentCached) {
         setData([])
       }
     } finally {
       isFetchingRef.current = false
       setLoading(false)
     }
-  }, [cached])
+  }, [])
 
   useEffect(() => {
     // Immediate fetch on mount without delay
@@ -370,19 +332,10 @@ export function useAdminCaseStudies() {
       setLoading(true)
       setError(null)
       const client = await getSupabaseClient()
-      let { data: rows, error: fetchErr } = await client
+      const { data: rows, error: fetchErr } = await client
         .from("case_studies")
         .select(CASE_STUDIES_SELECT_FIELDS)
         .order("sort_order", { ascending: true })
-
-      if (fetchErr && (fetchErr.message.includes("keywords") || fetchErr.message.includes("seo_"))) {
-        const retry = await client
-          .from("case_studies")
-          .select(CASE_STUDIES_SELECT_FIELDS_LEGACY)
-          .order("sort_order", { ascending: true })
-        rows = retry.data
-        fetchErr = retry.error
-      }
 
       if (fetchErr) {
         setError(fetchErr.message)

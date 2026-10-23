@@ -87,8 +87,9 @@ export function HomePage() {
   return (
     <div className="home-page-root">
       <SeoHead
-        title="Kozker Tech | AI Systems Development & Intelligent Systems for Business"
-        description="Augment existing software with AI. We build AI-powered systems, custom AI layers, and automated reporting to extend existing systems with AI."
+        title="KozkerTech | Data, AI & Automation"
+        description="Kozker engineers custom data intelligence pipelines, private AI assistants, and workflow automations that help modern businesses eliminate busywork and make confident."
+        ogType="article"
         keywords={[
           "Augment existing software with AI",
           "AI for your existing software",

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import {
   Globe,
   Save,
@@ -57,12 +57,28 @@ export function PageMetadataEditor() {
     }
 
   const [formData, setFormData] = useState<PageMetadata>(currentItem)
+  const lastSelectedPathRef = useRef<string>(selectedPath)
+  const isInitializedRef = useRef<boolean>(false)
 
-  // Keep formData in sync when allMetadata finishes loading or updates
+  // Initialize formData on first load of allMetadata
   useEffect(() => {
-    const match = allMetadata.find((m) => m.path === selectedPath)
-    if (match) {
-      setFormData(match)
+    if (!isInitializedRef.current && allMetadata.length > 0) {
+      isInitializedRef.current = true
+      const match = allMetadata.find((m) => m.path === selectedPath)
+      if (match) {
+        setFormData(match)
+      }
+    }
+  }, [allMetadata, selectedPath])
+
+  // Only sync formData when the user switches to a different route path
+  useEffect(() => {
+    if (lastSelectedPathRef.current !== selectedPath) {
+      lastSelectedPathRef.current = selectedPath
+      const match = allMetadata.find((m) => m.path === selectedPath)
+      if (match) {
+        setFormData(match)
+      }
     }
   }, [selectedPath, allMetadata])
 

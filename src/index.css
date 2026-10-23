@@ -661,14 +661,14 @@
   }
 
   .button-primary {
-    background: var(--orange, #FF6E30);
+    background: #CC4A10;
     color: #ffffff !important;
-    box-shadow: 0 6px 18px rgba(255, 110, 48, 0.28);
+    box-shadow: 0 6px 18px rgba(204, 74, 16, 0.28);
   }
 
   .button-primary:hover {
-    background: #e85c20;
-    box-shadow: 0 10px 24px rgba(255, 110, 48, 0.38);
+    background: #B83E0A;
+    box-shadow: 0 10px 24px rgba(204, 74, 16, 0.38);
     transform: translateY(-2px);
   }
 
@@ -1057,17 +1057,17 @@
     width: 8px;
     height: 8px;
     background: #D9D9D9;
-    border-radius: 50%;
+    border-radius: 4px;
     pointer-events: none !important;
     user-select: none !important;
-    transition: width 240ms cubic-bezier(0.22, 0.61, 0.36, 1), background-color 240ms ease, border-radius 240ms ease;
+    transition: opacity 240ms ease;
   }
 
   .gallery-dot.is-active {
     width: 36px;
     height: 8px;
-    background: #F87740;
-    border-radius: 8.22581px;
+    background: #CC4A10;
+    border-radius: 4px;
   }
 
   /* Metrics & Testimonials */
@@ -1112,7 +1112,7 @@
     font-size: clamp(38px, 3.8vw, 48px);
     font-weight: 400;
     line-height: 1.05;
-    color: var(--orange, #FF6E30);
+    color: #CC4A10;
     letter-spacing: -0.02em;
     white-space: nowrap;
   }
@@ -2057,7 +2057,7 @@
     font-size: 20px;
     font-weight: 400;
     line-height: 1.15;
-    color: var(--orange, #FF6E30);
+    color: #CC4A10;
     text-align: left;
     word-break: break-word;
     letter-spacing: -0.01em;
@@ -2327,7 +2327,7 @@
     font-family: var(--font-mono);
     font-size: 22px;
     font-weight: 500;
-    color: var(--orange);
+    color: #CC4A10;
   }
 
   .process-headline {
@@ -2532,8 +2532,8 @@
     align-items: center;
     padding: 3px 8px;
     border-radius: 5px;
-    background: rgba(255, 110, 48, 0.12);
-    color: var(--orange, #FF6E30);
+    background: rgba(255, 138, 80, 0.18);
+    color: #FFB088;
     font-family: var(--font-mono);
     font-size: 10.5px;
     font-weight: 700;
@@ -2950,8 +2950,8 @@
   .cta-band-action .button-primary,
   .cta-band-action .cta-band-btn,
   .cta-band-action [data-slot="button"] {
-    background: var(--orange, #FF6E30) !important;
-    background-color: var(--orange, #FF6E30) !important;
+    background: #CC4A10 !important;
+    background-color: #CC4A10 !important;
     color: #FFFFFF !important;
     border-radius: 9999px !important;
     padding: 12px 28px !important;
@@ -2974,10 +2974,9 @@
   .cta-band-action .button-primary:hover,
   .cta-band-action .cta-band-btn:hover,
   .cta-band-action [data-slot="button"]:hover {
-    background: #e85c20 !important;
-    background-color: #e85c20 !important;
+    background: #B83E0A !important;
+    background-color: #B83E0A !important;
     transform: translateY(-2px) !important;
-    box-shadow: none !important;
     color: #FFFFFF !important;
   }
 

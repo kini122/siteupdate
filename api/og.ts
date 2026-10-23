@@ -11,10 +11,10 @@ interface MetaData {
 
 const DEFAULT_METADATA: Record<string, MetaData> = {
   "/": {
-    title: "Kozker Tech | Data, AI & Automation",
-    description: "Kozker engineers custom data intelligence pipelines, private AI assistants, and workflow automations that help modern businesses eliminate busywork and make confident decisions.",
+    title: "KozkerTech | Data, AI & Automation",
+    description: "Kozker engineers custom data intelligence pipelines, private AI assistants, and workflow automations that help modern businesses eliminate busywork and make confident.",
     ogImage: "/assets/og-preview.jpg",
-    ogType: "website",
+    ogType: "article",
     twitterCard: "summary_large_image",
   },
   "/services": {

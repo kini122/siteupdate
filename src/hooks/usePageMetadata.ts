@@ -10,7 +10,7 @@ import {
 } from "@/types/metadata"
 import { initGoogleAnalytics } from "@/lib/analytics"
 
-const METADATA_STORAGE_KEY = "kozker_page_metadata_v2"
+const METADATA_STORAGE_KEY = "kozker_page_metadata_v3"
 const ANALYTICS_STORAGE_KEY = "kozker_site_analytics_settings_v1"
 const SITE_SETTINGS_STORAGE_KEY = "kozker_site_general_settings_v1"
 const SYNC_CHANNEL_NAME = "kozker_metadata_sync"
@@ -21,6 +21,10 @@ const SYNC_CHANNEL_NAME = "kozker_metadata_sync"
 const SYSTEM_METADATA_ID = "__site_metadata__"
 const SYSTEM_SETTINGS_ID = "__site_settings__"
 const SYSTEM_ANALYTICS_ID = "__site_analytics__"
+
+// Session availability flags to prevent repeated 404 console errors
+let isPageMetadataTableMissing = false
+let isSiteSettingsTableMissing = false
 
 async function getSupabaseClient() {
   const mod = await import("@/lib/supabase")
@@ -172,42 +176,48 @@ async function fetchRemoteMetadata(): Promise<PageMetadata[] | null> {
   try {
     const client = await getSupabaseClient()
 
-    // 1. Try dedicated page_metadata table
-    const { data: rows, error: metaErr } = await client
-      .from("page_metadata")
-      .select("*")
+    // 1. Try dedicated page_metadata table if not marked missing
+    if (!isPageMetadataTableMissing) {
+      const { data: rows, error: metaErr } = await client
+        .from("page_metadata")
+        .select("*")
 
-    if (!metaErr && rows && rows.length > 0) {
-      const map = new Map<string, PageMetadata>()
-      DEFAULT_PAGE_METADATA.forEach((def) => map.set(def.path, { ...def }))
-      rows.forEach((remote: any) => {
-        if (remote && remote.path) {
-          const existing: PageMetadata = map.get(remote.path) || {
-            id: remote.id || `meta-${remote.path.replace(/\//g, "-")}`,
-            path: remote.path,
-            title: remote.title || "Kozker Tech",
-            description: remote.description || "",
-            ogImage: "/assets/og-preview.jpg",
-            ogType: "website" as const,
-            twitterCard: "summary_large_image" as const,
-            noindex: false,
+      if (!metaErr && rows && rows.length > 0) {
+        const map = new Map<string, PageMetadata>()
+        DEFAULT_PAGE_METADATA.forEach((def) => map.set(def.path, { ...def }))
+        rows.forEach((remote: any) => {
+          if (remote && remote.path) {
+            const existing: PageMetadata = map.get(remote.path) || {
+              id: remote.id || `meta-${remote.path.replace(/\//g, "-")}`,
+              path: remote.path,
+              title: remote.title || "Kozker Tech",
+              description: remote.description || "",
+              ogImage: "/assets/og-preview.jpg",
+              ogType: "website" as const,
+              twitterCard: "summary_large_image" as const,
+              noindex: false,
+            }
+            map.set(remote.path, {
+              ...existing,
+              ...remote,
+              ogType: remote.og_type || remote.ogType || existing.ogType,
+              ogImage: remote.og_image || remote.ogImage || existing.ogImage,
+              twitterCard: remote.twitter_card || remote.twitterCard || existing.twitterCard,
+              canonicalUrl: remote.canonical_url || remote.canonicalUrl || existing.canonicalUrl,
+              keywords: remote.keywords || existing.keywords,
+              updatedAt: remote.updated_at || remote.updatedAt,
+            })
           }
-          map.set(remote.path, {
-            ...existing,
-            ...remote,
-            ogType: remote.og_type || remote.ogType || existing.ogType,
-            ogImage: remote.og_image || remote.ogImage || existing.ogImage,
-            twitterCard: remote.twitter_card || remote.twitterCard || existing.twitterCard,
-            canonicalUrl: remote.canonical_url || remote.canonicalUrl || existing.canonicalUrl,
-            keywords: remote.keywords || existing.keywords,
-            updatedAt: remote.updated_at || remote.updatedAt,
-          })
-        }
-      })
-      return Array.from(map.values())
+        })
+        return Array.from(map.values())
+      }
+
+      if (metaErr && (metaErr.code === "PGRST204" || metaErr.code === "PGRST200" || metaErr.code === "42P01" || metaErr.message?.includes("not found") || metaErr.message?.includes("does not exist") || (metaErr as any).status === 404)) {
+        isPageMetadataTableMissing = true
+      }
     }
 
-    // 2. If table doesn't exist, try fallback storage in case_studies
+    // 2. Fallback storage in case_studies
     const { data: fbRow, error: fbErr } = await client
       .from("case_studies")
       .select("description")
@@ -243,14 +253,21 @@ async function fetchRemoteSiteSettings(): Promise<SiteGeneralSettings | null> {
   if (!isSupabaseConfigured()) return null
   try {
     const client = await getSupabaseClient()
-    const { data: row, error: setErr } = await client
-      .from("site_settings")
-      .select("value")
-      .eq("key", "general")
-      .maybeSingle()
 
-    if (!setErr && row?.value) {
-      return row.value as SiteGeneralSettings
+    if (!isSiteSettingsTableMissing) {
+      const { data: row, error: setErr } = await client
+        .from("site_settings")
+        .select("value")
+        .eq("key", "general")
+        .maybeSingle()
+
+      if (!setErr && row?.value) {
+        return row.value as SiteGeneralSettings
+      }
+
+      if (setErr && (setErr.code === "PGRST204" || setErr.code === "PGRST200" || setErr.code === "42P01" || setErr.message?.includes("not found") || setErr.message?.includes("does not exist") || (setErr as any).status === 404)) {
+        isSiteSettingsTableMissing = true
+      }
     }
 
     // Fallback row in case_studies
@@ -331,21 +348,30 @@ export function useSiteSettings() {
 
       if (isSupabaseConfigured()) {
         const client = await getSupabaseClient()
-        // Try dedicated site_settings table
-        const { error: setErr } = await client.from("site_settings").upsert(
-          {
-            key: "general",
-            value: payload,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "key" }
-        )
+        let setErr = null
 
-        // If site_settings table doesn't exist or errors, fall back to case_studies storage
-        if (setErr) {
+        if (!isSiteSettingsTableMissing) {
+          // Try dedicated site_settings table
+          const res = await client.from("site_settings").upsert(
+            {
+              key: "general",
+              value: payload,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: "key" }
+          )
+          setErr = res.error
+          if (setErr && (setErr.code === "PGRST204" || setErr.code === "PGRST200" || setErr.code === "42P01" || setErr.message?.includes("not found") || setErr.message?.includes("does not exist") || (setErr as any).status === 404)) {
+            isSiteSettingsTableMissing = true
+          }
+        }
+
+        // Fall back to case_studies storage with slug
+        if (setErr || isSiteSettingsTableMissing) {
           const { error: fbErr } = await client.from("case_studies").upsert(
             {
               id: SYSTEM_SETTINGS_ID,
+              slug: "__system_settings__",
               client: "__SYSTEM__",
               category: "SETTINGS",
               title: "Site Settings Storage",
@@ -495,29 +521,10 @@ export function useAdminMetadata() {
       if (isSupabaseConfigured()) {
         const client = await getSupabaseClient()
 
-        // 1. Try dedicated page_metadata table with keywords
         let metaErr: { message?: string } | null = null
-        try {
-          const res = await client.from("page_metadata").upsert(
-            {
-              id: item.id || `meta-${item.path.replace(/\//g, "-")}`,
-              path: item.path,
-              title: item.title,
-              description: item.description,
-              og_image: item.ogImage,
-              og_type: item.ogType,
-              twitter_card: item.twitterCard,
-              noindex: item.noindex ?? false,
-              canonical_url: item.canonicalUrl || null,
-              keywords: item.keywords || [],
-              updated_at: new Date().toISOString(),
-            },
-            { onConflict: "path" }
-          )
-          metaErr = res.error
-          if (metaErr) {
-            // Retry without keywords column if column doesn't exist yet
-            const retryRes = await client.from("page_metadata").upsert(
+        if (!isPageMetadataTableMissing) {
+          try {
+            const res = await client.from("page_metadata").upsert(
               {
                 id: item.id || `meta-${item.path.replace(/\//g, "-")}`,
                 path: item.path,
@@ -528,21 +535,46 @@ export function useAdminMetadata() {
                 twitter_card: item.twitterCard,
                 noindex: item.noindex ?? false,
                 canonical_url: item.canonicalUrl || null,
+                keywords: item.keywords || [],
                 updated_at: new Date().toISOString(),
               },
               { onConflict: "path" }
             )
-            metaErr = retryRes.error
+            metaErr = res.error
+            if (metaErr) {
+              // Retry without keywords column if column doesn't exist yet
+              const retryRes = await client.from("page_metadata").upsert(
+                {
+                  id: item.id || `meta-${item.path.replace(/\//g, "-")}`,
+                  path: item.path,
+                  title: item.title,
+                  description: item.description,
+                  og_image: item.ogImage,
+                  og_type: item.ogType,
+                  twitter_card: item.twitterCard,
+                  noindex: item.noindex ?? false,
+                  canonical_url: item.canonicalUrl || null,
+                  updated_at: new Date().toISOString(),
+                },
+                { onConflict: "path" }
+              )
+              metaErr = retryRes.error
+            }
+            if (metaErr && (metaErr as any).code === "PGRST204" || (metaErr as any).code === "42P01" || metaErr?.message?.includes("not found") || metaErr?.message?.includes("does not exist")) {
+              isPageMetadataTableMissing = true
+            }
+          } catch {
+            isPageMetadataTableMissing = true
+            metaErr = { message: "page_metadata table unavailable" }
           }
-        } catch {
-          metaErr = { message: "page_metadata table unavailable" }
         }
 
-        // 2. If table doesn't exist or errors, fall back to case_studies fallback storage
-        if (metaErr) {
+        // 2. If table doesn't exist or errors, fall back to case_studies fallback storage with slug
+        if (metaErr || isPageMetadataTableMissing) {
           const { error: fbErr } = await client.from("case_studies").upsert(
             {
               id: SYSTEM_METADATA_ID,
+              slug: "__system_metadata__",
               client: "__SYSTEM__",
               category: "METADATA",
               title: "Page Metadata Storage",
@@ -602,18 +634,24 @@ export function useSiteAnalytics(isAdminUser = false) {
     try {
       setLoading(true)
       const client = await getSupabaseClient()
-      const { data: row, error: setErr } = await client
-        .from("site_settings")
-        .select("value")
-        .eq("key", "google_analytics")
-        .maybeSingle()
+      if (!isSiteSettingsTableMissing) {
+        const { data: row, error: setErr } = await client
+          .from("site_settings")
+          .select("value")
+          .eq("key", "google_analytics")
+          .maybeSingle()
 
-      if (!setErr && row?.value) {
-        const remoteSettings = row.value as SiteAnalyticsSettings
-        setStoredAnalyticsSettings(remoteSettings)
-        setSettings(remoteSettings)
-        initGoogleAnalytics(remoteSettings, isAdminUser)
-        return
+        if (!setErr && row?.value) {
+          const remoteSettings = row.value as SiteAnalyticsSettings
+          setStoredAnalyticsSettings(remoteSettings)
+          setSettings(remoteSettings)
+          initGoogleAnalytics(remoteSettings, isAdminUser)
+          return
+        }
+
+        if (setErr && (setErr.code === "PGRST204" || setErr.code === "PGRST200" || setErr.code === "42P01" || setErr.message?.includes("not found") || setErr.message?.includes("does not exist") || (setErr as any).status === 404)) {
+          isSiteSettingsTableMissing = true
+        }
       }
 
       // Fallback in case_studies
@@ -689,20 +727,28 @@ export function useSiteAnalytics(isAdminUser = false) {
 
       if (isSupabaseConfigured()) {
         const client = await getSupabaseClient()
-        const { error: setErr } = await client.from("site_settings").upsert(
-          {
-            key: "google_analytics",
-            value: payload,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "key" }
-        )
+        let setErr = null
+        if (!isSiteSettingsTableMissing) {
+          const res = await client.from("site_settings").upsert(
+            {
+              key: "google_analytics",
+              value: payload,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: "key" }
+          )
+          setErr = res.error
+          if (setErr && (setErr.code === "PGRST204" || setErr.code === "PGRST200" || setErr.code === "42P01" || setErr.message?.includes("not found") || setErr.message?.includes("does not exist") || (setErr as any).status === 404)) {
+            isSiteSettingsTableMissing = true
+          }
+        }
 
-        // Fallback to case_studies storage
-        if (setErr) {
+        // Fallback to case_studies storage with slug
+        if (setErr || isSiteSettingsTableMissing) {
           await client.from("case_studies").upsert(
             {
               id: SYSTEM_ANALYTICS_ID,
+              slug: "__system_analytics__",
               client: "__SYSTEM__",
               category: "ANALYTICS",
               title: "Analytics Settings Storage",
