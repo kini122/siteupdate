@@ -661,14 +661,14 @@
   }
 
   .button-primary {
-    background: #CC4A10;
+    background: var(--orange, #FF6E30);
     color: #ffffff !important;
-    box-shadow: 0 6px 18px rgba(204, 74, 16, 0.28);
+    box-shadow: 0 4px 14px rgba(255, 110, 48, 0.28);
   }
 
   .button-primary:hover {
-    background: #B83E0A;
-    box-shadow: 0 10px 24px rgba(204, 74, 16, 0.38);
+    background: #e85c20;
+    box-shadow: 0 6px 20px rgba(255, 110, 48, 0.38);
     transform: translateY(-2px);
   }
 
@@ -1066,7 +1066,7 @@
   .gallery-dot.is-active {
     width: 36px;
     height: 8px;
-    background: #CC4A10;
+    background: var(--orange, #FF6E30);
     border-radius: 4px;
   }
 
@@ -1112,7 +1112,7 @@
     font-size: clamp(38px, 3.8vw, 48px);
     font-weight: 400;
     line-height: 1.05;
-    color: #CC4A10;
+    color: var(--orange, #FF6E30);
     letter-spacing: -0.02em;
     white-space: nowrap;
   }
@@ -2057,7 +2057,7 @@
     font-size: 20px;
     font-weight: 400;
     line-height: 1.15;
-    color: #CC4A10;
+    color: var(--orange, #FF6E30);
     text-align: left;
     word-break: break-word;
     letter-spacing: -0.01em;
@@ -2327,7 +2327,7 @@
     font-family: var(--font-mono);
     font-size: 22px;
     font-weight: 500;
-    color: #CC4A10;
+    color: var(--orange, #FF6E30);
   }
 
   .process-headline {
@@ -2454,8 +2454,8 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: var(--orange, #EB5E28);
-    box-shadow: 0 0 8px rgba(235, 94, 40, 0.9);
+    background: var(--orange, #FF6E30);
+    box-shadow: 0 0 8px rgba(255, 110, 48, 0.9);
   }
 
   .dark-product-img {
@@ -2506,7 +2506,7 @@
 
   .dark-product-play-overlay:hover .dark-product-play-circle {
     transform: scale(1.12);
-    background: var(--orange, #EB5E28);
+    background: var(--orange, #FF6E30);
     border-color: #FFFFFF;
   }
 
@@ -2592,10 +2592,10 @@
   }
 
   .dark-product-btn-demo:hover {
-    background: var(--orange, #EB5E28);
+    background: var(--orange, #FF6E30);
     color: #FFFFFF !important;
     transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(235, 94, 40, 0.35);
+    box-shadow: 0 4px 14px rgba(255, 110, 48, 0.35);
   }
 
   .dark-product-btn-explore {
@@ -2621,8 +2621,8 @@
 
   .dark-product-btn-explore:hover {
     background: #FFFFFF;
-    border-color: var(--orange, #EB5E28);
-    color: var(--orange, #EB5E28) !important;
+    border-color: var(--orange, #FF6E30);
+    color: var(--orange, #FF6E30) !important;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
@@ -2950,8 +2950,8 @@
   .cta-band-action .button-primary,
   .cta-band-action .cta-band-btn,
   .cta-band-action [data-slot="button"] {
-    background: #CC4A10 !important;
-    background-color: #CC4A10 !important;
+    background: var(--orange, #FF6E30) !important;
+    background-color: var(--orange, #FF6E30) !important;
     color: #FFFFFF !important;
     border-radius: 9999px !important;
     padding: 12px 28px !important;
@@ -2962,21 +2962,22 @@
     font-weight: 600 !important;
     white-space: nowrap !important;
     border: none !important;
-    box-shadow: none !important;
+    box-shadow: 0 4px 14px rgba(255, 110, 48, 0.28) !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 8px !important;
     text-decoration: none !important;
-    transition: transform 180ms ease, background 180ms ease !important;
+    transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease !important;
   }
 
   .cta-band-action .button-primary:hover,
   .cta-band-action .cta-band-btn:hover,
   .cta-band-action [data-slot="button"]:hover {
-    background: #B83E0A !important;
-    background-color: #B83E0A !important;
+    background: #e85c20 !important;
+    background-color: #e85c20 !important;
     transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(255, 110, 48, 0.38) !important;
     color: #FFFFFF !important;
   }
 
@@ -3073,8 +3074,8 @@
   .cal-loading-spinner {
     width: 32px;
     height: 32px;
-    border: 3px solid rgba(255, 87, 34, 0.15);
-    border-top-color: #FF5722;
+    border: 3px solid rgba(255, 110, 48, 0.15);
+    border-top-color: var(--orange, #FF6E30);
     border-radius: 50%;
     animation: calSpin 0.9s linear infinite;
   }
@@ -4708,10 +4709,10 @@
   }
 
   .product-demo-btn:hover {
-    background: #EB5E28;
+    background: var(--orange, #FF6E30);
     color: #FFFFFF !important;
     transform: translateY(-1.5px);
-    box-shadow: 0 6px 18px rgba(235, 94, 40, 0.35);
+    box-shadow: 0 6px 18px rgba(255, 110, 48, 0.35);
   }
 
   /* Work Page Main Listing Shell (Frame 114 / 156 max-width: 1280px) */
@@ -5162,7 +5163,7 @@
 
   .partner-case-cta:hover {
     transform: translateX(4px);
-    color: #E85B1F;
+    color: #e85c20;
   }
 
   /* Homogeneous Pop-Up Model Dialog Styles (matching .product-preview-dialog) */
@@ -5366,7 +5367,7 @@
   }
 
   .partner-modal-enquire-btn:hover {
-    background: #E85B1F;
+    background: #e85c20;
     transform: translateY(-1px);
     box-shadow: none !important;
   }
@@ -6089,7 +6090,7 @@
   }
 
   .case-sidebar-cta-btn:hover {
-    background: #E85B1F;
+    background: #e85c20;
     transform: translateY(-1px);
     box-shadow: 0 6px 20px rgba(255, 110, 48, 0.38);
   }
@@ -6180,7 +6181,7 @@
   }
 
   .case-detail-btn-primary:hover {
-    background: #E85B1F;
+    background: #e85c20;
     transform: translateY(-1px);
     box-shadow: 0 6px 20px rgba(255, 110, 48, 0.38);
   }
@@ -8436,7 +8437,7 @@
   }
 
   .admin-submit-btn:hover:not(:disabled) {
-    background: #E85B1F;
+    background: #e85c20;
     transform: translateY(-1px);
   }
 
@@ -8662,7 +8663,7 @@
   }
 
   .admin-primary-btn:hover {
-    background: #E85B1F;
+    background: #e85c20;
     transform: translateY(-1px);
     box-shadow: 0 6px 16px rgba(255, 110, 48, 0.35);
   }
@@ -9046,7 +9047,7 @@
   }
 
   .admin-save-btn:hover:not(:disabled) {
-    background: #E85B1F;
+    background: #e85c20;
     transform: translateY(-1px);
   }
 
@@ -9396,8 +9397,8 @@
   }
 
   .admin-browser-btn--primary:hover {
-    background: #E85B1F;
-    border-color: #E85B1F;
+    background: #e85c20;
+    border-color: #e85c20;
   }
 
   /* Subbar */
