@@ -134,7 +134,7 @@ export function HomePage() {
           </h1>
 
           <p className="hero-copy hero-entrance-copy">
-            We build AI-powered systems to augment existing software with AI, automate the busywork, and extend existing systems with AI.
+            We add an AI layer to the system you already run
           </p>
 
           <div className="hero-actions hero-entrance-actions">
