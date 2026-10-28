@@ -29,7 +29,7 @@
 | **Brand Name** | Kozker / KozkerTech | Technology and intelligent systems company. |
 | **Primary Tagline** | *Data, AI & Automation* | Core service umbrella. |
 | **Secondary Tagline** | *Your Business, made easier with Technology.* | Brand value proposition. |
-| **Contact Phone** | `+91-73062-61147` (Mon-Fri, 9am-6pm IST) | Inbound phone & WhatsApp channel. |
+| **Contact Phone** | `+91 96088 06790` (Mon-Fri, 9am-6pm IST) | Inbound phone & WhatsApp channel. |
 | **Contact Emails** | `contact@kozker.com`, `support@kozker.com` | Primary inbound and support channels. |
 | **HQ Address** | `1st Floor, Adithya Shopping Complex, Thoppumpady, Kochi, Kerala, India, P.O 682005` | Company headquarters. |
 | **Social Links** | LinkedIn (`https://www.linkedin.com/company/kozker-tech`), Instagram (`https://www.instagram.com/kozkertech/`) | Official social channels (strictly Instagram and LinkedIn only). |
@@ -88,7 +88,7 @@
   - Links: `Services`, `Products`, `Work`, `About`, `Partners`, `Contact`
 * **Get in Touch Column**:
   - Heading: `Get in Touch`
-  - Phone Numbers: `+91-73062-61147` & `+91 98467 00327`
+  - Phone Numbers: `+91 96088 06790` & `+91 62820 54521`
   - Emails: `contact@kozker.com` & `support@kozker.com` (both styled in orange)
   - Address: `Kozker Tech Pvt Ltd, 1st Floor, Adithya Shopping Complex, Thoppumpady, Kochi, Kerala, India, P.O 682005`
   - Social Links: `LinkedIn` & `Instagram` (bare monocolor logos)
@@ -598,7 +598,7 @@ The Services page dynamically loads content across three distinct service domain
 #### Left Column: Direct Inquiries, HQ & Connect
 1. **Phone**:
    - Monospace Label: `PHONE`
-   - Numbers: `+91-73062-61147` (`tel:+917306261147`) & `+91 98467 00327` (`tel:+919846700327`)
+   - Numbers: `+91 96088 06790` (`tel:+919608806790`) & `+91 62820 54521` (`tel:+916282054521`)
    - Hours Subtext: `Mon-Fri, 9am-6pm IST`
 2. **Email**:
    - Monospace Label: `EMAIL`

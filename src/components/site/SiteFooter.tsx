@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router"
 import { Instagram, Linkedin } from "lucide-react"
+import { contactDetails } from "@/data/siteContent"
 
 export function SiteFooter() {
   return (
@@ -32,11 +33,11 @@ export function SiteFooter() {
             <h3 className="footer-nav-heading">Get in Touch</h3>
             <div className="footer-contact-links">
               <div className="footer-phones-group">
-                <a href="tel:+917306261147" className="footer-contact-phone font-mono">
-                  +91-73062-61147
+                <a href={`tel:${contactDetails.phoneRaw}`} className="footer-contact-phone font-mono">
+                  {contactDetails.phone}
                 </a>
-                <a href="tel:+919846700327" className="footer-contact-phone font-mono">
-                  +91 98467 00327
+                <a href={`tel:${contactDetails.phoneSecondaryRaw}`} className="footer-contact-phone font-mono">
+                  {contactDetails.phoneSecondary}
                 </a>
               </div>
               <div className="footer-emails-group">

@@ -390,7 +390,7 @@ export function ContactPage() {
                             type="tel"
                             value={formData.phone}
                             onChange={handleChange}
-                            placeholder="+91 73062 61147"
+                            placeholder="+91 96088 06790"
                             className="contact-input"
                             autoComplete="tel"
                           />

@@ -404,10 +404,10 @@ export const servicesDetails: Record<string, ServiceDetail> = {
 }
 
 export const contactDetails = {
-  phone: "+91-73062-61147",
-  phoneRaw: "+917306261147",
-  phoneSecondary: "+91 98467 00327",
-  phoneSecondaryRaw: "+919846700327",
+  phone: "+91 96088 06790",
+  phoneRaw: "+919608806790",
+  phoneSecondary: "+91 62820 54521",
+  phoneSecondaryRaw: "+916282054521",
   hours: "Mon-Fri, 9am-6pm IST",
   emails: {
     contact: "contact@kozker.com",
